@@ -1,0 +1,2 @@
+dynamic-clamps-scale-current
+============================

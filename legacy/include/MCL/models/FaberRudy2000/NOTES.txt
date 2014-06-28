@@ -1,0 +1,29 @@
+Currents
+0: I_Total
+1: I_Na_ion_total
+2: I_K_ion_total
+3: I_Ca_ion_total
+4: I_Na
+5: I_Na_b
+6: 3*I_Na_K
+7: 3*I_Na_Ca
+8: I_Ca_Na
+9: I_Kr
+10: I_Ks
+11: I_K1
+12: I_Kp
+13: 2*I_Na_K
+14: I_Ca_K
+15: I_Ca_L
+16: I_Ca_T
+17: I_Ca_b
+18: I_p_Ca
+19: 2*I_Na_Ca
+20: I_Na_ion_total
+21: I_K_ion_total
+22: I_Ca_ion_total
+
+Concentrations
+0: Na_in
+1: K_in
+2: Ca_in

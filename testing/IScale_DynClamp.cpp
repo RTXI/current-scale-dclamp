@@ -31,7 +31,7 @@
 #include <IScale_DynClamp.h>
 #include <iostream>
 #include <math.h>
-#include <qlistbox.h>
+/*#include <qlistbox.h>
 #include <qtooltip.h>
 #include <qvalidator.h>
 #include <qtimer.h>
@@ -41,9 +41,10 @@
 #include <qpushbutton.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
-#include <qmessagebox.h>
+#include <qmessagebox.h>*/
+#include <QtGui>
 
-#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
+//#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
@@ -108,7 +109,8 @@ IScale_DynClamp::IScale_DynClamp(void) :
     DefaultGUIModel("IScale_DynClamp",::vars,::num_vars) {
 
     // Build Module GUI
-    createGUI(vars, num_vars);
+    DefaultGUIModel::createGUI(vars, num_vars);
+	 customizeGUI();
 
     // Set GUI refresh rate
     QTimer *timer = new QTimer(this);
@@ -585,7 +587,7 @@ void IScale_DynClamp::createGUI(DefaultGUIModel::variable_t *var, int size) {
 
     // The following is a workaroud to incorporate custom GUI items in a default_gui format
 
-    param_t param;
+/*    param_t param;
     size_t nstate = 0, nparam = 0, i=2;
     // Manually set parameter array
     // Time
@@ -748,7 +750,7 @@ void IScale_DynClamp::createGUI(DefaultGUIModel::variable_t *var, int size) {
     QToolTip::add(param.label, vars[i].description);
     QToolTip::add(param.edit, vars[i].description);
     i++;
-
+*/
     // Model Combo Box
     mainWindow->modelComboBox->insertItem("LivRudy 2009");
     mainWindow->modelComboBox->insertItem("FaberRudy 2000");

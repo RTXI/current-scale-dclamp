@@ -31,7 +31,7 @@
 
 #include <default_gui_model.h>
 #include <cstdlib>
-#include <qwidget.h>
+#include <QtGui>
 #include <string>
 #include "include/MCL/ModelCell.h" // Model Cell Library
 #include "include/IS_DC_Protocol.h" // Protocol Library
@@ -147,7 +147,8 @@ private:
     double peakVoltage;
    
     // Module functions
-    void createGUI( DefaultGUIModel::variable_t *var, int size ); // Overloaded DefaultGUIModel function for custom GUI
+    //void createGUI( DefaultGUIModel::variable_t *var, int size ); // Overloaded DefaultGUIModel function for custom GUI
+	 void customizeGUI();
     void initialize( ); // Initialization
     void doLoad( const Settings::Object::State & ); // Load from settings file
     void doSave( Settings::Object::State & ) const; // Save to settings file

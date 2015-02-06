@@ -583,3 +583,5 @@ void LivRudy2009::makeMap( void ) {
 double LivRudy2009::param(string x){
     return *parameterMap[x]; // Return requested parameter
 }
+INCX"] = &INCX;
+}

@@ -31,106 +31,95 @@
 #include <IScale_DynClamp.h>
 #include <iostream>
 #include <math.h>
-#include <qlistbox.h>
-#include <qtooltip.h>
-#include <qvalidator.h>
+#include <main_window.h>
+
 #include <qtimer.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qstring.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
 #include <qcheckbox.h>
+#include <qpushbutton.h>
 #include <qmessagebox.h>
+#include <qlabel.h>
+#include <qvalidator.h>
+#include <qlineedit.h>
+#include <qlistbox.h>
+#include <qcombobox.h>
+#include <qlayout.h>
 
 #include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
-/* SyncEvent: Required for modify(), pause(), and exit() overloading */
-namespace {
-    class SyncEvent: public RT::Event {
-    public:
-        int callback(void) {
-            return 0;
-        };
-    }; // class SyncEvent
-} // namespace
-
-/* Create Module Instance */
+// Create Module Instance
 extern "C" Plugin::Object *createRTXIPlugin(void) {
-    return new IScale_DynClamp();
+    return new IScale_DynClamp::Module();
 }
 
-/* Inputs, Outputs, and Parameters for DefaultGUIModel */
-static IScale_DynClamp::variable_t vars[] = {
+// Inputs, Outputs, and Parameters
+static Workspace::variable_t vars[] = {
     {
-        "Input Voltage (V)", "Input Voltage (V)", IScale_DynClamp::INPUT, }, // Voltage of target cell, from amplifier, input(0)
+        "Input Voltage (V)", "Input Voltage (V)", Workspace::INPUT, }, // Voltage of target cell, from amplifier, input(0)
     {
-        "Output Current (A)", "Output Current (A)", IScale_DynClamp::OUTPUT, }, //  Current sent to target cell, to internal input, output(0)
+        "Output Current (A)", "Output Current (A)", Workspace::OUTPUT, }, //  Current sent to target cell, to internal input, output(0)
+    // States
     {
-        "Time (ms)", "Time Elapsed (ms)", IScale_DynClamp::STATE, }, 
+        "Time (ms)", "Time Elapsed (ms)", Workspace::STATE, }, 
     {
-        "Voltage (mv)", "Membrane voltage of target cell (mv)", IScale_DynClamp::STATE, }, // Voltage in mV, converted from amplifier input
+        "Voltage (mv)", "Membrane voltage of target cell (mv)", Workspace::STATE, }, // Voltage in mV, converted from amplifier input
     {
-        "Beat Number", "Number of beats", IScale_DynClamp::STATE, },
+        "Beat Number", "Number of beats", Workspace::STATE, },
     {
-        "APD (ms)", "Action Potential Duration of cell (ms)", IScale_DynClamp::STATE, }, 
-    {
-        "APD Repolarization %", "APD Repolarization %", IScale_DynClamp::PARAMETER | IScale_DynClamp::INTEGER, },
-    {
-        "Minimum APD (ms)", "Minimum depolarization duration considered to be an action potential (ms)", IScale_DynClamp::PARAMETER | IScale_DynClamp::INTEGER, }, 
-    {
-        "Number of Trials", "Number of times the protocol will be repeated", IScale_DynClamp::PARAMETER | IScale_DynClamp::INTEGER, }, 
-    {
-        "Interval Time (ms)", "Amont of time between each trial", IScale_DynClamp::PARAMETER | IScale_DynClamp::INTEGER, }, 
-    {
-        "BCL (ms)", "Basic Cycle Length", IScale_DynClamp::PARAMETER | IScale_DynClamp::INTEGER, }, 
-    {
-        "Stim Mag (nA)", "Amplitude of stimulation pulse (nA)", IScale_DynClamp::PARAMETER | IScale_DynClamp::DOUBLE, }, 
-    {
-        "Stim Length (ms)", "Duration of stimulation pulse (nA", IScale_DynClamp::PARAMETER | IScale_DynClamp::DOUBLE, }, 
-    {
-        "Cm (pF)", "Membrane capacitance of target cell (pF)", IScale_DynClamp::PARAMETER | IScale_DynClamp::DOUBLE, },
-
+        "APD (ms)", "Action Potential Duration of cell (ms)", Workspace::STATE, },
     // Hidden States
     {
-        "Target Curent (A/F)", "Value of model current targeted for scaling (A/F)", IScale_DynClamp::STATE, },
+        "Target Curent (A/F)", "Value of model current targeted for scaling (A/F)", Workspace::STATE, },
     {
-        "Scaled Target Current (A/F)", "Value of model current after scaling (A/F)", IScale_DynClamp::STATE, }, 
+        "Scaled Target Current (A/F)", "Value of model current after scaling (A/F)", Workspace::STATE, },
+    // Parameters
+    {
+        "APD Repolarization %", "APD Repolarization %", Workspace::PARAMETER, },
+    {
+        "Minimum APD (ms)", "Minimum depolarization duration considered to be an action potential (ms)", Workspace::PARAMETER, },
+    {
+        "Stim Window (ms)", "Window of time after stimulus that is ignored by APD calculation", Workspace::PARAMETER, }, 
+    {
+        "Number of Trials", "Number of times the protocol will be repeated", Workspace::PARAMETER, }, 
+    {
+        "Interval Time (ms)", "Amont of time between each trial", Workspace::PARAMETER, }, 
+    {
+        "BCL (ms)", "Basic Cycle Length", Workspace::PARAMETER, }, 
+    {
+        "Stim Mag (nA)", "Amplitude of stimulation pulse (nA)", Workspace::PARAMETER, }, 
+    {
+        "Stim Length (ms)", "Duration of stimulation pulse (nA", Workspace::PARAMETER, }, 
+    {
+        "Cm (pF)", "Membrane capacitance of target cell (pF)", Workspace::PARAMETER, },
+    {
+        "LJP (mv)", "Liquid Junction Potential (mV)", Workspace::PARAMETER, },    
 };
 
-/* Required variable */
-static size_t num_vars = sizeof(vars) / sizeof(IScale_DynClamp::variable_t);
+// Number of variables in vars
+static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
-/* Constructor */
-IScale_DynClamp::IScale_DynClamp(void) :
-    DefaultGUIModel("IScale_DynClamp",::vars,::num_vars) {
+IScale_DynClamp::Module::Module(void) :
+    QWidget( MainWindow::getInstance()->centralWidget(), 0, Qt::WStyle_NormalBorder | Qt::WDestructiveClose ),
+    RT::Thread( 0 ),
+    Workspace::Instance( "IScale DynClamp", vars, num_vars ) {
 
     // Build Module GUI
-    createGUI(vars, num_vars);
-
-    // Set GUI refresh rate
-    QTimer *timer = new QTimer(this);
-    timer->start(100);
-    QObject::connect(timer, SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-    show();
-    
+    createGUI();        
     initialize(); // Initialize parameters, initialize states, reset model, and update rate
-
-    refresh();
+    refreshDisplay();
+    show();
 } // End constructor
 
-/* Destructor */
-IScale_DynClamp::~IScale_DynClamp(void) {
+IScale_DynClamp::Module::~Module(void) {
     delete protocol;
-    delete mainWindow;
-    delete modelCell;
+    modelCell = NULL;
+    delete livshitzRudy2009;
+    delete faberRudy2000;
 } // End destructor
 
-/* Real-Time Execution */
-void IScale_DynClamp::execute(void) {
-    voltage = input(0) * 1e3;
+void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
+    voltage = input(0) * 1e3 - LJP;
 
     switch( executeMode ) {
     case IDLE:
@@ -140,15 +129,15 @@ void IScale_DynClamp::execute(void) {
         // Apply stimulus for given number of ms (StimLength) 
         if( time - cycleStartTime <= stimLength ) {
             backToBaseline = false;
-            peakVoltage = Vrest;
+            peakVoltageT = Vrest;
             output( 0 ) = stimulusLevel * 1e-9; // stimulsLevel is in nA, convert to A for amplifier
         }
         
         else {
             output( 0 ) = 0;
 
-            if( voltage > peakVoltage ) // Find peak voltage after stimulus
-                peakVoltage = voltage;
+            if( voltage > peakVoltageT ) // Find peak voltage after stimulus
+                peakVoltageT = voltage;
 
             // If Vm is back to resting membrane potential (within 2 mV; determined when threshold detection button is first pressed) 
             if( voltage-Vrest < 2 ) { // Vrest: voltage at the time threshold test starts
@@ -159,9 +148,10 @@ void IScale_DynClamp::execute(void) {
                 }
 
                 // Calculate time length of voltage response
-                if( responseDuration > 50 && peakVoltage > 10 ) { // If the response was more than 50ms long and peakVoltage is more than 10mV, consider it an action potential
+                if( responseDuration > 50 && peakVoltageT > 10 ) { // If the response was more than 50ms long and peakVoltage is more than 10mV, consider it an action potential
                     stimMag = stimulusLevel*1.5; // Set the current stimulus value as the calculated threshold * 2
-                    threshold = false;
+                    thresholdOn = false;
+                    executeMode = IDLE;
                 }
                 // If no action potential occurred, and Vm is back to rest 
                 else {
@@ -178,18 +168,14 @@ void IScale_DynClamp::execute(void) {
         break;
 
     case PACE:
-        if( recordData && !recording ){ // Record data if dataRecord is toggled
-            DataRecorder::startRecording();
-            recording = true;
-        }
         
         time += period;
         stepTime += 1;
         // If time is greater than BCL, advance the beat
         if ( stepTime - cycleStartTime >= BCLInt ) {
-            beatNum++;
-            
+            beatNum++;            
             cycleStartTime = stepTime;
+            Vrest = voltage;
             calculateAPD( 1 ); // First step of APD calculation called at each stimulus
         }
         
@@ -209,13 +195,13 @@ void IScale_DynClamp::execute(void) {
 
         time += period;
         stepTime += 1;
-
+        
         if( protocolMode == STEPINIT ) {
             if( recordData && !recording && currentStep == 0 ) { // Record data if dataRecord is toggled
-                DataRecorder::startRecording();
-                recording = true;
+                Event::Object event(Event::START_RECORDING_EVENT);
+                Event::Manager::getInstance()->postEventRT(&event);
             }
-
+            
             modelInit = true;                                
             // Model changes do not use up a thread loop by themselves
             // Using a while loop makes sure if multiple model changes are called
@@ -228,8 +214,15 @@ void IScale_DynClamp::execute(void) {
                 else {
                     stepPtr = protocolContainer->at( currentStep );
                     stepType = stepPtr->stepType;
-                    
-                    if( stepType == ProtocolStep::STARTMODEL ) {
+
+                    if( stepType == ProtocolStep::CHANGEMODEL ) {
+                        if( stepPtr->modelType == ProtocolStep::LIVRUDY2009 )
+                            modelCell = livshitzRudy2009;
+                        else
+                            modelCell = faberRudy2000;
+                        currentStep++;
+                    }
+                    else if( stepType == ProtocolStep::STARTMODEL ) {
                         voltageClamp = true;
                         currentStep++;
                     }
@@ -253,7 +246,8 @@ void IScale_DynClamp::execute(void) {
                         pBCLInt = stepPtr->BCL / period; // BCL for protocol
                         protocolMode = EXEC;
                         beatNum++;
-                        calculateAPD(1);
+                        Vrest = voltage;
+                        calculateAPD( 1 );
                         modelInit = false;
                     }
                     
@@ -266,7 +260,8 @@ void IScale_DynClamp::execute(void) {
                 if (stepTime - cycleStartTime >= pBCLInt){
                     beatNum++;
                     cycleStartTime = stepTime;
-                    calculateAPD(1);
+                    Vrest = voltage;
+                    calculateAPD( 1 );
                 }
                 // Stimulate cell for stimLength(ms)
                 if ( (stepTime - cycleStartTime) < stimLengthInt )
@@ -300,8 +295,10 @@ void IScale_DynClamp::execute(void) {
         } // end EXEC
 
         if( protocolMode == END ) { // End of Protocol: Stop Data recorder and untoggle button
-            if(recordData == true)
-                DataRecorder::stopRecording();
+            if(recording == true) {
+                Event::Object event(Event::STOP_RECORDING_EVENT);
+                Event::Manager::getInstance()->postEventRT(&event);
+            }
             protocolOn = false;
             executeMode = IDLE;
         } // end END
@@ -309,69 +306,14 @@ void IScale_DynClamp::execute(void) {
     } // end switch( executeMode )     
 } // end execute()
 
-/* Non-Real-Time Update */
-void IScale_DynClamp::update(IScale_DynClamp::update_flags_t flag) {
-    switch(flag){
-        
-    case MODIFY: // The parameters have been modified by the user
-        // Get Parameters
-        APDRepol = getParameter("APD Repolarization %").toInt();
-        minAPD = getParameter("Minimum APD (ms)").toInt();
-        numTrials = getParameter("Number of Trials").toInt();
-        intervalTime = getParameter("Interval Time (ms)").toInt();
-        BCL = getParameter("BCL (ms)").toInt();
-        stimMag = getParameter("Stim Mag (nA)").toDouble();
-        stimLength = getParameter("Stim Length (ms)").toDouble();
-        Cm = getParameter("Cm (pF)").toDouble();
-        update(PERIOD);
-        break;
-
-    case RESET:
-        update(PERIOD);
-        stepTime = -1;
-        time = -period;
-        cycleStartTime = 0;
-        beatNum = 1;
-        Vrest = voltage;
-        APD_start = -1;
-        upstroke_threshold = Vrest - (Vrest*0.50);
-        downstroke_threshold = Vrest * ( APDRepol / 100.0) ;
-
-        // Protocol variables
-        currentStep = 0;
-        targetCurrent = 0;
-        scaledCurrent = 0;
-        break;
-
-    case RESETMODEL:
-        modelCell->resetModel();
-        break;
-            
-    case PERIOD: // The system period has changed
-        period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
-        BCLInt = BCL / period;
-        stimLengthInt = stimLength / period;
-        modelCell->setModelRate(100000, period);
-        break;
-                
-    case PAUSE: // The Pause button has been activated
-        break;
-                    
-    case UNPAUSE: // When the pause button has been deactivated
-        update(PERIOD);
-        break;
-                
-    case EXIT: // When the module has been told to exit
-        break;
-        
-    } // End switch(flag)
-} // End update()
-
-/* Initializiation */
-void IScale_DynClamp::initialize(void){
+void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, protocol, and model cell
     protocol = new Protocol();
-    modelCell = new ModelCell();
-    modelCell->changeModel( ModelCell::LIVRUDY2009 );
+    livshitzRudy2009 = new ModelCell();
+    livshitzRudy2009->changeModel( ModelCell::LIVRUDY2009 );
+    faberRudy2000 = new ModelCell();
+    faberRudy2000->changeModel( ModelCell::FABERRUDY2000 );
+    modelCell = livshitzRudy2009; // Livshitz Rudy model is the default
+
     protocolContainer = &protocol->protocolContainer; // Pointer to protocol container
         
     // States
@@ -381,30 +323,29 @@ void IScale_DynClamp::initialize(void){
     APD = 0;
     targetCurrent = 0;
     scaledCurrent = 0;
-    setState( "Time (ms)", time );
-    setState( "Voltage (mv)", voltage );
-    setState( "Beat Number", beatNum );
-    setState( "APD (ms)", APD );
-    setState( "Target Curent (A/F)", targetCurrent );
-    setState( "Scaled Target Current (A/F)", scaledCurrent );
 
     // Parameters
-    APDRepol = 90;
+    APDRepol = 90;    
     minAPD = 50;
+    stimWindow = 4;
     numTrials = 1;
     intervalTime = 1000;
     BCL = 1000;
     stimMag = 4;
     stimLength = 1;
     Cm = 100;
-    setParameter("APD Repolarization %", APDRepol);
-    setParameter("Minimum APD (ms)", minAPD);
-    setParameter("Number of Trials", numTrials);
-    setParameter("Interval Time (ms)", intervalTime);
-    setParameter("BCL (ms)", BCL);
-    setParameter("Stim Mag (nA)", stimMag);
-    setParameter("Stim Length (ms)", stimLength);
-    setParameter("Cm (pF)", Cm);
+    LJP = 0;
+
+    mainWindow->APDRepolEdit->setText( QString::number(APDRepol) );
+    mainWindow->minAPDEdit->setText( QString::number(minAPD) );
+    mainWindow->stimWindowEdit->setText( QString::number(stimWindow) );
+    mainWindow->numTrialEdit->setText( QString::number(numTrials) );
+    mainWindow->intervalTimeEdit->setText( QString::number(intervalTime) );
+    mainWindow->BCLEdit->setText( QString::number(BCL) );
+    mainWindow->stimMagEdit->setText( QString::number(stimMag) );
+    mainWindow->stimLengthEdit->setText( QString::number(stimLength) );
+    mainWindow->CmEdit->setText( QString::number(Cm) );
+    mainWindow->LJPEdit->setText( QString::number(LJP) );
 
     // Flags
     recordData = mainWindow->recordDataCheckBox->isChecked();
@@ -412,19 +353,32 @@ void IScale_DynClamp::initialize(void){
     voltageClamp = false;
     modelInit = true;
     loadedFile = "";
-    threshold = false;
     protocolOn = false;
-    
-    update(PERIOD); // Get period
+
+    // APD parameters
+   upstrokeThreshold = -40;
 }
 
-/*** Slot Functions ***/
+void IScale_DynClamp::Module::reset( void ) {
+    period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
+    BCLInt = BCL / period;
+    stimLengthInt = stimLength / period;
+    modelCell->setModelRate(100000, period);
+     
+    stepTime = -1;
+    time = -period;
+    cycleStartTime = 0;
+    beatNum = 1;
+    Vrest = voltage;
+    calculateAPD( 1 );
 
-void IScale_DynClamp::reset( void ) {
-    update(RESET);
+    // Protocol variables
+    currentStep = 0;
+    targetCurrent = 0;
+    scaledCurrent = 0;
 }
 
-void IScale_DynClamp::addStep( void ) {
+void IScale_DynClamp::Module::addStep( void ) {
     int idx = mainWindow->protocolEditorListBox->currentItem();
     if( idx == -1 ) { // Protocol is empty or nothing is selected, add step to end
         if( protocol->addStep( this ) )   // Update protocolEditorListBox if a step was added
@@ -435,7 +389,7 @@ void IScale_DynClamp::addStep( void ) {
             rebuildListBox();            
 }
 
-void IScale_DynClamp::deleteStep( void ) {
+void IScale_DynClamp::Module::deleteStep( void ) {
     int idx = mainWindow->protocolEditorListBox->currentItem();
     if( idx == -1 ) // Protocol is empty or nothing is selected, return
         return ;
@@ -444,132 +398,105 @@ void IScale_DynClamp::deleteStep( void ) {
     rebuildListBox();
 }
 
-void IScale_DynClamp::saveProtocol( void ) {
+void IScale_DynClamp::Module::saveProtocol( void ) {
     protocol->saveProtocol( this );
 }
 
-void IScale_DynClamp::loadProtocol( void ) {
+void IScale_DynClamp::Module::loadProtocol( void ) {
     loadedFile = protocol->loadProtocol( this );
     rebuildListBox();
 }
 
-void IScale_DynClamp::clearProtocol( void ) {
+void IScale_DynClamp::Module::clearProtocol( void ) {
     protocol->clearProtocol();
     rebuildListBox();
 }
 
-void IScale_DynClamp::toggleRecordData( bool toggled ) {
-    if( toggled )
-        recordData = true;
-    else
-        recordData = false;
+void IScale_DynClamp::Module::toggleThreshold( void ) {
+    thresholdOn = mainWindow->thresholdButton->isOn();
+    
+    ToggleThresholdEvent event( this, thresholdOn );
+    RT::System::getInstance()->postEvent( &event );
 }
 
-void IScale_DynClamp::toggleProtocol( bool toggled ) {
-    protocolOn = toggled;
+void IScale_DynClamp::Module::toggleProtocol( void ) {
+    protocolOn = mainWindow->startProtocolButton->isOn();
     
-    if( toggled ){
-        if( protocolContainer->size() > 0 ) {
-            executeMode = IDLE; // Keep on IDLE until update is finished
-            recording = false;
-            voltageClamp = false;
-            modelInit = true;
-            update(RESET); // Reset timings
-            update(RESETMODEL);
-            beatNum = 0; // beatNum is changed at beginning of protocol, so it must start at 0 instead of 1
-            protocolMode = STEPINIT; 
-            executeMode = PROTOCOL;
-        }
-        else {
+    if( protocolOn ){
+        if( protocolContainer->size() <= 0 ) {
             QMessageBox::warning( this, "Error", "Protocol has yet to be defined." );
             mainWindow->startProtocolButton->setOn( false );
+            protocolOn = false;
         }
     }
-    else{
-        if(recording) DataRecorder::stopRecording(); // True if protocol is prematurely ended by clicking button
-        recording = false;
-        voltageClamp = false;
-        executeMode = IDLE;
-    }
+
+    ToggleProtocolEvent event( this, protocolOn );
+    RT::System::getInstance()->postEvent( &event );
 }
 
-void IScale_DynClamp::toggleThreshold( bool toggled ) {
-    threshold = toggled;
-    
-    if( toggled ){
-        Vrest = input(0)*1e3;
-        peakVoltage = Vrest;
-        stimulusLevel = 1e-9;
-        responseDuration = 0;
-        responseTime = 0;
-        update(RESET);
-        executeMode = THRESHOLD;
-    }
-    else{
-        executeMode = IDLE;
-        setParameter("Stim Mag (nA)",stimMag); // Set StimMag parameter
-    }
+void IScale_DynClamp::Module::togglePace( void ) {
+    paceOn = mainWindow->staticPacingButton->isOn();
+
+    TogglePaceEvent event( this, paceOn );
+    RT::System::getInstance()->postEvent( &event );
 }
 
-void IScale_DynClamp::togglePace( bool toggled ) {
-    if( toggled ){
-        executeMode = IDLE; // Keep on IDLE until update is finished
-        recording = false;
-        update(RESET); // Reset timings
-        executeMode = PACE;
-    }
-    else{
-        if(recording) DataRecorder::stopRecording(); // True if protocol is prematurely ended by clicking button
-        recording = false;
-        executeMode = IDLE;
-    }
-}
-
-void IScale_DynClamp::changeModel( int idx ) {
+void IScale_DynClamp::Module::changeModel( int idx ) {
     if( idx ) // Index 1 -> FaberRudy
-        modelCell->changeModel( ModelCell::FABERRUDY2000 ); // Old model is deleted and new one is instanciated
+        modelCell = faberRudy2000; // Old model is deleted and new one is instanciated
     else // Index 0 -> LivShitz Rudy
-        modelCell->changeModel( ModelCell::LIVRUDY2009 );
+        modelCell = livshitzRudy2009;
 }
 
 /*** Other Functions ***/
 
-/* Calculated APD function */
-void IScale_DynClamp::calculateAPD(int step) {
-
-    switch(step) {
-
+void IScale_DynClamp::Module::Module::calculateAPD(int step){ // Two APDs are calculated based on different criteria
+    switch( step ) {
     case 1:
-        if(APD_start == 1) { // Update only after AP has finished
-            APD_start = -1;
-            Vrest = voltage;
-            upstroke_threshold = Vrest - (Vrest*0.50);
-            downstroke_threshold = Vrest * ( APDRepol / 100.0 ) ;
-        }
-        
-    case 2:
-        // Update start time after voltage has passed depolarization threshold
-        if(APD_start == -1 && voltage > upstroke_threshold) { 
-            APD_start_time = time;
-            APD_start = 0;
-        }
-        // Calculate APD once voltage has passed repolarization threshold and is greater than minimum APD
-        if(APD_start == 0 && voltage < downstroke_threshold && (time - APD_start_time) > minAPD) { 
-            APD_end_time = time;
-            APD_start = 1;
-            APD = APD_end_time - APD_start_time;
-        }
+        APDMode = START;
+        break;
 
-        break;
-        
-    default:
-        cout << "\nErrorr: *default case called* IScale_DynCLamp::calculateAPD()";
-        break;
+    case 2:
+        switch( APDMode ) { 
+        case START:// Find time membrane voltage passes upstroke threshold, start of AP            
+            if( voltage >= upstrokeThreshold ) {
+                APStart = time;
+                peakVoltage = Vrest;
+                APDMode = PEAK;
+            }
+            break;
+            
+        case PEAK: // Find peak of AP, points within "window" are ignored to eliminate effect of stimulus artifact
+            if( (time - APStart) > stimWindow ) { // If we are outside the chosen time window after the AP
+                if( peakVoltage < voltage  ) { // Find peak voltage                    
+                    peakVoltage = voltage;
+                    peakTime = time;
+                }
+                else if ( (time - peakTime) > 5 ) { // Keep looking for the peak for 5ms to account for noise
+                    double APAmp;                    
+                    APAmp = peakVoltage - Vrest ; // Amplitude of action potential based on resting membrane and peak voltage
+                    // Calculate downstroke threshold based on AP amplitude and desired AP repolarization %
+                    downstrokeThreshold = peakVoltage - ( APAmp * (APDRepol / 100.0) );
+                    APDMode = DOWN;
+                }
+            }
+            break;
+            
+        case DOWN: // Find downstroke threshold and calculate APD
+            if( voltage <= downstrokeThreshold ) {
+                APD = time - APStart;
+                APDMode = DONE;
+            }
+            break;
+
+        default: // DONE: APD has been found, do nothing
+            break;
+        }
     }
 }
 
 // Rebuilds list box, run after modifying protocol
-void IScale_DynClamp::rebuildListBox( void ) {
+void IScale_DynClamp::Module::rebuildListBox( void ) {
     mainWindow->protocolEditorListBox->clear(); // Clear list box
 
     // Rebuild list box
@@ -578,216 +505,86 @@ void IScale_DynClamp::rebuildListBox( void ) {
     }
 }
 /* Build Module GUI */
-void IScale_DynClamp::createGUI(DefaultGUIModel::variable_t *var, int size) {
+void IScale_DynClamp::Module::createGUI( void ) {
     mainWindow = new IScale_DynClampUI(this);
     // Construct Main Layout - vertical layout
     QBoxLayout *layout = new QVBoxLayout(this);
 
-    // The following is a workaroud to incorporate custom GUI items in a default_gui format
-
-    param_t param;
-    size_t nstate = 0, nparam = 0, i=2;
-    // Manually set parameter array
-    // Time
-    param.label = mainWindow->timeLabel;
-    param.edit = mainWindow->timeEdit;
-    param.type = STATE;
-    param.index = nstate++;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // Voltage
-    param.label = mainWindow->voltageLabel;
-    param.edit = mainWindow->voltageEdit;
-    param.type = STATE;
-    param.index = nstate++;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // beatNum
-    param.label = mainWindow->beatNumLabel;
-    param.edit = mainWindow->beatNumEdit;
-    param.type = STATE;
-    param.index = nstate++;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // APD
-    param.label = mainWindow->APDLabel;
-    param.edit = mainWindow->APDEdit;
-    param.type = STATE;
-    param.index = nstate++;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // APDRepol
-    param.label = mainWindow->APDRepolLabel;
-    param.edit = mainWindow->APDRepolEdit;
-    param.edit->setValidator(new QIntValidator(param.edit));
-    param.type = PARAMETER | INTEGER;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // minAPD
-    param.label = mainWindow->minAPDLabel;
-    param.edit = mainWindow->minAPDEdit;
-    param.edit->setValidator(new QIntValidator(param.edit));
-    param.type = PARAMETER | INTEGER;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // numTrial
-    param.label = mainWindow->numTrialLabel;
-    param.edit = mainWindow->numTrialEdit;
-    param.edit->setValidator(new QIntValidator(param.edit));
-    param.type = PARAMETER | INTEGER;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // intervalTime
-    param.label = mainWindow->intervalTimeLabel;
-    param.edit = mainWindow->intervalTimeEdit;
-    param.edit->setValidator(new QIntValidator(param.edit));
-    param.type = PARAMETER | INTEGER;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // BCL
-    param.label = mainWindow->BCLLabel;
-    param.edit = mainWindow->BCLEdit;
-    param.edit->setValidator(new QIntValidator(param.edit));
-    param.type = PARAMETER | INTEGER;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // stimMag
-    param.label = mainWindow->stimMagLabel;
-    param.edit = mainWindow->stimMagEdit;
-    param.edit->setValidator(new QDoubleValidator(param.edit));
-    param.type = PARAMETER | DOUBLE;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // stimLength
-    param.label = mainWindow->stimLengthLabel;
-    param.edit = mainWindow->stimLengthEdit;
-    param.edit->setValidator(new QDoubleValidator(param.edit));
-    param.type = PARAMETER | DOUBLE;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
- 
-    // Cm
-    param.label = mainWindow->CmLabel;
-    param.edit = mainWindow->CmEdit;
-    param.edit->setValidator(new QDoubleValidator(param.edit));
-    param.type = PARAMETER | DOUBLE;
-    param.index = nparam++;
-    param.str_value = new QString;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
-        
-    // Hidden States
-    QWidget *hiddenWidget = new QWidget( this );
-    hiddenWidget->setEnabled(false);
-    hiddenWidget->setHidden(true);
-    
-    // Target Current *Hidden*
-    param.label = new QLabel( var[i].name, hiddenWidget );
-    param.edit = new DefaultGUILineEdit( hiddenWidget );
-    param.type = STATE;
-    param.index = nstate++;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
-
-    // Scaled Target Current *Hidden*
-    param.label = new QLabel( var[i].name, hiddenWidget );
-    param.edit = new DefaultGUILineEdit( hiddenWidget );
-    param.type = STATE;
-    param.index = nstate++;
-    parameter[var[i].name] = param;
-    QToolTip::add(param.label, vars[i].description);
-    QToolTip::add(param.edit, vars[i].description);
-    i++;
+    setCaption( QString::number( getID() ) + " Current Scaling Dyn Clamp" );
 
     // Model Combo Box
     mainWindow->modelComboBox->insertItem("LivRudy 2009");
     mainWindow->modelComboBox->insertItem("FaberRudy 2000");
+
+    // Set GUI refresh rate
+    QTimer *timer = new QTimer(this);
+    timer->start(500);
+
+    // Set validators
+    mainWindow->APDRepolEdit->setValidator( new QIntValidator(mainWindow->APDRepolEdit) );
+    mainWindow->minAPDEdit->setValidator( new QIntValidator(mainWindow->minAPDEdit) );
+    mainWindow->stimWindowEdit->setValidator( new QIntValidator(mainWindow->stimWindowEdit) );
+    mainWindow->numTrialEdit->setValidator( new QIntValidator(mainWindow->numTrialEdit) );
+    mainWindow->intervalTimeEdit->setValidator( new QIntValidator(mainWindow->intervalTimeEdit) );
+    mainWindow->BCLEdit->setValidator( new QIntValidator(mainWindow->BCLEdit) );
+    mainWindow->stimMagEdit->setValidator( new QDoubleValidator(mainWindow->stimMagEdit) );
+    mainWindow->stimLengthEdit->setValidator( new QDoubleValidator(mainWindow->stimLengthEdit) );
+    mainWindow->CmEdit->setValidator( new QDoubleValidator(mainWindow->CmEdit) );
+    mainWindow->LJPEdit->setValidator( new QDoubleValidator(mainWindow->CmEdit) );
     
     // Connect MainWindow elements to slot functions
-    pauseButton = mainWindow->pauseButton;
-    QObject::connect( pauseButton, SIGNAL(toggled(bool)), this, SLOT(pause(bool)) );
-    QObject::connect( mainWindow->modifyButton, SIGNAL(clicked(void)), this, SLOT( modify(void)) );
-    QObject::connect( mainWindow->unloadButton, SIGNAL(clicked(void)), this, SLOT( exit(void)) );
     QObject::connect( mainWindow->addStepButton, SIGNAL(clicked(void)), this, SLOT( addStep(void)) );
     QObject::connect( mainWindow->deleteStepButton, SIGNAL(clicked(void)), this, SLOT( deleteStep(void)) );
     QObject::connect( mainWindow->saveProtocolButton, SIGNAL(clicked(void)), this, SLOT( saveProtocol(void)) );
     QObject::connect( mainWindow->loadProtocolButton, SIGNAL(clicked(void)), this, SLOT( loadProtocol(void)) );
     QObject::connect( mainWindow->clearProtocolButton, SIGNAL(clicked(void)), this, SLOT( clearProtocol(void)) );
-    QObject::connect( mainWindow->recordDataCheckBox, SIGNAL(toggled(bool)), this, SLOT( toggleRecordData(bool)) );
-    QObject::connect( mainWindow->startProtocolButton, SIGNAL(toggled(bool)), this, SLOT( toggleProtocol(bool)) );
-    QObject::connect( mainWindow->thresholdButton, SIGNAL(toggled(bool)), this, SLOT( toggleThreshold(bool)) );
-    QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), this, SLOT( togglePace(bool)) );
+    QObject::connect( mainWindow->recordDataCheckBox, SIGNAL(clicked(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->startProtocolButton, SIGNAL(clicked(void)), this, SLOT( toggleProtocol(void)) );
+    QObject::connect( mainWindow->thresholdButton, SIGNAL(clicked(void)), this, SLOT( toggleThreshold(void)) );
+    QObject::connect( mainWindow->staticPacingButton, SIGNAL(clicked(void)), this, SLOT( togglePace(void)) );
     QObject::connect( mainWindow->resetButton, SIGNAL(clicked(void)), this, SLOT( reset(void)) );
     QObject::connect( mainWindow->modelComboBox, SIGNAL(activated(int)), this, SLOT( changeModel(int)) );    
-    
+    QObject::connect( mainWindow->APDRepolEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->minAPDEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->stimWindowEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->numTrialEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->intervalTimeEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->BCLEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->stimMagEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->stimLengthEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->CmEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect( mainWindow->LJPEdit, SIGNAL(returnPressed(void)), this, SLOT( modify(void)) );
+    QObject::connect(timer, SIGNAL(timeout(void)), this, SLOT(refreshDisplay(void)));
+
+    // Connections to allow only one button being toggled at a time
+    QObject::connect( mainWindow->thresholdButton, SIGNAL(toggled(bool)), mainWindow->staticPacingButton, SLOT( setDisabled(bool)) );
+    QObject::connect( mainWindow->thresholdButton, SIGNAL(toggled(bool)), mainWindow->startProtocolButton, SLOT( setDisabled(bool)) );
+    QObject::connect( mainWindow->startProtocolButton, SIGNAL(toggled(bool)), mainWindow->staticPacingButton, SLOT( setDisabled(bool)) );
+    QObject::connect( mainWindow->startProtocolButton, SIGNAL(toggled(bool)), mainWindow->thresholdButton, SLOT( setDisabled(bool)) );
+    QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), mainWindow->thresholdButton, SLOT( setDisabled(bool)) );
+    QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), mainWindow->startProtocolButton, SLOT( setDisabled(bool)) );
+                      
     layout->addWidget(mainWindow);
+    
+    // Connect states to workspace
+    setData( Workspace::STATE, 0, &time );
+    setData( Workspace::STATE, 1, &voltage );
+    setData( Workspace::STATE, 2, &beatNum );
+    setData( Workspace::STATE, 3, &APD );
+    setData( Workspace::STATE, 4, &targetCurrent );
+    setData( Workspace::STATE, 5, &scaledCurrent );
+
+    resize( minimumSize() ); // Set window to minimum size
 	show();
 } // End createGUI()
 
-/***
- * Overloaded DefaultGUIModel Functions
- ***/   
-
-/* Load from Settings */
-void IScale_DynClamp::doLoad(const Settings::Object::State &s) {
-    for (std::map<QString, param_t>::iterator i = parameter.begin(); i
-             != parameter.end(); ++i)
-        i->second.edit->setText(s.loadString(i->first));
+// Load from Settings
+void IScale_DynClamp::Module::doLoad(const Settings::Object::State &s) {
     if (s.loadInteger("Maximized"))
         showMaximized();
     else if (s.loadInteger("Minimized"))
         showMinimized();
-    // this only exists in RTXI versions >1.3
+    
     if (s.loadInteger("W") != NULL) {
         resize(s.loadInteger("W"), s.loadInteger("H"));
         parentWidget()->move(s.loadInteger("X"), s.loadInteger("Y"));
@@ -799,90 +596,223 @@ void IScale_DynClamp::doLoad(const Settings::Object::State &s) {
         rebuildListBox();
     }
 
-    pauseButton->setOn(s.loadInteger("paused"));
+    mainWindow->APDRepolEdit->setText( QString::number( s.loadInteger("APD Repol") ) );
+    mainWindow->minAPDEdit->setText( QString::number( s.loadInteger("Min APD") ) );
+    mainWindow->stimWindowEdit->setText( QString::number( s.loadInteger("Stim Window") ) );
+    mainWindow->numTrialEdit->setText( QString::number( s.loadInteger("Num Trials") ) );
+    mainWindow->intervalTimeEdit->setText( QString::number( s.loadInteger("Interval Time") ) );
+    mainWindow->BCLEdit->setText( QString::number( s.loadInteger("BCL") ) );
+    mainWindow->stimMagEdit->setText( QString::number( s.loadInteger("Stim Mag") ) );
+    mainWindow->stimLengthEdit->setText( QString::number( s.loadInteger("Stim Length") ) );
+    mainWindow->CmEdit->setText( QString::number( s.loadInteger("Cm") ) );
+    mainWindow->LJPEdit->setText( QString::number( s.loadInteger("LJP") ) );    
+    
     modify();
 }
 
-/*** Overloaded DefaultGUIModel Functions ***/
-
-/* Save Settings */
-void IScale_DynClamp::doSave(Settings::Object::State &s) const {
-    s.saveInteger("paused", pauseButton->isOn());
+// Save Settings
+void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     if (isMaximized())
-        s.saveInteger("Maximized", 1);
+        s.saveInteger( "Maximized", 1 );
     else if (isMinimized())
-        s.saveInteger("Minimized", 1);
+        s.saveInteger( "Minimized", 1 );
 
     QPoint pos = parentWidget()->pos();
-    s.saveInteger("X", pos.x());
-    s.saveInteger("Y", pos.y());
-    s.saveInteger("W", width());
-    s.saveInteger("H", height());
+    s.saveInteger( "X", pos.x() );
+    s.saveInteger( "Y", pos.y() );
+    s.saveInteger( "W", width() );
+    s.saveInteger( "H", height() );
+    s.saveString( "Protocol", loadedFile );
+    s.saveInteger( "APD Repol", APDRepol );
+    s.saveInteger( "Min APD", minAPD );
+    s.saveInteger( "Stim Window", stimWindow );
+    s.saveInteger( "Num Trials", numTrials);
+    s.saveInteger( "Interval Time", intervalTime );
+    s.saveInteger( "BCL", BCL );
+    s.saveDouble( "Stim Mag", stimMag );
+    s.saveDouble( "Stim Length", stimLength );
+    s.saveDouble( "Cm", Cm );
+    s.saveDouble( "LJP", LJP );
+}
+void IScale_DynClamp::Module::modify(void) {
+    int APDr = mainWindow->APDRepolEdit->text().toInt();
+    int mAPD = mainWindow->minAPDEdit->text().toInt();
+    int sw = mainWindow->stimWindowEdit->text().toInt();
+    int nt = mainWindow->numTrialEdit->text().toInt();
+    int it = mainWindow->intervalTimeEdit->text().toInt();
+    int b = mainWindow->BCLEdit->text().toInt();
+    double sm = mainWindow->stimMagEdit->text().toDouble();
+    double sl = mainWindow->stimLengthEdit->text().toDouble();
+    double c = mainWindow->CmEdit->text().toDouble();
+    double ljp = mainWindow->LJPEdit->text().toDouble();
+    bool rd = mainWindow->recordDataCheckBox->isOn();
 
-    s.saveString("Protocol", loadedFile);
+    if( APDr == APDRepol && mAPD == minAPD && sw == stimWindow && nt == numTrials && it == intervalTime
+        && b == BCL && sm == stimMag && sl == stimLength && c == Cm && ljp == LJP && rd == recordData ) // If nothing has changed
+        return ;
 
-    for (std::map<QString, param_t>::const_iterator i = parameter.begin(); i
-             != parameter.end(); ++i)
-        s.saveString(i->first, i->second.edit->text());
+    // Set parameters
+    setValue( 0, APDr );
+    setValue( 1, mAPD );
+    setValue( 2, sw );
+    setValue( 3, nt );
+    setValue( 4, it );
+    setValue( 5, b );
+    setValue( 6, sm );
+    setValue( 7, sl );
+    setValue( 8, c );
+    setValue( 9, ljp );
+
+    ModifyEvent event( this, APDr, mAPD, sw, nt, it, b, sm, sl, c, ljp, rd );
+    RT::System::getInstance()->postEvent( &event );
 }
 
-/*** Required Functions to Overload if Using Specific Set of Update Flags ***/
+void IScale_DynClamp::Module::refreshDisplay(void) {
+    mainWindow->timeEdit->setText( QString::number(time) );
+    mainWindow->voltageEdit->setText( QString::number(voltage) );
+    mainWindow->beatNumEdit->setText( QString::number(beatNum) );
+    mainWindow->APDEdit->setText( QString::number(APD) );
 
-void IScale_DynClamp::pause(bool p) {
-	if (pauseButton->isOn() != p)
-		pauseButton->setDown(p);
-
-	setActive(!p);
-	if (p)
-		update(PAUSE);
-	else
-		update(UNPAUSE);
+    if( executeMode == IDLE ) {
+        if( mainWindow->startProtocolButton->isOn() && !protocolOn )
+            mainWindow->startProtocolButton->setOn( false );
+        else if( mainWindow->thresholdButton->isOn() && !thresholdOn ) {
+            mainWindow->thresholdButton->setOn( false );
+            mainWindow->stimMagEdit->setText( QString::number( stimMag ) );
+            modify();
+        }
+    }
+    else if( executeMode == PROTOCOL ) {
+        if( stepTracker != currentStep ) {
+            stepTracker = currentStep;
+            mainWindow->protocolEditorListBox->setSelected( currentStep, true );
+        }        
+    }
 }
 
-void IScale_DynClamp::modify(void) {
-	bool active = getActive();
-
-	setActive(false);
-
-	// Ensure that the realtime thread isn't in the middle of executing IScale_DynClamp::execute()
-	SyncEvent event;
-	RT::System::getInstance()->postEvent(&event);
-
-	for (std::map<QString, param_t>::iterator i = parameter.begin(); i != parameter.end(); ++i)
-		if (i->second.type & COMMENT)
-			Workspace::Instance::setComment( i->second.index, i->second.edit->text().latin1() );
-
-	update(MODIFY);
-	setActive(active);
-
-	for (std::map<QString, param_t>::iterator i = parameter.begin(); i != parameter.end(); ++i)
-		i->second.edit->blacken();
+// RT::Events - Called from GUI thread, handled by RT thread
+IScale_DynClamp::Module::ToggleProtocolEvent::ToggleProtocolEvent( Module *m, bool o )
+    : module( m ), on( o ) {
 }
 
-void IScale_DynClamp::exit(void) {
-	update(EXIT);
-	Plugin::Manager::getInstance()->unload(this);
+int IScale_DynClamp::Module::ToggleProtocolEvent::callback( void ) {
+    if( on ) { // Start protocol, reinitialize parameters to start values
+        
+        module->executeMode = IDLE; // Keep on IDLE until update is finished
+        module->voltageClamp = false;
+        module->modelInit = true;
+        module->reset();
+        module->modelCell->resetModel();
+        module->beatNum = 0; // beatNum is changed at beginning of protocol, so it must start at 0 instead of 1
+        module->stepTracker = -1; // Used to highlight the current step in list box, -1 to force first step to be highlighted
+        module->protocolMode = STEPINIT; 
+        module->executeMode = PROTOCOL;
+        module->setActive( true );
+    }
+    else { // Stop protocol, only called when protocol button is unclicked in the middle of a run
+        if( module->recording ) { // Stop data recorder if recording
+            ::Event::Object event(::Event::STOP_RECORDING_EVENT);
+            ::Event::Manager::getInstance()->postEventRT(&event);
+        }        
+        module->executeMode = IDLE;
+        module->setActive( false );
+    }
+    
+    return 0;
 }
 
-void IScale_DynClamp::refresh(void) {
-	for (std::map<QString, param_t>::iterator i = parameter.begin(); i
-			!= parameter.end(); ++i) {
-		if (i->second.type & (STATE | EVENT)) {
-			i->second.edit->setText(QString::number(getValue(i->second.type,
-					i->second.index)));
-			i->second.edit->setPaletteForegroundColor(Qt::darkGray);
-		} else if ((i->second.type & PARAMETER) && !i->second.edit->edited()
-				&& i->second.edit->text() != *i->second.str_value) {
-			i->second.edit->setText(*i->second.str_value);
-		} else if ((i->second.type & COMMENT) && !i->second.edit->edited()
-				&& i->second.edit->text() != getValueString(COMMENT,
-						i->second.index)) {
-			i->second.edit->setText(getValueString(COMMENT, i->second.index));
-		}
-	}
-	pauseButton->setOn(!getActive());
-    if(mainWindow->thresholdButton->isOn())
-        mainWindow->thresholdButton->setOn(threshold);
-    if(mainWindow->startProtocolButton->isOn())
-        mainWindow->startProtocolButton->setOn(protocolOn);
+IScale_DynClamp::Module::TogglePaceEvent::TogglePaceEvent( Module *m, bool o )
+    : module( m ), on( o ) {
+}
+
+int IScale_DynClamp::Module::TogglePaceEvent::callback( void ) {
+    if( on ) { // Start protocol, reinitialize parameters to start values
+        module->reset();
+        module->executeMode = PACE;
+        module->setActive( true );
+    }
+    else { // Stop protocol, only called when pace button is unclicked in the middle of a run
+        if( module->recording ) { // Stop data recorder if recording
+            ::Event::Object event(::Event::STOP_RECORDING_EVENT);
+            ::Event::Manager::getInstance()->postEventRT(&event);
+        }        
+        module->executeMode = IDLE;
+        module->setActive( false );
+    }
+    
+    return 0;
+}
+
+IScale_DynClamp::Module::ToggleThresholdEvent::ToggleThresholdEvent( Module *m, bool o )
+    : module( m ), on( o ) {
+}
+
+int IScale_DynClamp::Module::ToggleThresholdEvent::callback( void ) {
+    if( on ) { // Start protocol, reinitialize parameters to start values
+        
+        module->executeMode = THRESHOLD;
+        module->reset();
+        module->Vrest = module->input(0) * 1e3;
+        module->peakVoltageT = module->Vrest;
+        module->stimulusLevel = 2.0; // na
+        module->responseDuration = 0;
+        module->responseTime = 0;
+        module->setActive( true );
+    }
+    else { // Stop protocol, only called when pace button is unclicked in the middle of a run
+        module->executeMode = IDLE;
+        module->setActive( false );
+    }
+    
+    return 0;
+}
+ 
+IScale_DynClamp::Module::ModifyEvent::ModifyEvent( Module *m, int APDr, int mAPD, int sw,
+                                                   int nt, int it, int b, double sm, double sl, double c, double ljp, bool rd )
+    : module( m ), APDRepolValue( APDr ), minAPDValue( mAPD ), stimWindowValue( sw ),
+      numTrialsValue( nt ), intervalTimeValue( it ), BCLValue( b ), stimMagValue( sm ),
+      stimLengthValue( sl ), CmValue( c ), LJPValue( ljp ), recordDataValue( rd ) {
+}
+
+int IScale_DynClamp::Module::ModifyEvent::callback( void ) {
+    module->APDRepol = APDRepolValue;
+    module->minAPD = minAPDValue;
+    module->numTrials = numTrialsValue;
+    module->intervalTime = intervalTimeValue;
+    module->BCL = BCLValue;
+    module->BCLInt = module->BCL / module->period; // Update BCLInt when BCL is updated
+    module->stimMag = stimMagValue;
+    module->stimLength = stimLengthValue;
+    module->Cm = CmValue;
+    module->LJP = LJPValue;
+    module->recordData = recordDataValue;
+    
+    return 0;
+}
+
+// Event handling
+void IScale_DynClamp::Module::receiveEvent( const ::Event::Object *event ) {
+    if( event->getName() == Event::RT_POSTPERIOD_EVENT ) {
+        period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
+        BCLInt = BCL / period;
+        stimLengthInt = stimLength / period;
+        modelCell->setModelRate(100000, period);
+    }
+    if( event->getName() == Event::START_RECORDING_EVENT )
+        recording = true;
+    if( event->getName() == Event::STOP_RECORDING_EVENT )
+        recording = false;
+}
+
+void IScale_DynClamp::Module::receiveEventRT( const ::Event::Object *event ) {
+    if( event->getName() == Event::RT_POSTPERIOD_EVENT ) {
+        period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
+        BCLInt = BCL / period;
+        stimLengthInt = stimLength / period;
+        modelCell->setModelRate(100000, period);
+    }
+    if( event->getName() == Event::START_RECORDING_EVENT )
+        recording = true;
+    if( event->getName() == Event::STOP_RECORDING_EVENT )
+        recording = false;
 }

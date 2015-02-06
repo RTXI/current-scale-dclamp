@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'IS_DC_MainWindowUI.ui'
 **
-** Created: Wed Mar 7 20:56:21 2012
+** Created: Mon Jul 29 15:55:34 2013
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
@@ -11,10 +11,11 @@
 #include <qvariant.h>
 #include <qpushbutton.h>
 #include <qbuttongroup.h>
-#include <qgroupbox.h>
+#include <qtabwidget.h>
 #include <qlabel.h>
-#include <default_gui_model.h>
+#include <qlineedit.h>
 #include <qcheckbox.h>
+#include <qgroupbox.h>
 #include <qcombobox.h>
 #include <qlistbox.h>
 #include <qlayout.h>
@@ -30,122 +31,66 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent, const char* name, WFlags 
 {
     if ( !name )
 	setName( "IScale_DynClampUI" );
-    setBaseSize( QSize( 0, 0 ) );
-    IScale_DynClampUILayout = new QVBoxLayout( this, 4, 6, "IScale_DynClampUILayout"); 
-
-    systemButtonGroup = new QButtonGroup( this, "systemButtonGroup" );
-    systemButtonGroup->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, systemButtonGroup->sizePolicy().hasHeightForWidth() ) );
-    systemButtonGroup->setMinimumSize( QSize( 0, 0 ) );
-    QFont systemButtonGroup_font(  systemButtonGroup->font() );
-    systemButtonGroup_font.setBold( TRUE );
-    systemButtonGroup->setFont( systemButtonGroup_font ); 
-    systemButtonGroup->setFrameShape( QButtonGroup::NoFrame );
-    systemButtonGroup->setColumnLayout(0, Qt::Vertical );
-    systemButtonGroup->layout()->setSpacing( 6 );
-    systemButtonGroup->layout()->setMargin( 11 );
-    systemButtonGroupLayout = new QHBoxLayout( systemButtonGroup->layout() );
-    systemButtonGroupLayout->setAlignment( Qt::AlignTop );
-
-    pauseButton = new QPushButton( systemButtonGroup, "pauseButton" );
-    pauseButton->setToggleButton( TRUE );
-    systemButtonGroupLayout->addWidget( pauseButton );
-
-    modifyButton = new QPushButton( systemButtonGroup, "modifyButton" );
-    modifyButton->setToggleButton( FALSE );
-    systemButtonGroupLayout->addWidget( modifyButton );
-
-    resetButton = new QPushButton( systemButtonGroup, "resetButton" );
-    resetButton->setToggleButton( FALSE );
-    systemButtonGroupLayout->addWidget( resetButton );
-
-    unloadButton = new QPushButton( systemButtonGroup, "unloadButton" );
-    unloadButton->setToggleButton( FALSE );
-    systemButtonGroupLayout->addWidget( unloadButton );
-    IScale_DynClampUILayout->addWidget( systemButtonGroup );
-
-    stateGroupBox = new QGroupBox( this, "stateGroupBox" );
-    stateGroupBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, stateGroupBox->sizePolicy().hasHeightForWidth() ) );
-    QFont stateGroupBox_font(  stateGroupBox->font() );
-    stateGroupBox_font.setBold( TRUE );
-    stateGroupBox->setFont( stateGroupBox_font ); 
-    stateGroupBox->setAlignment( int( QGroupBox::AlignCenter ) );
-    stateGroupBox->setColumnLayout(0, Qt::Vertical );
-    stateGroupBox->layout()->setSpacing( 6 );
-    stateGroupBox->layout()->setMargin( 11 );
-    stateGroupBoxLayout = new QGridLayout( stateGroupBox->layout() );
-    stateGroupBoxLayout->setAlignment( Qt::AlignTop );
-
-    timeLayout = new QHBoxLayout( 0, 0, 6, "timeLayout"); 
-
-    timeLabel = new QLabel( stateGroupBox, "timeLabel" );
-    timeLabel->setMinimumSize( QSize( 100, 0 ) );
-    timeLabel->setMaximumSize( QSize( 100, 32767 ) );
-    timeLabel->setAlignment( int( QLabel::AlignCenter ) );
-    timeLayout->addWidget( timeLabel );
-
-    timeEdit = new DefaultGUILineEdit( stateGroupBox );
-    timeEdit->setMinimumSize( QSize( 0, 0 ) );
-    timeEdit->setMaximumSize( QSize( 75, 32767 ) );
-    timeEdit->setReadOnly( TRUE );
-    timeLayout->addWidget( timeEdit );
-
-    stateGroupBoxLayout->addLayout( timeLayout, 0, 0 );
-
-    beatNumLayout = new QHBoxLayout( 0, 0, 6, "beatNumLayout"); 
-
-    beatNumLabel = new QLabel( stateGroupBox, "beatNumLabel" );
-    beatNumLabel->setMinimumSize( QSize( 100, 0 ) );
-    beatNumLabel->setMaximumSize( QSize( 100, 32767 ) );
-    beatNumLabel->setAlignment( int( QLabel::AlignCenter ) );
-    beatNumLayout->addWidget( beatNumLabel );
-
-    beatNumEdit = new DefaultGUILineEdit( stateGroupBox );
-    beatNumEdit->setMinimumSize( QSize( 0, 0 ) );
-    beatNumEdit->setMaximumSize( QSize( 75, 32767 ) );
-    beatNumEdit->setReadOnly( TRUE );
-    beatNumLayout->addWidget( beatNumEdit );
-
-    stateGroupBoxLayout->addLayout( beatNumLayout, 1, 0 );
-
-    voltageLayout = new QHBoxLayout( 0, 0, 6, "voltageLayout"); 
-
-    voltageLabel = new QLabel( stateGroupBox, "voltageLabel" );
-    voltageLabel->setMinimumSize( QSize( 100, 0 ) );
-    voltageLabel->setMaximumSize( QSize( 100, 32767 ) );
-    voltageLabel->setAlignment( int( QLabel::AlignCenter ) );
-    voltageLayout->addWidget( voltageLabel );
-
-    voltageEdit = new DefaultGUILineEdit( stateGroupBox );
-    voltageEdit->setMinimumSize( QSize( 0, 0 ) );
-    voltageEdit->setMaximumSize( QSize( 75, 32767 ) );
-    voltageEdit->setReadOnly( TRUE );
-    voltageLayout->addWidget( voltageEdit );
-
-    stateGroupBoxLayout->addLayout( voltageLayout, 0, 2 );
-
-    APDLayout = new QHBoxLayout( 0, 0, 6, "APDLayout"); 
-
-    APDLabel = new QLabel( stateGroupBox, "APDLabel" );
-    APDLabel->setMinimumSize( QSize( 100, 0 ) );
-    APDLabel->setMaximumSize( QSize( 100, 32767 ) );
-    APDLabel->setAlignment( int( QLabel::AlignCenter ) );
-    APDLayout->addWidget( APDLabel );
-
-    APDEdit = new DefaultGUILineEdit( stateGroupBox );
-    APDEdit->setMinimumSize( QSize( 0, 0 ) );
-    APDEdit->setMaximumSize( QSize( 75, 32767 ) );
-    APDEdit->setReadOnly( TRUE );
-    APDLayout->addWidget( APDEdit );
-
-    stateGroupBoxLayout->addLayout( APDLayout, 1, 2 );
-    spacer5 = new QSpacerItem( 1, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    stateGroupBoxLayout->addItem( spacer5, 1, 1 );
-    spacer4 = new QSpacerItem( 1, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    stateGroupBoxLayout->addItem( spacer4, 0, 1 );
-    IScale_DynClampUILayout->addWidget( stateGroupBox );
+    setPaletteBackgroundColor( QColor( 195, 195, 195 ) );
+    QPalette pal;
+    QColorGroup cg;
+    cg.setColor( QColorGroup::Foreground, black );
+    cg.setColor( QColorGroup::Button, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Light, white );
+    cg.setColor( QColorGroup::Midlight, white );
+    cg.setColor( QColorGroup::Dark, QColor( 85, 85, 85) );
+    cg.setColor( QColorGroup::Mid, QColor( 199, 199, 199) );
+    cg.setColor( QColorGroup::Text, black );
+    cg.setColor( QColorGroup::BrightText, white );
+    cg.setColor( QColorGroup::ButtonText, black );
+    cg.setColor( QColorGroup::Base, white );
+    cg.setColor( QColorGroup::Background, QColor( 195, 195, 195) );
+    cg.setColor( QColorGroup::Shadow, black );
+    cg.setColor( QColorGroup::Highlight, QColor( 103, 141, 178) );
+    cg.setColor( QColorGroup::HighlightedText, white );
+    cg.setColor( QColorGroup::Link, QColor( 0, 0, 238) );
+    cg.setColor( QColorGroup::LinkVisited, QColor( 82, 24, 139) );
+    pal.setActive( cg );
+    cg.setColor( QColorGroup::Foreground, black );
+    cg.setColor( QColorGroup::Button, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Light, white );
+    cg.setColor( QColorGroup::Midlight, white );
+    cg.setColor( QColorGroup::Dark, QColor( 85, 85, 85) );
+    cg.setColor( QColorGroup::Mid, QColor( 199, 199, 199) );
+    cg.setColor( QColorGroup::Text, black );
+    cg.setColor( QColorGroup::BrightText, white );
+    cg.setColor( QColorGroup::ButtonText, black );
+    cg.setColor( QColorGroup::Base, white );
+    cg.setColor( QColorGroup::Background, QColor( 195, 195, 195) );
+    cg.setColor( QColorGroup::Shadow, black );
+    cg.setColor( QColorGroup::Highlight, QColor( 103, 141, 178) );
+    cg.setColor( QColorGroup::HighlightedText, white );
+    cg.setColor( QColorGroup::Link, QColor( 0, 0, 238) );
+    cg.setColor( QColorGroup::LinkVisited, QColor( 82, 24, 139) );
+    pal.setInactive( cg );
+    cg.setColor( QColorGroup::Foreground, QColor( 128, 128, 128) );
+    cg.setColor( QColorGroup::Button, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Light, white );
+    cg.setColor( QColorGroup::Midlight, white );
+    cg.setColor( QColorGroup::Dark, QColor( 85, 85, 85) );
+    cg.setColor( QColorGroup::Mid, QColor( 199, 199, 199) );
+    cg.setColor( QColorGroup::Text, QColor( 199, 199, 199) );
+    cg.setColor( QColorGroup::BrightText, white );
+    cg.setColor( QColorGroup::ButtonText, QColor( 128, 128, 128) );
+    cg.setColor( QColorGroup::Base, white );
+    cg.setColor( QColorGroup::Background, QColor( 195, 195, 195) );
+    cg.setColor( QColorGroup::Shadow, black );
+    cg.setColor( QColorGroup::Highlight, QColor( 86, 117, 148) );
+    cg.setColor( QColorGroup::HighlightedText, white );
+    cg.setColor( QColorGroup::Link, QColor( 0, 0, 238) );
+    cg.setColor( QColorGroup::LinkVisited, QColor( 82, 24, 139) );
+    pal.setDisabled( cg );
+    setPalette( pal );
+    IScale_DynClampUILayout = new QVBoxLayout( this, 11, 6, "IScale_DynClampUILayout"); 
 
     protocolButtonGroup = new QButtonGroup( this, "protocolButtonGroup" );
     protocolButtonGroup->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, protocolButtonGroup->sizePolicy().hasHeightForWidth() ) );
+    protocolButtonGroup->setPaletteBackgroundColor( QColor( 221, 223, 228 ) );
     QFont protocolButtonGroup_font(  protocolButtonGroup->font() );
     protocolButtonGroup_font.setBold( TRUE );
     protocolButtonGroup->setFont( protocolButtonGroup_font ); 
@@ -153,82 +98,261 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent, const char* name, WFlags 
     protocolButtonGroup->setColumnLayout(0, Qt::Vertical );
     protocolButtonGroup->layout()->setSpacing( 6 );
     protocolButtonGroup->layout()->setMargin( 11 );
-    protocolButtonGroupLayout = new QHBoxLayout( protocolButtonGroup->layout() );
+    protocolButtonGroupLayout = new QGridLayout( protocolButtonGroup->layout() );
     protocolButtonGroupLayout->setAlignment( Qt::AlignTop );
-
-    thresholdButton = new QPushButton( protocolButtonGroup, "thresholdButton" );
-    thresholdButton->setToggleButton( TRUE );
-    protocolButtonGroupLayout->addWidget( thresholdButton );
+    spacer1b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    protocolButtonGroupLayout->addItem( spacer1b, 0, 4 );
+    spacer2b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    protocolButtonGroupLayout->addItem( spacer2b, 1, 4 );
 
     staticPacingButton = new QPushButton( protocolButtonGroup, "staticPacingButton" );
+    staticPacingButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, staticPacingButton->sizePolicy().hasHeightForWidth() ) );
+    staticPacingButton->setMaximumSize( QSize( 250, 32767 ) );
+    staticPacingButton->setPaletteBackgroundColor( QColor( 116, 144, 191 ) );
+    staticPacingButton->setFocusPolicy( QPushButton::NoFocus );
     staticPacingButton->setToggleButton( TRUE );
-    protocolButtonGroupLayout->addWidget( staticPacingButton );
+
+    protocolButtonGroupLayout->addWidget( staticPacingButton, 0, 3 );
+
+    resetButton = new QPushButton( protocolButtonGroup, "resetButton" );
+    resetButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, resetButton->sizePolicy().hasHeightForWidth() ) );
+    resetButton->setMaximumSize( QSize( 250, 32767 ) );
+    resetButton->setPaletteBackgroundColor( QColor( 116, 144, 191 ) );
+    resetButton->setFocusPolicy( QPushButton::NoFocus );
+    resetButton->setToggleButton( FALSE );
+
+    protocolButtonGroupLayout->addWidget( resetButton, 1, 3 );
+    spacer3b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    protocolButtonGroupLayout->addItem( spacer3b, 0, 2 );
+    spacer4b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    protocolButtonGroupLayout->addItem( spacer4b, 1, 2 );
 
     startProtocolButton = new QPushButton( protocolButtonGroup, "startProtocolButton" );
+    startProtocolButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, startProtocolButton->sizePolicy().hasHeightForWidth() ) );
+    startProtocolButton->setMaximumSize( QSize( 250, 32767 ) );
+    startProtocolButton->setPaletteBackgroundColor( QColor( 116, 144, 191 ) );
+    startProtocolButton->setFocusPolicy( QPushButton::NoFocus );
     startProtocolButton->setToggleButton( TRUE );
-    protocolButtonGroupLayout->addWidget( startProtocolButton );
+
+    protocolButtonGroupLayout->addWidget( startProtocolButton, 1, 1 );
+
+    thresholdButton = new QPushButton( protocolButtonGroup, "thresholdButton" );
+    thresholdButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, thresholdButton->sizePolicy().hasHeightForWidth() ) );
+    thresholdButton->setMaximumSize( QSize( 250, 32767 ) );
+    thresholdButton->setPaletteBackgroundColor( QColor( 116, 144, 191 ) );
+    thresholdButton->setFocusPolicy( QPushButton::NoFocus );
+    thresholdButton->setToggleButton( TRUE );
+
+    protocolButtonGroupLayout->addWidget( thresholdButton, 0, 1 );
+    spacer5b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    protocolButtonGroupLayout->addItem( spacer5b, 1, 0 );
+    spacer6b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    protocolButtonGroupLayout->addItem( spacer6b, 0, 0 );
     IScale_DynClampUILayout->addWidget( protocolButtonGroup );
 
-    layout26 = new QHBoxLayout( 0, 0, 6, "layout26"); 
+    tabBox = new QTabWidget( this, "tabBox" );
+    tabBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)1, 0, 0, tabBox->sizePolicy().hasHeightForWidth() ) );
+    tabBox->setPaletteBackgroundColor( QColor( 221, 223, 228 ) );
+    QFont tabBox_font(  tabBox->font() );
+    tabBox_font.setBold( TRUE );
+    tabBox->setFont( tabBox_font ); 
+    tabBox->setFocusPolicy( QTabWidget::NoFocus );
+    tabBox->setTabPosition( QTabWidget::Top );
+    tabBox->setTabShape( QTabWidget::Rounded );
 
-    layoutA2 = new QVBoxLayout( 0, 0, 6, "layoutA2"); 
+    TabPage = new QWidget( tabBox, "TabPage" );
+    TabPageLayout = new QVBoxLayout( TabPage, 11, 0, "TabPageLayout"); 
 
-    APDParamGroup = new QButtonGroup( this, "APDParamGroup" );
-    APDParamGroup->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, APDParamGroup->sizePolicy().hasHeightForWidth() ) );
-    QFont APDParamGroup_font(  APDParamGroup->font() );
-    APDParamGroup->setFont( APDParamGroup_font ); 
-    APDParamGroup->setAlignment( int( QButtonGroup::AlignCenter ) );
-    APDParamGroup->setColumnLayout(0, Qt::Vertical );
-    APDParamGroup->layout()->setSpacing( 6 );
-    APDParamGroup->layout()->setMargin( 11 );
-    APDParamGroupLayout = new QVBoxLayout( APDParamGroup->layout() );
-    APDParamGroupLayout->setAlignment( Qt::AlignTop );
+    timeLayout = new QHBoxLayout( 0, 0, 6, "timeLayout"); 
 
-    APDRepolLayout = new QHBoxLayout( 0, 0, 6, "APDRepolLayout"); 
+    timeLabel = new QLabel( TabPage, "timeLabel" );
+    timeLabel->setMinimumSize( QSize( 100, 0 ) );
+    timeLabel->setMaximumSize( QSize( 100, 32767 ) );
+    QFont timeLabel_font(  timeLabel->font() );
+    timeLabel->setFont( timeLabel_font ); 
+    timeLabel->setAlignment( int( QLabel::AlignCenter ) );
+    timeLayout->addWidget( timeLabel );
 
-    APDRepolLabel = new QLabel( APDParamGroup, "APDRepolLabel" );
-    APDRepolLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, APDRepolLabel->sizePolicy().hasHeightForWidth() ) );
-    APDRepolLabel->setMinimumSize( QSize( 130, 0 ) );
-    APDRepolLabel->setMaximumSize( QSize( 130, 32767 ) );
-    APDRepolLabel->setAlignment( int( QLabel::AlignCenter ) );
-    APDRepolLayout->addWidget( APDRepolLabel );
+    timeEdit = new QLineEdit( TabPage, "timeEdit" );
+    timeEdit->setMinimumSize( QSize( 0, 0 ) );
+    timeEdit->setMaximumSize( QSize( 75, 32767 ) );
+    timeEdit->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
+    QFont timeEdit_font(  timeEdit->font() );
+    timeEdit->setFont( timeEdit_font ); 
+    timeEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    timeEdit->setReadOnly( TRUE );
+    timeLayout->addWidget( timeEdit );
+    TabPageLayout->addLayout( timeLayout );
 
-    APDRepolEdit = new DefaultGUILineEdit( APDParamGroup );
-    APDRepolEdit->setMinimumSize( QSize( 50, 0 ) );
-    APDRepolEdit->setMaximumSize( QSize( 50, 32767 ) );
-    APDRepolLayout->addWidget( APDRepolEdit );
-    APDParamGroupLayout->addLayout( APDRepolLayout );
+    beatNumLayout = new QHBoxLayout( 0, 0, 6, "beatNumLayout"); 
 
-    minAPDLayout = new QHBoxLayout( 0, 0, 6, "minAPDLayout"); 
+    beatNumLabel = new QLabel( TabPage, "beatNumLabel" );
+    beatNumLabel->setMinimumSize( QSize( 100, 0 ) );
+    beatNumLabel->setMaximumSize( QSize( 100, 32767 ) );
+    QFont beatNumLabel_font(  beatNumLabel->font() );
+    beatNumLabel->setFont( beatNumLabel_font ); 
+    beatNumLabel->setAlignment( int( QLabel::AlignCenter ) );
+    beatNumLayout->addWidget( beatNumLabel );
 
-    minAPDLabel = new QLabel( APDParamGroup, "minAPDLabel" );
-    minAPDLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, minAPDLabel->sizePolicy().hasHeightForWidth() ) );
-    minAPDLabel->setMinimumSize( QSize( 130, 0 ) );
-    minAPDLabel->setMaximumSize( QSize( 130, 32767 ) );
-    minAPDLabel->setAlignment( int( QLabel::AlignCenter ) );
-    minAPDLayout->addWidget( minAPDLabel );
+    beatNumEdit = new QLineEdit( TabPage, "beatNumEdit" );
+    beatNumEdit->setMinimumSize( QSize( 0, 0 ) );
+    beatNumEdit->setMaximumSize( QSize( 75, 32767 ) );
+    beatNumEdit->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
+    QFont beatNumEdit_font(  beatNumEdit->font() );
+    beatNumEdit->setFont( beatNumEdit_font ); 
+    beatNumEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    beatNumEdit->setReadOnly( TRUE );
+    beatNumLayout->addWidget( beatNumEdit );
+    TabPageLayout->addLayout( beatNumLayout );
 
-    minAPDEdit = new DefaultGUILineEdit( APDParamGroup );
-    minAPDEdit->setMinimumSize( QSize( 50, 0 ) );
-    minAPDEdit->setMaximumSize( QSize( 50, 32767 ) );
-    minAPDLayout->addWidget( minAPDEdit );
-    APDParamGroupLayout->addLayout( minAPDLayout );
-    layoutA2->addWidget( APDParamGroup );
+    voltageLayout = new QHBoxLayout( 0, 0, 6, "voltageLayout"); 
 
-    protocolParamGroup = new QButtonGroup( this, "protocolParamGroup" );
-    protocolParamGroup->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, protocolParamGroup->sizePolicy().hasHeightForWidth() ) );
-    QFont protocolParamGroup_font(  protocolParamGroup->font() );
-    protocolParamGroup->setFont( protocolParamGroup_font ); 
-    protocolParamGroup->setAlignment( int( QButtonGroup::AlignCenter ) );
-    protocolParamGroup->setColumnLayout(0, Qt::Vertical );
-    protocolParamGroup->layout()->setSpacing( 6 );
-    protocolParamGroup->layout()->setMargin( 11 );
-    protocolParamGroupLayout = new QVBoxLayout( protocolParamGroup->layout() );
-    protocolParamGroupLayout->setAlignment( Qt::AlignTop );
+    voltageLabel = new QLabel( TabPage, "voltageLabel" );
+    voltageLabel->setMinimumSize( QSize( 100, 0 ) );
+    voltageLabel->setMaximumSize( QSize( 100, 32767 ) );
+    QFont voltageLabel_font(  voltageLabel->font() );
+    voltageLabel->setFont( voltageLabel_font ); 
+    voltageLabel->setAlignment( int( QLabel::AlignCenter ) );
+    voltageLayout->addWidget( voltageLabel );
+
+    voltageEdit = new QLineEdit( TabPage, "voltageEdit" );
+    voltageEdit->setMinimumSize( QSize( 0, 0 ) );
+    voltageEdit->setMaximumSize( QSize( 75, 32767 ) );
+    voltageEdit->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
+    QFont voltageEdit_font(  voltageEdit->font() );
+    voltageEdit->setFont( voltageEdit_font ); 
+    voltageEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    voltageEdit->setReadOnly( TRUE );
+    voltageLayout->addWidget( voltageEdit );
+    TabPageLayout->addLayout( voltageLayout );
+
+    APDLayout = new QHBoxLayout( 0, 0, 6, "APDLayout"); 
+
+    APDLabel = new QLabel( TabPage, "APDLabel" );
+    APDLabel->setMinimumSize( QSize( 100, 0 ) );
+    APDLabel->setMaximumSize( QSize( 100, 32767 ) );
+    QFont APDLabel_font(  APDLabel->font() );
+    APDLabel->setFont( APDLabel_font ); 
+    APDLabel->setAlignment( int( QLabel::AlignCenter ) );
+    APDLayout->addWidget( APDLabel );
+
+    APDEdit = new QLineEdit( TabPage, "APDEdit" );
+    APDEdit->setMinimumSize( QSize( 0, 0 ) );
+    APDEdit->setMaximumSize( QSize( 75, 32767 ) );
+    APDEdit->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
+    QFont APDEdit_font(  APDEdit->font() );
+    APDEdit->setFont( APDEdit_font ); 
+    APDEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    APDEdit->setReadOnly( TRUE );
+    APDLayout->addWidget( APDEdit );
+    TabPageLayout->addLayout( APDLayout );
+    tabBox->insertTab( TabPage, QString::fromLatin1("") );
+
+    TabPage_2 = new QWidget( tabBox, "TabPage_2" );
+    TabPageLayout_2 = new QVBoxLayout( TabPage_2, 11, 6, "TabPageLayout_2"); 
+
+    BCLLayout = new QHBoxLayout( 0, 0, 6, "BCLLayout"); 
+
+    BCLLabel = new QLabel( TabPage_2, "BCLLabel" );
+    BCLLabel->setMinimumSize( QSize( 120, 0 ) );
+    BCLLabel->setMaximumSize( QSize( 120, 32767 ) );
+    QFont BCLLabel_font(  BCLLabel->font() );
+    BCLLabel->setFont( BCLLabel_font ); 
+    BCLLabel->setAlignment( int( QLabel::AlignCenter ) );
+    BCLLayout->addWidget( BCLLabel );
+
+    BCLEdit = new QLineEdit( TabPage_2, "BCLEdit" );
+    BCLEdit->setMinimumSize( QSize( 0, 0 ) );
+    BCLEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont BCLEdit_font(  BCLEdit->font() );
+    BCLEdit->setFont( BCLEdit_font ); 
+    BCLEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    BCLLayout->addWidget( BCLEdit );
+    TabPageLayout_2->addLayout( BCLLayout );
+
+    stimMagLayout = new QHBoxLayout( 0, 0, 6, "stimMagLayout"); 
+
+    stimMagLabel = new QLabel( TabPage_2, "stimMagLabel" );
+    stimMagLabel->setMinimumSize( QSize( 120, 0 ) );
+    stimMagLabel->setMaximumSize( QSize( 120, 32767 ) );
+    QFont stimMagLabel_font(  stimMagLabel->font() );
+    stimMagLabel->setFont( stimMagLabel_font ); 
+    stimMagLabel->setAlignment( int( QLabel::AlignCenter ) );
+    stimMagLayout->addWidget( stimMagLabel );
+
+    stimMagEdit = new QLineEdit( TabPage_2, "stimMagEdit" );
+    stimMagEdit->setMinimumSize( QSize( 0, 0 ) );
+    stimMagEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont stimMagEdit_font(  stimMagEdit->font() );
+    stimMagEdit->setFont( stimMagEdit_font ); 
+    stimMagEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    stimMagLayout->addWidget( stimMagEdit );
+    TabPageLayout_2->addLayout( stimMagLayout );
+
+    stimLengthLayout = new QHBoxLayout( 0, 0, 6, "stimLengthLayout"); 
+
+    stimLengthLabel = new QLabel( TabPage_2, "stimLengthLabel" );
+    stimLengthLabel->setMinimumSize( QSize( 120, 0 ) );
+    stimLengthLabel->setMaximumSize( QSize( 120, 32767 ) );
+    QFont stimLengthLabel_font(  stimLengthLabel->font() );
+    stimLengthLabel->setFont( stimLengthLabel_font ); 
+    stimLengthLabel->setAlignment( int( QLabel::AlignCenter ) );
+    stimLengthLayout->addWidget( stimLengthLabel );
+
+    stimLengthEdit = new QLineEdit( TabPage_2, "stimLengthEdit" );
+    stimLengthEdit->setMinimumSize( QSize( 0, 0 ) );
+    stimLengthEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont stimLengthEdit_font(  stimLengthEdit->font() );
+    stimLengthEdit->setFont( stimLengthEdit_font ); 
+    stimLengthEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    stimLengthLayout->addWidget( stimLengthEdit );
+    TabPageLayout_2->addLayout( stimLengthLayout );
+
+    CmEditLayout = new QHBoxLayout( 0, 0, 6, "CmEditLayout"); 
+
+    CmLabel = new QLabel( TabPage_2, "CmLabel" );
+    CmLabel->setMinimumSize( QSize( 120, 0 ) );
+    CmLabel->setMaximumSize( QSize( 120, 32767 ) );
+    QFont CmLabel_font(  CmLabel->font() );
+    CmLabel->setFont( CmLabel_font ); 
+    CmLabel->setAlignment( int( QLabel::AlignCenter ) );
+    CmEditLayout->addWidget( CmLabel );
+
+    CmEdit = new QLineEdit( TabPage_2, "CmEdit" );
+    CmEdit->setMinimumSize( QSize( 0, 0 ) );
+    CmEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont CmEdit_font(  CmEdit->font() );
+    CmEdit->setFont( CmEdit_font ); 
+    CmEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    CmEditLayout->addWidget( CmEdit );
+    TabPageLayout_2->addLayout( CmEditLayout );
+
+    LJPEditLayout = new QHBoxLayout( 0, 0, 6, "LJPEditLayout"); 
+
+    LJPLabel = new QLabel( TabPage_2, "LJPLabel" );
+    LJPLabel->setMinimumSize( QSize( 120, 0 ) );
+    LJPLabel->setMaximumSize( QSize( 120, 32767 ) );
+    QFont LJPLabel_font(  LJPLabel->font() );
+    LJPLabel->setFont( LJPLabel_font ); 
+    LJPLabel->setAlignment( int( QLabel::AlignCenter ) );
+    LJPEditLayout->addWidget( LJPLabel );
+
+    LJPEdit = new QLineEdit( TabPage_2, "LJPEdit" );
+    LJPEdit->setMinimumSize( QSize( 0, 0 ) );
+    LJPEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont LJPEdit_font(  LJPEdit->font() );
+    LJPEdit->setFont( LJPEdit_font ); 
+    LJPEdit->setAlignment( int( QLineEdit::AlignHCenter ) );
+    LJPEditLayout->addWidget( LJPEdit );
+    TabPageLayout_2->addLayout( LJPEditLayout );
+    tabBox->insertTab( TabPage_2, QString::fromLatin1("") );
+
+    tab = new QWidget( tabBox, "tab" );
+    tabLayout = new QVBoxLayout( tab, 11, 0, "tabLayout"); 
 
     numTrialLayout = new QHBoxLayout( 0, 0, 6, "numTrialLayout"); 
 
-    numTrialLabel = new QLabel( protocolParamGroup, "numTrialLabel" );
+    numTrialLabel = new QLabel( tab, "numTrialLabel" );
     numTrialLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, numTrialLabel->sizePolicy().hasHeightForWidth() ) );
     numTrialLabel->setMinimumSize( QSize( 130, 0 ) );
     numTrialLabel->setMaximumSize( QSize( 130, 32767 ) );
@@ -237,109 +361,41 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent, const char* name, WFlags 
     numTrialLabel->setAlignment( int( QLabel::AlignCenter ) );
     numTrialLayout->addWidget( numTrialLabel );
 
-    numTrialEdit = new DefaultGUILineEdit( protocolParamGroup );
+    numTrialEdit = new QLineEdit( tab, "numTrialEdit" );
     numTrialEdit->setMinimumSize( QSize( 50, 0 ) );
     numTrialEdit->setMaximumSize( QSize( 50, 32767 ) );
     numTrialLayout->addWidget( numTrialEdit );
-    protocolParamGroupLayout->addLayout( numTrialLayout );
+    tabLayout->addLayout( numTrialLayout );
 
     intervalTimeLayout = new QHBoxLayout( 0, 0, 6, "intervalTimeLayout"); 
 
-    intervalTimeLabel = new QLabel( protocolParamGroup, "intervalTimeLabel" );
+    intervalTimeLabel = new QLabel( tab, "intervalTimeLabel" );
     intervalTimeLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, intervalTimeLabel->sizePolicy().hasHeightForWidth() ) );
     intervalTimeLabel->setMinimumSize( QSize( 130, 0 ) );
     intervalTimeLabel->setMaximumSize( QSize( 130, 32767 ) );
     intervalTimeLabel->setAlignment( int( QLabel::AlignCenter ) );
     intervalTimeLayout->addWidget( intervalTimeLabel );
 
-    intervalTimeEdit = new DefaultGUILineEdit( protocolParamGroup );
+    intervalTimeEdit = new QLineEdit( tab, "intervalTimeEdit" );
     intervalTimeEdit->setMinimumSize( QSize( 50, 0 ) );
     intervalTimeEdit->setMaximumSize( QSize( 50, 32767 ) );
     intervalTimeLayout->addWidget( intervalTimeEdit );
-    protocolParamGroupLayout->addLayout( intervalTimeLayout );
+    tabLayout->addLayout( intervalTimeLayout );
 
-    recordDataCheckBox = new QCheckBox( protocolParamGroup, "recordDataCheckBox" );
+    recordDataLayout = new QHBoxLayout( 0, 0, 6, "recordDataLayout"); 
+    spacer1a = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    recordDataLayout->addItem( spacer1a );
+
+    recordDataCheckBox = new QCheckBox( tab, "recordDataCheckBox" );
     QFont recordDataCheckBox_font(  recordDataCheckBox->font() );
-    recordDataCheckBox_font.setBold( TRUE );
     recordDataCheckBox->setFont( recordDataCheckBox_font ); 
     recordDataCheckBox->setTristate( FALSE );
-    protocolParamGroupLayout->addWidget( recordDataCheckBox );
-    layoutA2->addWidget( protocolParamGroup );
-    layout26->addLayout( layoutA2 );
-    spacer3 = new QSpacerItem( 1, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    layout26->addItem( spacer3 );
+    recordDataLayout->addWidget( recordDataCheckBox );
+    spacer2a = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    recordDataLayout->addItem( spacer2a );
+    tabLayout->addLayout( recordDataLayout );
 
-    layoutA3 = new QVBoxLayout( 0, 0, 6, "layoutA3"); 
-
-    stimParamGroup = new QGroupBox( this, "stimParamGroup" );
-    stimParamGroup->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, stimParamGroup->sizePolicy().hasHeightForWidth() ) );
-    QFont stimParamGroup_font(  stimParamGroup->font() );
-    stimParamGroup->setFont( stimParamGroup_font ); 
-    stimParamGroup->setAlignment( int( QGroupBox::AlignCenter ) );
-    stimParamGroup->setColumnLayout(0, Qt::Vertical );
-    stimParamGroup->layout()->setSpacing( 6 );
-    stimParamGroup->layout()->setMargin( 11 );
-    stimParamGroupLayout = new QVBoxLayout( stimParamGroup->layout() );
-    stimParamGroupLayout->setAlignment( Qt::AlignTop );
-
-    BCLLayout = new QHBoxLayout( 0, 0, 6, "BCLLayout"); 
-
-    BCLLabel = new QLabel( stimParamGroup, "BCLLabel" );
-    BCLLabel->setMinimumSize( QSize( 110, 0 ) );
-    BCLLabel->setMaximumSize( QSize( 110, 32767 ) );
-    BCLLabel->setAlignment( int( QLabel::AlignCenter ) );
-    BCLLayout->addWidget( BCLLabel );
-
-    BCLEdit = new DefaultGUILineEdit( stimParamGroup );
-    BCLEdit->setMinimumSize( QSize( 50, 0 ) );
-    BCLEdit->setMaximumSize( QSize( 50, 32767 ) );
-    BCLLayout->addWidget( BCLEdit );
-    stimParamGroupLayout->addLayout( BCLLayout );
-
-    stimMagLayout = new QHBoxLayout( 0, 0, 6, "stimMagLayout"); 
-
-    stimMagLabel = new QLabel( stimParamGroup, "stimMagLabel" );
-    stimMagLabel->setMinimumSize( QSize( 110, 0 ) );
-    stimMagLabel->setMaximumSize( QSize( 110, 32767 ) );
-    stimMagLabel->setAlignment( int( QLabel::AlignCenter ) );
-    stimMagLayout->addWidget( stimMagLabel );
-
-    stimMagEdit = new DefaultGUILineEdit( stimParamGroup );
-    stimMagEdit->setMinimumSize( QSize( 50, 0 ) );
-    stimMagEdit->setMaximumSize( QSize( 50, 32767 ) );
-    stimMagLayout->addWidget( stimMagEdit );
-    stimParamGroupLayout->addLayout( stimMagLayout );
-
-    stimLengthLayout = new QHBoxLayout( 0, 0, 6, "stimLengthLayout"); 
-
-    stimLengthLabel = new QLabel( stimParamGroup, "stimLengthLabel" );
-    stimLengthLabel->setMinimumSize( QSize( 110, 0 ) );
-    stimLengthLabel->setMaximumSize( QSize( 110, 32767 ) );
-    stimLengthLabel->setAlignment( int( QLabel::AlignCenter ) );
-    stimLengthLayout->addWidget( stimLengthLabel );
-
-    stimLengthEdit = new DefaultGUILineEdit( stimParamGroup );
-    stimLengthEdit->setMinimumSize( QSize( 50, 0 ) );
-    stimLengthEdit->setMaximumSize( QSize( 50, 32767 ) );
-    stimLengthLayout->addWidget( stimLengthEdit );
-    stimParamGroupLayout->addLayout( stimLengthLayout );
-
-    CmEditLayout = new QHBoxLayout( 0, 0, 6, "CmEditLayout"); 
-
-    CmLabel = new QLabel( stimParamGroup, "CmLabel" );
-    CmLabel->setMinimumSize( QSize( 110, 0 ) );
-    CmLabel->setMaximumSize( QSize( 110, 32767 ) );
-    CmLabel->setAlignment( int( QLabel::AlignCenter ) );
-    CmEditLayout->addWidget( CmLabel );
-
-    CmEdit = new DefaultGUILineEdit( stimParamGroup );
-    CmEdit->setMinimumSize( QSize( 50, 0 ) );
-    CmEdit->setMaximumSize( QSize( 50, 32767 ) );
-    CmEditLayout->addWidget( CmEdit );
-    stimParamGroupLayout->addLayout( CmEditLayout );
-    layoutA3->addWidget( stimParamGroup );
-
-    modelGroup = new QGroupBox( this, "modelGroup" );
+    modelGroup = new QGroupBox( tab, "modelGroup" );
     modelGroup->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, modelGroup->sizePolicy().hasHeightForWidth() ) );
     QFont modelGroup_font(  modelGroup->font() );
     modelGroup->setFont( modelGroup_font ); 
@@ -352,50 +408,187 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent, const char* name, WFlags 
 
     modelComboBox = new QComboBox( FALSE, modelGroup, "modelComboBox" );
     modelGroupLayout->addWidget( modelComboBox );
-    layoutA3->addWidget( modelGroup );
-    layout26->addLayout( layoutA3 );
-    IScale_DynClampUILayout->addLayout( layout26 );
+    tabLayout->addWidget( modelGroup );
+    tabBox->insertTab( tab, QString::fromLatin1("") );
 
-    layoutB = new QHBoxLayout( 0, 0, 6, "layoutB"); 
+    TabPage_3 = new QWidget( tabBox, "TabPage_3" );
+    TabPageLayout_3 = new QVBoxLayout( TabPage_3, 11, 6, "TabPageLayout_3"); 
 
-    protocolEditorButtonGroup = new QButtonGroup( this, "protocolEditorButtonGroup" );
-    QFont protocolEditorButtonGroup_font(  protocolEditorButtonGroup->font() );
-    protocolEditorButtonGroup_font.setBold( TRUE );
-    protocolEditorButtonGroup->setFont( protocolEditorButtonGroup_font ); 
-    protocolEditorButtonGroup->setAlignment( int( QButtonGroup::AlignCenter ) );
-    protocolEditorButtonGroup->setColumnLayout(0, Qt::Vertical );
-    protocolEditorButtonGroup->layout()->setSpacing( 6 );
-    protocolEditorButtonGroup->layout()->setMargin( 11 );
-    protocolEditorButtonGroupLayout = new QVBoxLayout( protocolEditorButtonGroup->layout() );
-    protocolEditorButtonGroupLayout->setAlignment( Qt::AlignTop );
+    pEditLayout1 = new QGridLayout( 0, 1, 1, 0, 6, "pEditLayout1"); 
 
-    addStepButton = new QPushButton( protocolEditorButtonGroup, "addStepButton" );
-    protocolEditorButtonGroupLayout->addWidget( addStepButton );
+    deleteStepButton = new QPushButton( TabPage_3, "deleteStepButton" );
+    deleteStepButton->setMinimumSize( QSize( 120, 0 ) );
+    deleteStepButton->setMaximumSize( QSize( 120, 32767 ) );
+    QFont deleteStepButton_font(  deleteStepButton->font() );
+    deleteStepButton->setFont( deleteStepButton_font ); 
 
-    deleteStepButton = new QPushButton( protocolEditorButtonGroup, "deleteStepButton" );
-    protocolEditorButtonGroupLayout->addWidget( deleteStepButton );
+    pEditLayout1->addWidget( deleteStepButton, 1, 0 );
 
-    saveProtocolButton = new QPushButton( protocolEditorButtonGroup, "saveProtocolButton" );
-    protocolEditorButtonGroupLayout->addWidget( saveProtocolButton );
+    loadProtocolButton = new QPushButton( TabPage_3, "loadProtocolButton" );
+    loadProtocolButton->setMinimumSize( QSize( 120, 0 ) );
+    loadProtocolButton->setMaximumSize( QSize( 120, 32767 ) );
+    QFont loadProtocolButton_font(  loadProtocolButton->font() );
+    loadProtocolButton->setFont( loadProtocolButton_font ); 
 
-    loadProtocolButton = new QPushButton( protocolEditorButtonGroup, "loadProtocolButton" );
-    protocolEditorButtonGroupLayout->addWidget( loadProtocolButton );
+    pEditLayout1->addWidget( loadProtocolButton, 1, 1 );
 
-    clearProtocolButton = new QPushButton( protocolEditorButtonGroup, "clearProtocolButton" );
-    protocolEditorButtonGroupLayout->addWidget( clearProtocolButton );
-    layoutB->addWidget( protocolEditorButtonGroup );
+    saveProtocolButton = new QPushButton( TabPage_3, "saveProtocolButton" );
+    saveProtocolButton->setMinimumSize( QSize( 120, 0 ) );
+    saveProtocolButton->setMaximumSize( QSize( 120, 32767 ) );
+    QFont saveProtocolButton_font(  saveProtocolButton->font() );
+    saveProtocolButton->setFont( saveProtocolButton_font ); 
+
+    pEditLayout1->addWidget( saveProtocolButton, 0, 1 );
+
+    addStepButton = new QPushButton( TabPage_3, "addStepButton" );
+    addStepButton->setMinimumSize( QSize( 120, 0 ) );
+    addStepButton->setMaximumSize( QSize( 120, 32767 ) );
+    QFont addStepButton_font(  addStepButton->font() );
+    addStepButton->setFont( addStepButton_font ); 
+
+    pEditLayout1->addWidget( addStepButton, 0, 0 );
+    TabPageLayout_3->addLayout( pEditLayout1 );
+
+    pEditLayout2 = new QHBoxLayout( 0, 0, 6, "pEditLayout2"); 
+    spacer1 = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    pEditLayout2->addItem( spacer1 );
+
+    clearProtocolButton = new QPushButton( TabPage_3, "clearProtocolButton" );
+    clearProtocolButton->setMinimumSize( QSize( 120, 0 ) );
+    clearProtocolButton->setMaximumSize( QSize( 120, 32767 ) );
+    QFont clearProtocolButton_font(  clearProtocolButton->font() );
+    clearProtocolButton->setFont( clearProtocolButton_font ); 
+    pEditLayout2->addWidget( clearProtocolButton );
+    spacer2 = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    pEditLayout2->addItem( spacer2 );
+    TabPageLayout_3->addLayout( pEditLayout2 );
+    tabBox->insertTab( TabPage_3, QString::fromLatin1("") );
+
+    tab_2 = new QWidget( tabBox, "tab_2" );
+    tabLayout_2 = new QVBoxLayout( tab_2, 11, 0, "tabLayout_2"); 
+
+    APDRepolLayout = new QHBoxLayout( 0, 0, 6, "APDRepolLayout"); 
+
+    APDRepolLabel = new QLabel( tab_2, "APDRepolLabel" );
+    APDRepolLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, APDRepolLabel->sizePolicy().hasHeightForWidth() ) );
+    APDRepolLabel->setMinimumSize( QSize( 150, 0 ) );
+    APDRepolLabel->setMaximumSize( QSize( 150, 32767 ) );
+    QFont APDRepolLabel_font(  APDRepolLabel->font() );
+    APDRepolLabel->setFont( APDRepolLabel_font ); 
+    APDRepolLabel->setAlignment( int( QLabel::AlignCenter ) );
+    APDRepolLayout->addWidget( APDRepolLabel );
+
+    APDRepolEdit = new QLineEdit( tab_2, "APDRepolEdit" );
+    APDRepolEdit->setMinimumSize( QSize( 50, 0 ) );
+    APDRepolEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont APDRepolEdit_font(  APDRepolEdit->font() );
+    APDRepolEdit->setFont( APDRepolEdit_font ); 
+    APDRepolLayout->addWidget( APDRepolEdit );
+    tabLayout_2->addLayout( APDRepolLayout );
+
+    minAPDLayout = new QHBoxLayout( 0, 0, 6, "minAPDLayout"); 
+
+    minAPDLabel = new QLabel( tab_2, "minAPDLabel" );
+    minAPDLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, minAPDLabel->sizePolicy().hasHeightForWidth() ) );
+    minAPDLabel->setMinimumSize( QSize( 150, 0 ) );
+    minAPDLabel->setMaximumSize( QSize( 150, 32767 ) );
+    QFont minAPDLabel_font(  minAPDLabel->font() );
+    minAPDLabel->setFont( minAPDLabel_font ); 
+    minAPDLabel->setAlignment( int( QLabel::AlignCenter ) );
+    minAPDLayout->addWidget( minAPDLabel );
+
+    minAPDEdit = new QLineEdit( tab_2, "minAPDEdit" );
+    minAPDEdit->setMinimumSize( QSize( 50, 0 ) );
+    minAPDEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont minAPDEdit_font(  minAPDEdit->font() );
+    minAPDEdit->setFont( minAPDEdit_font ); 
+    minAPDLayout->addWidget( minAPDEdit );
+    tabLayout_2->addLayout( minAPDLayout );
+
+    APDRepolLayout_2 = new QHBoxLayout( 0, 0, 6, "APDRepolLayout_2"); 
+
+    stimWindowLabel = new QLabel( tab_2, "stimWindowLabel" );
+    stimWindowLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)5, 0, 0, stimWindowLabel->sizePolicy().hasHeightForWidth() ) );
+    stimWindowLabel->setMinimumSize( QSize( 150, 0 ) );
+    stimWindowLabel->setMaximumSize( QSize( 150, 32767 ) );
+    QFont stimWindowLabel_font(  stimWindowLabel->font() );
+    stimWindowLabel->setFont( stimWindowLabel_font ); 
+    stimWindowLabel->setAlignment( int( QLabel::AlignCenter ) );
+    APDRepolLayout_2->addWidget( stimWindowLabel );
+
+    stimWindowEdit = new QLineEdit( tab_2, "stimWindowEdit" );
+    stimWindowEdit->setMinimumSize( QSize( 50, 0 ) );
+    stimWindowEdit->setMaximumSize( QSize( 50, 32767 ) );
+    QFont stimWindowEdit_font(  stimWindowEdit->font() );
+    stimWindowEdit->setFont( stimWindowEdit_font ); 
+    APDRepolLayout_2->addWidget( stimWindowEdit );
+    tabLayout_2->addLayout( APDRepolLayout_2 );
+    tabBox->insertTab( tab_2, QString::fromLatin1("") );
+    IScale_DynClampUILayout->addWidget( tabBox );
 
     protocolEditorListBox = new QListBox( this, "protocolEditorListBox" );
     protocolEditorListBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, protocolEditorListBox->sizePolicy().hasHeightForWidth() ) );
-    protocolEditorListBox->setMinimumSize( QSize( 250, 0 ) );
+    protocolEditorListBox->setMinimumSize( QSize( 150, 0 ) );
+    protocolEditorListBox->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
+    cg.setColor( QColorGroup::Foreground, black );
+    cg.setColor( QColorGroup::Button, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Light, white );
+    cg.setColor( QColorGroup::Midlight, QColor( 238, 239, 241) );
+    cg.setColor( QColorGroup::Dark, QColor( 110, 111, 114) );
+    cg.setColor( QColorGroup::Mid, QColor( 147, 149, 152) );
+    cg.setColor( QColorGroup::Text, black );
+    cg.setColor( QColorGroup::BrightText, white );
+    cg.setColor( QColorGroup::ButtonText, black );
+    cg.setColor( QColorGroup::Base, white );
+    cg.setColor( QColorGroup::Background, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Shadow, black );
+    cg.setColor( QColorGroup::Highlight, QColor( 0, 0, 128) );
+    cg.setColor( QColorGroup::HighlightedText, white );
+    cg.setColor( QColorGroup::Link, black );
+    cg.setColor( QColorGroup::LinkVisited, black );
+    pal.setActive( cg );
+    cg.setColor( QColorGroup::Foreground, black );
+    cg.setColor( QColorGroup::Button, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Light, white );
+    cg.setColor( QColorGroup::Midlight, QColor( 254, 254, 255) );
+    cg.setColor( QColorGroup::Dark, QColor( 110, 111, 114) );
+    cg.setColor( QColorGroup::Mid, QColor( 147, 149, 152) );
+    cg.setColor( QColorGroup::Text, black );
+    cg.setColor( QColorGroup::BrightText, white );
+    cg.setColor( QColorGroup::ButtonText, black );
+    cg.setColor( QColorGroup::Base, white );
+    cg.setColor( QColorGroup::Background, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Shadow, black );
+    cg.setColor( QColorGroup::Highlight, QColor( 0, 0, 128) );
+    cg.setColor( QColorGroup::HighlightedText, white );
+    cg.setColor( QColorGroup::Link, QColor( 0, 0, 238) );
+    cg.setColor( QColorGroup::LinkVisited, QColor( 82, 24, 139) );
+    pal.setInactive( cg );
+    cg.setColor( QColorGroup::Foreground, QColor( 128, 128, 128) );
+    cg.setColor( QColorGroup::Button, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Light, white );
+    cg.setColor( QColorGroup::Midlight, QColor( 254, 254, 255) );
+    cg.setColor( QColorGroup::Dark, QColor( 110, 111, 114) );
+    cg.setColor( QColorGroup::Mid, QColor( 147, 149, 152) );
+    cg.setColor( QColorGroup::Text, QColor( 128, 128, 128) );
+    cg.setColor( QColorGroup::BrightText, white );
+    cg.setColor( QColorGroup::ButtonText, QColor( 128, 128, 128) );
+    cg.setColor( QColorGroup::Base, white );
+    cg.setColor( QColorGroup::Background, QColor( 221, 223, 228) );
+    cg.setColor( QColorGroup::Shadow, black );
+    cg.setColor( QColorGroup::Highlight, QColor( 0, 0, 128) );
+    cg.setColor( QColorGroup::HighlightedText, white );
+    cg.setColor( QColorGroup::Link, QColor( 0, 0, 238) );
+    cg.setColor( QColorGroup::LinkVisited, QColor( 82, 24, 139) );
+    pal.setDisabled( cg );
+    protocolEditorListBox->setPalette( pal );
     QFont protocolEditorListBox_font(  protocolEditorListBox->font() );
     protocolEditorListBox->setFont( protocolEditorListBox_font ); 
     protocolEditorListBox->setVScrollBarMode( QListBox::AlwaysOn );
     protocolEditorListBox->setHScrollBarMode( QListBox::Auto );
-    layoutB->addWidget( protocolEditorListBox );
-    IScale_DynClampUILayout->addLayout( layoutB );
+    IScale_DynClampUILayout->addWidget( protocolEditorListBox );
     languageChange();
-    resize( QSize(427, 615).expandedTo(minimumSizeHint()) );
+    resize( QSize(296, 371).expandedTo(minimumSizeHint()) );
     clearWState( WState_Polished );
 }
 
@@ -414,38 +607,36 @@ IScale_DynClampUI::~IScale_DynClampUI()
 void IScale_DynClampUI::languageChange()
 {
     setCaption( tr( "Current Scaling Dynamic Clamp" ) );
-    systemButtonGroup->setTitle( QString::null );
-    pauseButton->setText( tr( "Pause" ) );
-    modifyButton->setText( tr( "Modify" ) );
+    protocolButtonGroup->setTitle( QString::null );
+    staticPacingButton->setText( tr( "Pace" ) );
     resetButton->setText( tr( "Reset" ) );
-    unloadButton->setText( tr( "Unload" ) );
-    stateGroupBox->setTitle( tr( "States" ) );
+    startProtocolButton->setText( tr( "Protocol" ) );
+    thresholdButton->setText( tr( "Threshold" ) );
     timeLabel->setText( tr( "Time (ms)" ) );
     beatNumLabel->setText( tr( "Beat Number" ) );
     voltageLabel->setText( tr( "Voltage (mV)" ) );
     APDLabel->setText( tr( "APD (ms)" ) );
-    protocolButtonGroup->setTitle( tr( "Protocol Control" ) );
-    thresholdButton->setText( tr( "Threshold" ) );
-    staticPacingButton->setText( tr( "Static Pacing" ) );
-    startProtocolButton->setText( tr( "Start Protocol" ) );
-    APDParamGroup->setTitle( tr( "APD Parameters" ) );
-    APDRepolLabel->setText( tr( "APD Repolarization %" ) );
-    minAPDLabel->setText( tr( "Minimum APD (ms)" ) );
-    protocolParamGroup->setTitle( tr( "Protocol Parameters" ) );
-    numTrialLabel->setText( tr( "Number of Trials" ) );
-    intervalTimeLabel->setText( tr( "Interval Time (ms)" ) );
-    recordDataCheckBox->setText( tr( "Record Data" ) );
-    stimParamGroup->setTitle( tr( "Stimulation Parameters" ) );
+    tabBox->changeTab( TabPage, tr( "States" ) );
     BCLLabel->setText( tr( "BCL (ms)" ) );
     stimMagLabel->setText( tr( "Stim Mag (nA)" ) );
     stimLengthLabel->setText( tr( "Stim Length (ms)" ) );
     CmLabel->setText( tr( "Cm (pF)" ) );
+    LJPLabel->setText( tr( "LJP (mV)" ) );
+    tabBox->changeTab( TabPage_2, tr( "Stim" ) );
+    numTrialLabel->setText( tr( "Number of Trials" ) );
+    intervalTimeLabel->setText( tr( "Interval Time (ms)" ) );
+    recordDataCheckBox->setText( tr( "Record Data" ) );
     modelGroup->setTitle( tr( "Dynamic Clamp Model" ) );
-    protocolEditorButtonGroup->setTitle( tr( "Protocol Editor" ) );
-    addStepButton->setText( tr( "Add Step" ) );
+    tabBox->changeTab( tab, tr( "Protocol" ) );
     deleteStepButton->setText( tr( "Delete Step" ) );
-    saveProtocolButton->setText( tr( "Save Protocol" ) );
     loadProtocolButton->setText( tr( "Load Protocol" ) );
+    saveProtocolButton->setText( tr( "Save Protocol" ) );
+    addStepButton->setText( tr( "Add Step" ) );
     clearProtocolButton->setText( tr( "Clear Protocol" ) );
+    tabBox->changeTab( TabPage_3, tr( "P. Edit" ) );
+    APDRepolLabel->setText( tr( "APD Repolarization %" ) );
+    minAPDLabel->setText( tr( "Minimum APD (ms)" ) );
+    stimWindowLabel->setText( tr( "Stim Window (ms)" ) );
+    tabBox->changeTab( tab_2, tr( "APD" ) );
 }
 

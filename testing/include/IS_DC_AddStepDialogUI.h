@@ -26,7 +26,7 @@ class AddStepDialog : public QDialog
     Q_OBJECT
 
 public:
-    AddStepDialog( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    AddStepDialog( QWidget* parent = 0 /*, const char* name = 0, bool modal = FALSE, WFlags fl = 0*/ );
     ~AddStepDialog();
 
     QComboBox* stepComboBox;

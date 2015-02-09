@@ -9,8 +9,7 @@
 #ifndef ISCALE_DYNCLAMPUI_H
 #define ISCALE_DYNCLAMPUI_H
 
-#include <qvariant.h>
-#include <qwidget.h>
+#include <QtGui>
 
 class QVBoxLayout;
 class QHBoxLayout;
@@ -24,18 +23,19 @@ class QLineEdit;
 class QCheckBox;
 class QGroupBox;
 class QComboBox;
-class QListBox;
-class QListBoxItem;
+//class QListBox;
+//class QListBoxItem;
 
 class IScale_DynClampUI : public QWidget
 {
     Q_OBJECT
 
 public:
-    IScale_DynClampUI( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+    IScale_DynClampUI( QWidget* parent = 0 /*, const char* name = 0, WFlags fl = 0 */);
     ~IScale_DynClampUI();
 
     QButtonGroup* protocolButtonGroup;
+	 QGroupBox* protocolGroup;
     QPushButton* staticPacingButton;
     QPushButton* resetButton;
     QPushButton* startProtocolButton;
@@ -82,11 +82,12 @@ public:
     QLineEdit* minAPDEdit;
     QLabel* stimWindowLabel;
     QLineEdit* stimWindowEdit;
-    QListBox* protocolEditorListBox;
+    QListWidget* protocolEditorListBox;
 
 protected:
     QVBoxLayout* IScale_DynClampUILayout;
     QGridLayout* protocolButtonGroupLayout;
+    QGridLayout* protocolGroupLayout;
     QSpacerItem* spacer1b;
     QSpacerItem* spacer2b;
     QSpacerItem* spacer3b;

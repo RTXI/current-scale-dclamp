@@ -91,11 +91,10 @@ static Workspace::variable_t vars[] = {
 // Number of variables in vars
 static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
-IScale_DynClamp::Module::Module(void) : QMdiSubWindow( MainWindow::getInstance()->centralWidget(), Qt::WA_DeleteOnClose ),
-    RT::Thread( 0 ),
-    Workspace::Instance( "IScale DynClamp", vars, num_vars ) {
+IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), RT::Thread( 0 ), Workspace::Instance( "IScale DynClamp", vars, num_vars ) {
 
     // Build Module GUI
+	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
     createGUI();        
     initialize(); // Initialize parameters, initialize states, reset model, and update rate
     refreshDisplay();
@@ -370,7 +369,7 @@ void IScale_DynClamp::Module::reset( void ) {
 }
 
 void IScale_DynClamp::Module::addStep( void ) {
-    int idx = mainWindow->protocolEditorListBox->currentIndex();
+    int idx = mainWindow->protocolEditorListBox->currentRow();
     if( idx == -1 ) { // Protocol is empty or nothing is selected, add step to end
         if( protocol->addStep( this ) )   // Update protocolEditorListBox if a step was added
             rebuildListBox();
@@ -381,7 +380,7 @@ void IScale_DynClamp::Module::addStep( void ) {
 }
 
 void IScale_DynClamp::Module::deleteStep( void ) {
-    int idx = mainWindow->protocolEditorListBox->currentIndex();
+    int idx = mainWindow->protocolEditorListBox->currentRow();
     if( idx == -1 ) // Protocol is empty or nothing is selected, return
         return ;
     
@@ -501,7 +500,7 @@ void IScale_DynClamp::Module::createGUI( void ) {
     // Construct Main Layout - vertical layout
     QBoxLayout *layout = new QVBoxLayout(this);
 
-    setCaption( QString::number( getID() ) + " Current Scaling Dyn Clamp" );
+    setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
 
     // Model Combo Box
     mainWindow->modelComboBox->addItem("LivRudy 2009");
@@ -676,7 +675,7 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
     else if( executeMode == PROTOCOL ) {
         if( stepTracker != currentStep ) {
             stepTracker = currentStep;
-            mainWindow->protocolEditorListBox->setSelected( currentStep, true );
+            mainWindow->protocolEditorListBox->setCurrentRow( currentStep);
         }        
     }
 }

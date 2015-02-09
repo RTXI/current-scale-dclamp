@@ -61,7 +61,7 @@ public:
     // Virtual functions for default_model base class
     virtual double iClamp(double); // Current clamp
     virtual double vClamp(double); // Voltage clamp
-	virtual void reset(); // Reset model to initial conditions
+	 virtual void reset(); // Reset model to initial conditions
     virtual double param(int); // Get parameter
     virtual void setParam(int, double); // Set parameter
     virtual double param(std::string);
@@ -81,15 +81,15 @@ private:
 	double Vx;
 	int z;
 	int ilow;
-    double linext;
-    double (*lkup)[20];
+   double linext;
+   double (*lkup)[20];
 	
-    //// Model variables
+   //// Model variables
     
-    // Model parameters
-    double V;
+   // Model parameters
+   double V;
     
-    //double DT; // Already part of base class
+   //double DT; // Already part of base class
 	double dVdt;
 	double Cai;
 	double CaNSR;

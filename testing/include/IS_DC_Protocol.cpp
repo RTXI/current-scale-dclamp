@@ -35,8 +35,7 @@
 using namespace std;
 
 /* AddStepInputDialog Class */
-AddStepInputDialog::AddStepInputDialog(QWidget* parent ) :
-    AddStepDialog( parent, 0, TRUE ) {
+AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent ) /*, 0, TRUE )*/ {
     QValidator* validator = new QIntValidator(this);
     BCLEdit->setValidator(validator);
     numBeatsEdit->setValidator(validator);
@@ -117,14 +116,14 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and checks if they are valid entries
     bool check = true;
     BCL = BCLEdit->text();
-    stepType = QString::number( stepComboBox->currentItem() );
+    stepType = QString::number( stepComboBox->currentIndex() );
     numBeats = numBeatsEdit->text();
     currentToScale = currentToScaleEdit->text();
     scalingPercentage = scalingPercentageEdit->text();
     waitTime = waitTimeEdit->text();
-    model = QString::number( modelComboBox->currentItem() );
+    model = QString::number( modelComboBox->currentIndex() );
     
-    switch( stepComboBox->currentItem() ) {
+    switch( stepComboBox->currentIndex() ) {
     case 0: // Pace
         if(BCL == "" || numBeats == "")
             check = false;
@@ -158,13 +157,13 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
     if( exec() == QDialog::Rejected )
         return inputAnswers; // Return an empty vector if step window is closed
     else { // QDialog is accepted when addStep button is pressed and inputs are considered valid
-        inputAnswers.push_back( QString::number( stepComboBox->currentItem() ) );
+        inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
         inputAnswers.push_back( BCL );
         inputAnswers.push_back( numBeats );
         inputAnswers.push_back( currentToScale );
         inputAnswers.push_back( scalingPercentage );
         inputAnswers.push_back( waitTime );
-        inputAnswers.push_back( QString::number( modelComboBox->currentItem() ) );
+        inputAnswers.push_back( QString::number( modelComboBox->currentIndex() ) );
         return inputAnswers;
     }
 }
@@ -172,11 +171,9 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 /* Protocol Step Class */
 
 ProtocolStep::ProtocolStep( stepType_t st, int bcl, int nb, string c, int sp, int w, modelType_t(mt) ) :
-    stepType(st), BCL(bcl), numBeats(nb), currentToScale(c), scalingPercentage(sp), waitTime(w), modelType(mt) {
-}
+    stepType(st), BCL(bcl), numBeats(nb), currentToScale(c), scalingPercentage(sp), waitTime(w), modelType(mt) { }
 
-ProtocolStep::~ProtocolStep( void ) {
-}
+ProtocolStep::~ProtocolStep( void ) { }
 
 int ProtocolStep::stepLength( double period ) {
     return 0;
@@ -203,7 +200,7 @@ bool Protocol::addStep( QWidget *parent ) {
                                                                        (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
                                                                        inputAnswers[1].toInt(), // BCL
                                                                        inputAnswers[2].toInt(), // numBeats
-                                                                       inputAnswers[3], // currentToScale
+                                                                       inputAnswers[3].toStdString(), // currentToScale
                                                                        inputAnswers[4].toInt(), // scalingPercentage
                                                                        inputAnswers[5].toInt(), // waitTime
                                                                        (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
@@ -229,7 +226,7 @@ bool Protocol::addStep( QWidget *parent, int idx ) {
                                                                        (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
                                                                        inputAnswers[1].toInt(), // BCL
                                                                        inputAnswers[2].toInt(), // numBeats
-                                                                       inputAnswers[3], // currentToScale
+                                                                       inputAnswers[3].toStdString(), // currentToScale
                                                                        inputAnswers[4].toInt(), // scalingPercentage
                                                                        inputAnswers[5].toInt(), // waitTime
                                                                        (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
@@ -259,6 +256,7 @@ void Protocol::deleteStep( QWidget *parent, int stepNumber ) {
 }
 
 void Protocol::saveProtocol( QWidget *parent ) {
+
     // Make sure protocol has at least one segment with one step
     if( protocolContainer.size() == 0 ) { 
         QMessageBox::warning(parent,
@@ -274,11 +272,10 @@ void Protocol::saveProtocol( QWidget *parent ) {
     
     // Save dialog to retrieve desired filename and location
     QString fileName = QFileDialog::getSaveFileName(
-                                                    "~/",
-                                                    "XML Files (*.xml)",
-                                                    parent,
-                                                    "save file dialog",
-                                                    "Save the protocol" );
+	 							parent,
+								"Save the protocol",
+								"~/",
+								"XML Files (*.xml)" );
 
     // If filename does not include .xml extension, add extension
     if( !(fileName.endsWith(".xml")) )
@@ -299,7 +296,7 @@ void Protocol::saveProtocol( QWidget *parent ) {
 
     // Save protocol to file
     QFile file(fileName); // Open file
-    if( !file.open(IO_WriteOnly) ) { // Open file, return error if unable to do so
+    if( !file.open(QIODevice::WriteOnly) ) { // Open file, return error if unable to do so
         QMessageBox::warning(parent,
                              "Error",
                              "Unable to save file: Please check folder permissions." );
@@ -322,15 +319,14 @@ QString Protocol::loadProtocol( QWidget *parent ) {
 
     // Save dialog to retrieve desired filename and location
     QString fileName = QFileDialog::getOpenFileName(
-                                                    "~/",
-                                                    "XML Files (*.xml)",
                                                     parent,
-                                                    "open file dialog",
-                                                    "Open a protocol" );
+                                                    "Open a protocol",
+                                                    "~/",
+                                                    "XML Files (*.xml)");
     QDomDocument doc( "protocol" );
     QFile file( fileName );
 
-    if( !file.open( IO_ReadOnly ) ) { // Make sure file can be opened, if not, warn user
+    if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
         QMessageBox::warning(parent,
                              "Error",
                              "Unable to open protocol file" );
@@ -365,7 +361,7 @@ QString Protocol::loadProtocol( QWidget *parent ) {
                                                       (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
                                                       stepElement.attribute( "BCL" ).toInt(),
                                                       stepElement.attribute( "numBeats" ).toInt(),
-                                                      stepElement.attribute( "currentToScale" ),
+                                                      stepElement.attribute( "currentToScale" ).toStdString(),
                                                       stepElement.attribute( "scalingPercentage" ).toInt(),
                                                       stepElement.attribute( "waitTime" ).toInt(),
                                                       (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
@@ -397,7 +393,7 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
     QDomDocument doc( "protocol" );
     QFile file( fileName );
 
-    if( !file.open( IO_ReadOnly ) ) { // Make sure file can be opened, if not, warn user
+    if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
         QMessageBox::warning(parent,
                              "Error",
                              "Unable to open protocol file" );
@@ -432,7 +428,7 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
                                                       (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
                                                       stepElement.attribute( "BCL" ).toInt(),
                                                       stepElement.attribute( "numBeats" ).toInt(),
-                                                      stepElement.attribute( "currentToScale" ),
+                                                      stepElement.attribute( "currentToScale" ).toStdString(),
                                                       stepElement.attribute( "scalingPercentage" ).toInt(),
                                                       stepElement.attribute( "waitTime" ).toInt(),
                                                       (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
@@ -455,7 +451,7 @@ QDomElement Protocol::stepToNode( QDomDocument &doc, const ProtocolStepPtr stepP
     stepElement.setAttribute( "stepType", QString::number( stepPtr->stepType ) );
     stepElement.setAttribute( "BCL", QString::number( stepPtr->BCL ) );
     stepElement.setAttribute( "numBeats", QString::number( stepPtr->numBeats ) );
-    stepElement.setAttribute( "currentToScale", stepPtr->currentToScale );
+    stepElement.setAttribute( "currentToScale", QString::fromStdString( stepPtr->currentToScale ) );
     stepElement.setAttribute( "scalingPercentage", stepPtr->scalingPercentage );
     stepElement.setAttribute( "waitTime", stepPtr->waitTime );
     stepElement.setAttribute( "modelType", stepPtr->modelType );
@@ -481,7 +477,7 @@ QString Protocol::getStepDescription( int stepNumber ) {
         break;
             
     case ProtocolStep::SCALE:
-        type = "Scale " + step->currentToScale + "(" + QString::number( step->scalingPercentage ) + "%)";
+        type = "Scale " + QString::fromStdString(step->currentToScale) + "(" + QString::number( step->scalingPercentage ) + "%)";
         description = type + ": " + QString::number( step->numBeats ) + " beats - " + QString::number( step->BCL ) + "ms BCL";
         break;
                 

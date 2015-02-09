@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'IS_DC_AddStepDialogUI.ui'
 **
-** Created: Wed Mar 7 20:56:21 2012
+** Created: Mon Jul 29 15:55:34 2013
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
@@ -30,6 +30,7 @@ AddStepDialog::AddStepDialog( QWidget* parent, const char* name, bool modal, WFl
 {
     if ( !name )
 	setName( "AddStepDialog" );
+    setPaletteBackgroundColor( QColor( 221, 223, 228 ) );
     AddStepDialogLayout = new QVBoxLayout( this, 11, 6, "AddStepDialogLayout"); 
 
     stepComboBox = new QComboBox( FALSE, this, "stepComboBox" );
@@ -123,7 +124,23 @@ AddStepDialog::AddStepDialog( QWidget* parent, const char* name, bool modal, WFl
     layout5->addWidget( waitTimeEdit );
     AddStepDialogLayout->addLayout( layout5 );
 
+    layout6 = new QHBoxLayout( 0, 0, 6, "layout6"); 
+
+    modelLabel = new QLabel( this, "modelLabel" );
+    modelLabel->setMinimumSize( QSize( 65, 0 ) );
+    modelLabel->setMaximumSize( QSize( 65, 32767 ) );
+    QFont modelLabel_font(  modelLabel->font() );
+    modelLabel_font.setBold( TRUE );
+    modelLabel->setFont( modelLabel_font ); 
+    modelLabel->setAlignment( int( QLabel::AlignCenter ) );
+    layout6->addWidget( modelLabel );
+
+    modelComboBox = new QComboBox( FALSE, this, "modelComboBox" );
+    layout6->addWidget( modelComboBox );
+    AddStepDialogLayout->addLayout( layout6 );
+
     buttonGroup = new QButtonGroup( this, "buttonGroup" );
+    buttonGroup->setPaletteBackgroundColor( QColor( 221, 223, 228 ) );
     buttonGroup->setColumnLayout(0, Qt::Vertical );
     buttonGroup->layout()->setSpacing( 6 );
     buttonGroup->layout()->setMargin( 11 );
@@ -131,19 +148,21 @@ AddStepDialog::AddStepDialog( QWidget* parent, const char* name, bool modal, WFl
     buttonGroupLayout->setAlignment( Qt::AlignTop );
 
     addStepButton = new QPushButton( buttonGroup, "addStepButton" );
+    addStepButton->setPaletteBackgroundColor( QColor( 116, 144, 191 ) );
     QFont addStepButton_font(  addStepButton->font() );
     addStepButton_font.setBold( TRUE );
     addStepButton->setFont( addStepButton_font ); 
     buttonGroupLayout->addWidget( addStepButton );
 
     exitButton = new QPushButton( buttonGroup, "exitButton" );
+    exitButton->setPaletteBackgroundColor( QColor( 116, 144, 191 ) );
     QFont exitButton_font(  exitButton->font() );
     exitButton_font.setBold( TRUE );
     exitButton->setFont( exitButton_font ); 
     buttonGroupLayout->addWidget( exitButton );
     AddStepDialogLayout->addWidget( buttonGroup );
     languageChange();
-    resize( QSize(280, 249).expandedTo(minimumSizeHint()) );
+    resize( QSize(297, 279).expandedTo(minimumSizeHint()) );
     clearWState( WState_Polished );
 }
 
@@ -169,11 +188,17 @@ void AddStepDialog::languageChange()
     stepComboBox->insertItem( tr( "Model: Start" ) );
     stepComboBox->insertItem( tr( "Model: Stop" ) );
     stepComboBox->insertItem( tr( "Model: Reset" ) );
+    stepComboBox->insertItem( tr( "Model: Change" ) );
     BCLLabel->setText( tr( "Basic Cycle Length (ms)" ) );
     numBeatsLabel->setText( tr( "Number of Beats" ) );
     currentToScaleLabel->setText( tr( "Current to Scale" ) );
+    QToolTip::add( currentToScaleEdit, tr( "INa IKr IKs ICaL IK1 ICaT INaK INCX" ) );
     scalingPercentageLabel->setText( tr( "Scaling Percentage" ) );
     waitTimeLabel->setText( tr( "Wait Time (ms)" ) );
+    modelLabel->setText( tr( "Model" ) );
+    modelComboBox->clear();
+    modelComboBox->insertItem( tr( "Livzhitz Rudy 2009" ) );
+    modelComboBox->insertItem( tr( "Faber Rudy 2000" ) );
     buttonGroup->setTitle( QString::null );
     addStepButton->setText( tr( "Add Step" ) );
     exitButton->setText( tr( "Exit" ) );

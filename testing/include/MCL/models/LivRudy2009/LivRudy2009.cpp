@@ -35,6 +35,9 @@
 #include <iostream>
 #include "LivRudy2009.h"
 
+//#define ORIGINALCONC
+#define NEWCONC
+
 using namespace std;
 
 #define fastEXP RTmath->fastEXP //define shortcut for fastEXP function
@@ -63,8 +66,8 @@ LivRudy2009::LivRudy2009(void){ // Model initialization
 	  xs2 = 1e-4;
 	  Jrel = 1e-4;
 	*/
-
-	//// Initial conditions after 700 beats (Steady State)
+	//// Initial conditions after 700 beats (Steady State), old solutions
+#ifdef ORIGINALCONC    
 	V = -88.9248;
 	Cai = 1.1366e-04;
 	CaNSR = 1.7519;
@@ -82,7 +85,28 @@ LivRudy2009::LivRudy2009(void){ // Model initialization
 	xs1 = 0.0049;
 	xs2 = 0.0243;
 	Jrel = 2.4967e-18;
+#endif    
 
+    //Initial conditions after conc change - 800 beats
+#ifdef NEWCONC
+        V = -8.185872e+01;
+        Cai = 1.797384e-04; 
+        CaNSR = 2.463960e+00; 
+        CaJSR = 1.524945e+00;
+        Nai = 1.357382e+01; 
+        Ki = 1.239044e+02; 
+        m = 2.601169e-03; 
+        h = 9.697101e-01; 
+        j = 9.806867e-01; 
+        d = 5.928788e-322; 
+        f = 9.981991e-01; 
+        b = 1.866354e-03;
+        g = 9.650771e-01;
+        xKr = 4.291283e-04; 
+        xs1 = 2.954278e-02; 
+        xs2 = 8.283927e-02;
+        Jrel = 1.101473e-38;
+#endif
     //// Constants
     // Physical Constants
     F = 96485; // Faraday's constant, C/mol
@@ -105,9 +129,19 @@ LivRudy2009::LivRudy2009(void){ // Model initialization
     // Cell Capacitance 
     Cm = 1.0;
     // Fixed ionic concentrations 
-    Ko = 4.5 ; // uM
-    Nao = 140 ; // uM
-    Cao = 1.8 ; // uM
+#ifdef ORIGINALCONC
+    std::cout << "ORIGINAL CONCENTRATIONS" << std::endl;
+    Ko = 4.0; // uM //Changed based on solutions, old was 4.0
+    Nao = 140; // uM // Changed based on solutions, old was 140
+    Cao = 1.8 ; // uM // Changed based on solutions, old was 1.8
+#endif
+
+#ifdef NEWCONC
+    std::cout << "NEW CONCENTRATIONS" << std::endl;
+    Ko = 5.4;
+    Nao = 137;
+    Cao = 2.0;
+#endif
     // Na current constants 
     GNa_= 16; // mS/cm^2
     GNab = 0.004;
@@ -431,6 +465,7 @@ void LivRudy2009::reset(){ // Reset to initial conditions
 	*/
 
 	// Initial conditions after 700 beats
+#ifdef ORIGINALCONC
 	V = -88.9248;
 	Cai = 1.1366e-04;
 	CaNSR = 1.7519;
@@ -448,8 +483,29 @@ void LivRudy2009::reset(){ // Reset to initial conditions
 	xs1 = 0.0049;
 	xs2 = 0.0243;
 	Jrel = 2.4967e-18;
-
-    cout << "**** LivRudy2009 model reset to initial conditions ****" << endl;
+#endif    
+    
+    //Initial conditions after conc change - 800 beats
+#ifdef NEWCONC
+  V = -8.185872e+01;
+  Cai = 1.797384e-04; 
+  CaNSR = 2.463960e+00; 
+  CaJSR = 1.524945e+00;
+  Nai = 1.357382e+01; 
+  Ki = 1.239044e+02; 
+  m = 2.601169e-03; 
+  h = 9.697101e-01; 
+  j = 9.806867e-01; 
+  d = 5.928788e-322; 
+  f = 9.981991e-01; 
+  b = 1.866354e-03;
+  g = 9.650771e-01;
+  xKr = 4.291283e-04; 
+  xs1 = 2.954278e-02; 
+  xs2 = 8.283927e-02;
+  Jrel = 1.101473e-38;
+#endif
+  cout << "**** LivRudy2009 model reset to initial conditions ****" << endl;
 }
 
 /*** Parameter Functions ***/
@@ -519,6 +575,9 @@ void LivRudy2009::makeMap( void ) {
     parameterMap["IKs"] = &IKs;
     parameterMap["ICaL"] = &ICaL;
     parameterMap["IK1"] = &IK1;
+    parameterMap["ICaT"] = &ICaT;
+    parameterMap["INaK"] = &INaK;
+    parameterMap["INCX"] = &INCX;
 }
 
 double LivRudy2009::param(string x){

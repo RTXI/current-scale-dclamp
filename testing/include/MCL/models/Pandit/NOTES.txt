@@ -1,0 +1,19 @@
+Currents
+0: Itotal
+1: INa
+2: It
+3: Ikslow
+4: Iss
+5: Ik1
+6: IfNa
+7: IfK
+8: INaK
+9: ICaP
+10: INaCa
+11: IB
+12: ICaL
+
+Concentrations
+0: Nai
+1: Ki
+2: Cai

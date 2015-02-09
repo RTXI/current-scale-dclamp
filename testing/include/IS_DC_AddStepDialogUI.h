@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'IS_DC_AddStepDialogUI.ui'
 **
-** Created: Wed Mar 7 20:56:21 2012
+** Created: Mon Jul 29 15:55:34 2013
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
@@ -41,6 +41,8 @@ public:
     QLineEdit* scalingPercentageEdit;
     QLabel* waitTimeLabel;
     QLineEdit* waitTimeEdit;
+    QLabel* modelLabel;
+    QComboBox* modelComboBox;
     QButtonGroup* buttonGroup;
     QPushButton* addStepButton;
     QPushButton* exitButton;
@@ -52,6 +54,7 @@ protected:
     QHBoxLayout* layout3;
     QHBoxLayout* layout4;
     QHBoxLayout* layout5;
+    QHBoxLayout* layout6;
     QHBoxLayout* buttonGroupLayout;
 
 protected slots:

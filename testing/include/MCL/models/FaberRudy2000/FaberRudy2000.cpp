@@ -63,9 +63,9 @@ FaberRudy2000::FaberRudy2000(void) {
     V_jsr = V_sr * 0.08; //Junctional SR is 8% of SR
     V_cleft = (V_cell/0.88)*0.12; //Cleft volume
     flag = 0;
-    Na_out = 140;
-    Ca_out = 1.8;
-    K_out = 4.5;
+    Na_out = 137; // Was 140, changed to match patch solutions
+    Ca_out = 2.0; // Was 1.8, changed to match patch solutions
+    K_out = 5.4; // Was 4.5, changed to match patch solutions
     dCa_in = 0.0;
     dCa_jsr = 0.0;
     dCa_nsr = 0.0;
@@ -142,7 +142,7 @@ FaberRudy2000::FaberRudy2000(void) {
 	   GUINEA_PIG[14]=1.179991;
     */
     //Initial conditions after 300 WT HH beats at BCL = 1000ms
-    GUINEA_PIG[0]= 0.000004;
+    /* GUINEA_PIG[0]= 0.000004;
     GUINEA_PIG[1]= 0.999723;
     GUINEA_PIG[2]= 0.005301;
     GUINEA_PIG[3]= 0.033794;
@@ -156,7 +156,26 @@ FaberRudy2000::FaberRudy2000(void) {
     GUINEA_PIG[11]= 135.525797;
     GUINEA_PIG[12]= 0.000122;
     GUINEA_PIG[13]= 1.531388;
-    GUINEA_PIG[14]=1.942522;
+    GUINEA_PIG[14]= 1.942522;
+    */
+
+    // Initial conditions after 1100 beats at 1000ms BCL with new concentrations
+    V = -83.4366;
+    GUINEA_PIG[0] = 7.71003e-06;
+    GUINEA_PIG[1] = 0.999098;
+    GUINEA_PIG[2] = 0.0184959;
+    GUINEA_PIG[3] = 0.082228;
+    GUINEA_PIG[4] = 0.000261177;
+    GUINEA_PIG[5] = 0.00160623;
+    GUINEA_PIG[6] = 0.980753;
+    GUINEA_PIG[7] = 0.00199501;
+    GUINEA_PIG[8] = 0.978777;
+    GUINEA_PIG[9] = 0.986735;
+    GUINEA_PIG[10] = 11.753;
+    GUINEA_PIG[11] = 133.987;
+    GUINEA_PIG[12] = 0.000147466;
+    GUINEA_PIG[13] = 1.46651;
+    GUINEA_PIG[14] = 2.31135;
 
     //use lookup tables to speed up code
     lkup= new double[20000][22];
@@ -636,6 +655,9 @@ void FaberRudy2000::makeMap( void ) {
     parameterMap["IKs"] = &I_Ks;
     parameterMap["ICaL"] = &I_Ca_L;
     parameterMap["IK1"] = &I_K1;
+    parameterMap["ICaT"] = &I_Ca_T;
+    parameterMap["INaK"] = &I_Na_K;
+    parameterMap["INCX"] = &I_Na_Ca;
 }
 
 double FaberRudy2000::param(string x){

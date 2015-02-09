@@ -9,8 +9,7 @@
 #ifndef ADDSTEPDIALOG_H
 #define ADDSTEPDIALOG_H
 
-#include <qvariant.h>
-#include <qdialog.h>
+#include <QtGui>
 
 class QVBoxLayout;
 class QHBoxLayout;

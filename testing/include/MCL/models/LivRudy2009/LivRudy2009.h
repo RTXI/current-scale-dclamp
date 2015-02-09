@@ -47,7 +47,7 @@
 #define LIVRUDY2009_H
 
 #include <map>
-#include <qstringlist.h>
+#include <QtGui>
 #include "../include/default_model.h" // default_model base class
 
 

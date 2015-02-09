@@ -29,12 +29,8 @@
 
 #include "IS_DC_Protocol.h"
 #include <iostream>
-#include <qvalidator.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-#include <qfiledialog.h>
+
+#include <QtGui>
 
 using namespace std;
 

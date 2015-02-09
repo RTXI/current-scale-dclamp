@@ -8,15 +8,7 @@
 
 #include "IS_DC_AddStepDialogUI.h"
 
-#include <qvariant.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qbuttongroup.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
+#include <QtGui>
 
 /*
  *  Constructs a AddStepDialog as a child of 'parent', with the

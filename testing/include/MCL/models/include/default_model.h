@@ -37,7 +37,7 @@
 #define DEFAULT_MODEL_H
 
 #include <string>
-#include <qstringlist.h>
+#include <QtGui>
 #include "../include/RealTimeMath.h" // RealTimeMath library
 
 /*** Class default_model ***/

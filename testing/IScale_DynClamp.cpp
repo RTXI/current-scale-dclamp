@@ -33,18 +33,10 @@
 #include <math.h>
 #include <main_window.h>
 
-#include <qtimer.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qvalidator.h>
-#include <qlineedit.h>
-#include <qlistbox.h>
-#include <qcombobox.h>
-#include <qlayout.h>
+#include <QtGui>
 
-#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
+//#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
+#include "/home/ansel/Projects/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
@@ -99,8 +91,7 @@ static Workspace::variable_t vars[] = {
 // Number of variables in vars
 static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
-IScale_DynClamp::Module::Module(void) :
-    QWidget( MainWindow::getInstance()->centralWidget(), 0, Qt::WStyle_NormalBorder | Qt::WDestructiveClose ),
+IScale_DynClamp::Module::Module(void) : QMdiSubWindow( MainWindow::getInstance()->centralWidget(), Qt::WA_DeleteOnClose ),
     RT::Thread( 0 ),
     Workspace::Instance( "IScale DynClamp", vars, num_vars ) {
 
@@ -379,7 +370,7 @@ void IScale_DynClamp::Module::reset( void ) {
 }
 
 void IScale_DynClamp::Module::addStep( void ) {
-    int idx = mainWindow->protocolEditorListBox->currentItem();
+    int idx = mainWindow->protocolEditorListBox->currentIndex();
     if( idx == -1 ) { // Protocol is empty or nothing is selected, add step to end
         if( protocol->addStep( this ) )   // Update protocolEditorListBox if a step was added
             rebuildListBox();
@@ -390,7 +381,7 @@ void IScale_DynClamp::Module::addStep( void ) {
 }
 
 void IScale_DynClamp::Module::deleteStep( void ) {
-    int idx = mainWindow->protocolEditorListBox->currentItem();
+    int idx = mainWindow->protocolEditorListBox->currentIndex();
     if( idx == -1 ) // Protocol is empty or nothing is selected, return
         return ;
     
@@ -413,19 +404,19 @@ void IScale_DynClamp::Module::clearProtocol( void ) {
 }
 
 void IScale_DynClamp::Module::toggleThreshold( void ) {
-    thresholdOn = mainWindow->thresholdButton->isOn();
+    thresholdOn = mainWindow->thresholdButton->isChecked();
     
     ToggleThresholdEvent event( this, thresholdOn );
     RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::toggleProtocol( void ) {
-    protocolOn = mainWindow->startProtocolButton->isOn();
+    protocolOn = mainWindow->startProtocolButton->isChecked();
     
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
             QMessageBox::warning( this, "Error", "Protocol has yet to be defined." );
-            mainWindow->startProtocolButton->setOn( false );
+            mainWindow->startProtocolButton->setChecked( false );
             protocolOn = false;
         }
     }
@@ -435,7 +426,7 @@ void IScale_DynClamp::Module::toggleProtocol( void ) {
 }
 
 void IScale_DynClamp::Module::togglePace( void ) {
-    paceOn = mainWindow->staticPacingButton->isOn();
+    paceOn = mainWindow->staticPacingButton->isChecked();
 
     TogglePaceEvent event( this, paceOn );
     RT::System::getInstance()->postEvent( &event );
@@ -501,7 +492,7 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 
     // Rebuild list box
     for( int i = 0; i < protocolContainer->size(); i++ ) {
-        mainWindow->protocolEditorListBox->insertItem( protocol->getStepDescription( i ) );
+        mainWindow->protocolEditorListBox->insertItem( i,  protocol->getStepDescription( i ) );
     }
 }
 /* Build Module GUI */
@@ -513,8 +504,8 @@ void IScale_DynClamp::Module::createGUI( void ) {
     setCaption( QString::number( getID() ) + " Current Scaling Dyn Clamp" );
 
     // Model Combo Box
-    mainWindow->modelComboBox->insertItem("LivRudy 2009");
-    mainWindow->modelComboBox->insertItem("FaberRudy 2000");
+    mainWindow->modelComboBox->addItem("LivRudy 2009");
+    mainWindow->modelComboBox->addItem("FaberRudy 2000");
 
     // Set GUI refresh rate
     QTimer *timer = new QTimer(this);
@@ -590,7 +581,7 @@ void IScale_DynClamp::Module::doLoad(const Settings::Object::State &s) {
         parentWidget()->move(s.loadInteger("X"), s.loadInteger("Y"));
     }
 
-    loadedFile = s.loadString("Protocol");
+    loadedFile = QString::fromStdString(s.loadString("Protocol"));
     if( loadedFile != "" ) {        
         protocol->loadProtocol( this, loadedFile );
         rebuildListBox();
@@ -622,7 +613,7 @@ void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     s.saveInteger( "Y", pos.y() );
     s.saveInteger( "W", width() );
     s.saveInteger( "H", height() );
-    s.saveString( "Protocol", loadedFile );
+    s.saveString( "Protocol", loadedFile.toStdString() );
     s.saveInteger( "APD Repol", APDRepol );
     s.saveInteger( "Min APD", minAPD );
     s.saveInteger( "Stim Window", stimWindow );
@@ -645,7 +636,7 @@ void IScale_DynClamp::Module::modify(void) {
     double sl = mainWindow->stimLengthEdit->text().toDouble();
     double c = mainWindow->CmEdit->text().toDouble();
     double ljp = mainWindow->LJPEdit->text().toDouble();
-    bool rd = mainWindow->recordDataCheckBox->isOn();
+    bool rd = mainWindow->recordDataCheckBox->isChecked();
 
     if( APDr == APDRepol && mAPD == minAPD && sw == stimWindow && nt == numTrials && it == intervalTime
         && b == BCL && sm == stimMag && sl == stimLength && c == Cm && ljp == LJP && rd == recordData ) // If nothing has changed
@@ -674,10 +665,10 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
     mainWindow->APDEdit->setText( QString::number(APD) );
 
     if( executeMode == IDLE ) {
-        if( mainWindow->startProtocolButton->isOn() && !protocolOn )
-            mainWindow->startProtocolButton->setOn( false );
-        else if( mainWindow->thresholdButton->isOn() && !thresholdOn ) {
-            mainWindow->thresholdButton->setOn( false );
+        if( mainWindow->startProtocolButton->isChecked() && !protocolOn )
+            mainWindow->startProtocolButton->setChecked( false );
+        else if( mainWindow->thresholdButton->isChecked() && !thresholdOn ) {
+            mainWindow->thresholdButton->setChecked( false );
             mainWindow->stimMagEdit->setText( QString::number( stimMag ) );
             modify();
         }

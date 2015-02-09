@@ -8,19 +8,7 @@
 
 #include "IS_DC_MainWindowUI.h"
 
-#include <qvariant.h>
-#include <qpushbutton.h>
-#include <qbuttongroup.h>
-#include <qtabwidget.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qcombobox.h>
-#include <qlistbox.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
+#include <QtGui>
 
 /*
  *  Constructs a IScale_DynClampUI as a child of 'parent', with the

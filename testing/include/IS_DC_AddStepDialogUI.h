@@ -43,6 +43,7 @@ public:
     QLabel* modelLabel;
     QComboBox* modelComboBox;
     QButtonGroup* buttonGroup;
+	 QGroupBox* buttonGroupBox;
     QPushButton* addStepButton;
     QPushButton* exitButton;
 
@@ -55,6 +56,7 @@ protected:
     QHBoxLayout* layout5;
     QHBoxLayout* layout6;
     QHBoxLayout* buttonGroupLayout;
+    QHBoxLayout* buttonGroupBoxLayout;
 
 protected slots:
     virtual void languageChange();

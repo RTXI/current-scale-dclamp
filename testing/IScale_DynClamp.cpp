@@ -499,6 +499,7 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 /* Build Module GUI */
 void IScale_DynClamp::Module::createGUI( void ) {
 std::cout<<"createGUI called"<<std::endl;
+
     mainWindow = new IScale_DynClampUI(this);
     // Construct Main Layout - vertical layout
     QBoxLayout *layout = new QVBoxLayout(this);
@@ -512,7 +513,7 @@ std::cout<<"createGUI called"<<std::endl;
 
     // Set GUI refresh rate
     QTimer *timer = new QTimer(this);
-    timer->start(500);
+    timer->start(1000);
 
     // Set validators
     mainWindow->APDRepolEdit->setValidator( new QIntValidator(mainWindow->APDRepolEdit) );

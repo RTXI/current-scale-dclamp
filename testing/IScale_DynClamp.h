@@ -23,10 +23,6 @@
  *
  * Author: Francis A. Ortega (2011)
  *
- *** NOTES
- *
- * v1.0 - Initial Version
- *
  ***/
 
 #ifndef ISCALE_DYNCLAMP_H

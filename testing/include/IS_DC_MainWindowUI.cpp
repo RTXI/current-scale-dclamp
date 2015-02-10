@@ -12,7 +12,6 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
 std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
 
-//    setWindowTitle( "IScale_DynClampUI" );
     IScale_DynClampUILayout = new QVBoxLayout( this ); /*, 11, 6, "IScale_DynClampUILayout"); */
 	 setLayout(IScale_DynClampUILayout);
 

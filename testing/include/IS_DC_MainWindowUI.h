@@ -1,11 +1,3 @@
-/****************************************************************************
-** Form interface generated from reading ui file 'IS_DC_MainWindowUI.ui'
-**
-** Created: Mon Jul 29 15:55:34 2013
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
-
 #ifndef ISCALE_DYNCLAMPUI_H
 #define ISCALE_DYNCLAMPUI_H
 
@@ -23,11 +15,8 @@ class QLineEdit;
 class QCheckBox;
 class QGroupBox;
 class QComboBox;
-//class QListBox;
-//class QListBoxItem;
 
-class IScale_DynClampUI : public QWidget
-{
+class IScale_DynClampUI : public QWidget {
     Q_OBJECT
 
 public:
@@ -124,7 +113,6 @@ protected:
 
 protected slots:
     virtual void languageChange();
-
 };
 
 #endif // ISCALE_DYNCLAMPUI_H

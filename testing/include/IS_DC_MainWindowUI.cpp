@@ -1,14 +1,7 @@
-/****************************************************************************
-** Form implementation generated from reading ui file 'IS_DC_MainWindowUI.ui'
-**
-** Created: Mon Jul 29 15:55:34 2013
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
-
 #include "IS_DC_MainWindowUI.h"
 
 #include <QtGui>
+#include <iostream>
 
 /*
  *  Constructs a IScale_DynClampUI as a child of 'parent', with the
@@ -16,10 +9,12 @@
  */
 IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFlags fl*/ ) : QWidget( parent /*, name, fl */) {
 
+std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
 
-    setWindowTitle( "IScale_DynClampUI" );
+//    setWindowTitle( "IScale_DynClampUI" );
     IScale_DynClampUILayout = new QVBoxLayout( this ); /*, 11, 6, "IScale_DynClampUILayout"); */
+	 setLayout(IScale_DynClampUILayout);
 
     protocolButtonGroup = new QButtonGroup( this );
 //    protocolButtonGroup->setAlignment( Qt::AlignCenter );
@@ -39,6 +34,7 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
 //    protocolGroup->layout()->setSpacing( 6 );
 //    protocolGroup->layout()->setMargin( 11 );
     protocolGroupLayout = new QGridLayout( protocolGroup );
+	 protocolGroup->setLayout(protocolGroupLayout);
     protocolGroupLayout->setAlignment( Qt::AlignTop );
     spacer1b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     protocolGroupLayout->addItem( spacer1b, 0, 4 );
@@ -83,11 +79,11 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
     tabBox->setTabPosition( QTabWidget::North );
     tabBox->setTabShape( QTabWidget::Rounded );
 
-    TabPage = new QWidget( TabPage );
-    TabPageLayout = new QVBoxLayout( TabPage ); /*, 11, 0, "TabPageLayout"); */
+    TabPage = new QWidget( tabBox );
+    TabPageLayout = new QVBoxLayout( TabPage );
+	 TabPage->setLayout(TabPageLayout);
 
     timeLayout = new QHBoxLayout; 
-//    timeLayout = new QHBoxLayout( 0, 0, 6, "timeLayout"); 
 
     timeLabel = new QLabel( "timeLabel", TabPage );
     timeLabel->setAlignment( Qt::AlignCenter );
@@ -137,8 +133,9 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
     tabBox->addTab( TabPage, QString::fromLatin1("") );
 //    tabBox->insertTab( TabPage, QString::fromLatin1("") );
 
-    TabPage_2 = new QWidget( tabBox /*, "TabPage_2"*/ );
-    TabPageLayout_2 = new QVBoxLayout( TabPage_2 ); /*, 11, 6, "TabPageLayout_2"); */
+    TabPage_2 = new QWidget( tabBox );
+    TabPageLayout_2 = new QVBoxLayout( TabPage_2 );
+	 TabPage_2->setLayout(TabPageLayout_2);
 
     BCLLayout = new QHBoxLayout; /*( 0, 0, 6, "BCLLayout"); */
 
@@ -184,7 +181,7 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
     CmEditLayout->addWidget( CmEdit );
     TabPageLayout_2->addLayout( CmEditLayout );
 
-    LJPEditLayout = new QHBoxLayout; /*( 0, 0, 6, "LJPEditLayout"); */
+    LJPEditLayout = new QHBoxLayout;
 
     LJPLabel = new QLabel( "LJPLabel", TabPage_2 );
     LJPLabel->setAlignment( Qt::AlignCenter );
@@ -194,11 +191,11 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
     LJPEdit->setAlignment( Qt::AlignHCenter );
     LJPEditLayout->addWidget( LJPEdit );
     TabPageLayout_2->addLayout( LJPEditLayout );
-//    tabBox->insertTab( TabPage_2, QString::fromLatin1("") );
     tabBox->addTab( TabPage_2, QString::fromLatin1("") );
 
     tab = new QWidget( tabBox /*, "tab"*/ );
-    tabLayout = new QVBoxLayout( tab ); /*, 11, 0, "tabLayout"); */
+    tabLayout = new QVBoxLayout( tab );
+	 tab->setLayout(tabLayout);
 
     numTrialLayout = new QHBoxLayout; /*( 0, 0, 6, "numTrialLayout"); */
 
@@ -234,54 +231,45 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
     modelGroup = new QGroupBox( "modelGroup", tab );
     modelGroup->setAlignment( Qt::AlignCenter );
 //    modelGroup->setColumnLayout( 0, Qt::Vertical );
-    modelGroup->layout()->setSpacing( 6 );
-    modelGroup->layout()->setMargin( 11 );
+//    modelGroup->layout()->setSpacing( 6 );
+//    modelGroup->layout()->setMargin( 11 );
     modelGroupLayout = new QVBoxLayout( modelGroup );
+	 modelGroup->setLayout(modelGroupLayout);
     modelGroupLayout->setAlignment( Qt::AlignTop );
 
     modelComboBox = new QComboBox( modelGroup );
-//    modelComboBox = new QComboBox( FALSE, modelGroup, "modelComboBox" );
     modelGroupLayout->addWidget( modelComboBox );
     tabLayout->addWidget( modelGroup );
     tabBox->addTab( tab, QString::fromLatin1("") );
-//    tabBox->insertTab( tab, QString::fromLatin1("") );
 
     TabPage_3 = new QWidget( tabBox );
-    TabPageLayout_3 = new QVBoxLayout( TabPage_3 ); /*, 11, 6, "TabPageLayout_3"); */
+    TabPageLayout_3 = new QVBoxLayout( TabPage_3 );
+	 TabPage_3->setLayout(TabPageLayout_3);
 
-    pEditLayout1 = new QGridLayout; /*( 0, 1, 1, 0, 6, "pEditLayout1"); */
-
+    pEditLayout1 = new QGridLayout;
     deleteStepButton = new QPushButton( "deleteStepButton", TabPage_3 );
-
     pEditLayout1->addWidget( deleteStepButton, 1, 0 );
-
     loadProtocolButton = new QPushButton( "loadProtocolButton", TabPage_3 );
-
     pEditLayout1->addWidget( loadProtocolButton, 1, 1 );
-
     saveProtocolButton = new QPushButton( "saveProtocolButton", TabPage_3 );
-
     pEditLayout1->addWidget( saveProtocolButton, 0, 1 );
-
     addStepButton = new QPushButton( "addStepButton", TabPage_3 );
-
     pEditLayout1->addWidget( addStepButton, 0, 0 );
     TabPageLayout_3->addLayout( pEditLayout1 );
 
-    pEditLayout2 = new QHBoxLayout; /*( 0, 0, 6, "pEditLayout2"); */
+    pEditLayout2 = new QHBoxLayout;
     spacer1 = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     pEditLayout2->addItem( spacer1 );
-
     clearProtocolButton = new QPushButton( "clearProtocolButton", TabPage_3 );
     pEditLayout2->addWidget( clearProtocolButton );
     spacer2 = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     pEditLayout2->addItem( spacer2 );
     TabPageLayout_3->addLayout( pEditLayout2 );
-//    tabBox->insertTab( TabPage_3, QString::fromLatin1("") );
     tabBox->addTab( TabPage_3, QString::fromLatin1("") );
 
     tab_2 = new QWidget( tabBox );
-    tabLayout_2 = new QVBoxLayout( tab_2 ); /*, 11, 0, "tabLayout_2"); */
+    tabLayout_2 = new QVBoxLayout( tab_2 );
+	 tab_2->setLayout(tabLayout_2);
 
     APDRepolLayout = new QHBoxLayout; /*( 0, 0, 6, "APDRepolLayout"); */
 
@@ -313,23 +301,21 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
     APDRepolLayout_2->addWidget( stimWindowEdit );
     tabLayout_2->addLayout( APDRepolLayout_2 );
     tabBox->addTab( tab_2, QString::fromLatin1("") );
-//    tabBox->insertTab( tab_2, QString::fromLatin1("") );
     IScale_DynClampUILayout->addWidget( tabBox );
 
     protocolEditorListBox = new QListWidget( this );
 //    protocolEditorListBox->setVScrollBarMode( QListWidget::AlwaysOn );
 //    protocolEditorListBox->setHScrollBarMode( QListWidget::Auto );
     IScale_DynClampUILayout->addWidget( protocolEditorListBox );
-
     languageChange();
 //    resize( QSize(296, 371).expandedTo(minimumSizeHint()) );
+std::cout<<"IScale_DynClampUI constructor returned"<<std::endl;
 }
 
 /*
  *  Destroys the object and frees any allocated resources
  */
-IScale_DynClampUI::~IScale_DynClampUI()
-{
+IScale_DynClampUI::~IScale_DynClampUI() {
     // no need to delete child widgets, Qt does it all for us
 }
 
@@ -338,6 +324,7 @@ IScale_DynClampUI::~IScale_DynClampUI()
  *  language.
  */
 void IScale_DynClampUI::languageChange() {
+
 
     setWindowTitle( tr( "Current Scaling Dynamic Clamp" ) );
 //    protocolButtonGroup->setTitle( QString::null );
@@ -372,4 +359,3 @@ void IScale_DynClampUI::languageChange() {
     stimWindowLabel->setText( tr( "Stim Window (ms)" ) );
     tabBox->setTabText( tabBox->indexOf(tab_2), tr( "APD" ) );
 }
-

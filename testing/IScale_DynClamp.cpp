@@ -297,6 +297,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 } // end execute()
 
 void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, protocol, and model cell
+std::cout<<"initialize called"<<std::endl;
     protocol = new Protocol();
     livshitzRudy2009 = new ModelCell();
     livshitzRudy2009->changeModel( ModelCell::LIVRUDY2009 );
@@ -347,6 +348,7 @@ void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, pro
 
     // APD parameters
    upstrokeThreshold = -40;
+std::cout<<"initialize returned"<<std::endl;
 }
 
 void IScale_DynClamp::Module::reset( void ) {
@@ -496,11 +498,13 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 }
 /* Build Module GUI */
 void IScale_DynClamp::Module::createGUI( void ) {
+std::cout<<"createGUI called"<<std::endl;
     mainWindow = new IScale_DynClampUI(this);
     // Construct Main Layout - vertical layout
     QBoxLayout *layout = new QVBoxLayout(this);
 
     setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
+	 setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
 
     // Model Combo Box
     mainWindow->modelComboBox->addItem("LivRudy 2009");
@@ -564,8 +568,9 @@ void IScale_DynClamp::Module::createGUI( void ) {
     setData( Workspace::STATE, 4, &targetCurrent );
     setData( Workspace::STATE, 5, &scaledCurrent );
 
-    resize( minimumSize() ); // Set window to minimum size
+//    resize( minimumSize() ); // Set window to minimum size
 	show();
+std::cout<<"createGUI returned"<<std::endl;
 } // End createGUI()
 
 // Load from Settings

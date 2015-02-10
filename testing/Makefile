@@ -1,4 +1,3 @@
-
 PLUGIN_NAME = IScale_DynClamp
 
 HEADERS = IScale_DynClamp.h

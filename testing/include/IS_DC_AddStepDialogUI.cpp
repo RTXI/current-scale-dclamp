@@ -1,11 +1,3 @@
-/****************************************************************************
-** Form implementation generated from reading ui file 'IS_DC_AddStepDialogUI.ui'
-**
-** Created: Mon Jul 29 15:55:34 2013
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
-
 #include "IS_DC_AddStepDialogUI.h"
 
 #include <QtGui>
@@ -21,7 +13,7 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
 
-    setWindowTitle( "AddStepDialog" );
+//    setWindowTitle( "AddStepDialog" );
     AddStepDialogLayout = new QVBoxLayout( this );/*, 11, 6, "AddStepDialogLayout"); */
 
     stepComboBox = new QComboBox( this);

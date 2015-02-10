@@ -36,7 +36,7 @@
 #include <QtGui>
 
 //#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
-#include "/home/ansel/Projects/rtxi/plugins/data_recorder/data_recorder.h"
+#include "/home/user/Projects/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
@@ -500,12 +500,17 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 void IScale_DynClamp::Module::createGUI( void ) {
 std::cout<<"createGUI called"<<std::endl;
 
-    mainWindow = new IScale_DynClampUI(this);
-    // Construct Main Layout - vertical layout
-    QBoxLayout *layout = new QVBoxLayout(this);
-
+    QMdiSubWindow *subWindow  = new QMdiSubWindow;
     setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
 	 setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
+	 MainWindow::getInstance()->createMdi(subWindow); 
+	 subWindow->setWidget(this);
+
+    mainWindow = new IScale_DynClampUI(subWindow);
+    // Construct Main Layout - vertical layout
+    QBoxLayout *layout = new QVBoxLayout(subWindow);
+	 setLayout(layout);
+	 layout->addWidget(mainWindow);
 
     // Model Combo Box
     mainWindow->modelComboBox->addItem("LivRudy 2009");
@@ -559,8 +564,6 @@ std::cout<<"createGUI called"<<std::endl;
     QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), mainWindow->thresholdButton, SLOT( setDisabled(bool)) );
     QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), mainWindow->startProtocolButton, SLOT( setDisabled(bool)) );
                       
-    layout->addWidget(mainWindow);
-    
     // Connect states to workspace
     setData( Workspace::STATE, 0, &time );
     setData( Workspace::STATE, 1, &voltage );

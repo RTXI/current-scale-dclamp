@@ -11,11 +11,17 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
 
 std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
+	 
+//	 QMdiSubWindow *subWindow = new QMdiSubWindow;
+//	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
+//	 subWindow->setAttribute(Qt::WA_DeleteOnClose);
+//	 MainWindow::getInstance()->createMdi(subWindow);
+//	 subWindow->setWidget(parent);
 
-    IScale_DynClampUILayout = new QVBoxLayout( this ); /*, 11, 6, "IScale_DynClampUILayout"); */
+    IScale_DynClampUILayout = new QVBoxLayout( parent ); /*, 11, 6, "IScale_DynClampUILayout"); */
 	 setLayout(IScale_DynClampUILayout);
 
-    protocolButtonGroup = new QButtonGroup( this );
+    protocolButtonGroup = new QButtonGroup( parent );
 //    protocolButtonGroup->setAlignment( Qt::AlignCenter );
 //    protocolButtonGroup->setColumnLayout(0, Qt::Vertical );
 //    protocolButtonGroup->layout()->setSpacing( 6 );
@@ -73,7 +79,7 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     protocolGroupLayout->addItem( spacer6b, 0, 0 );
     IScale_DynClampUILayout->addWidget( protocolGroup );
 
-    tabBox = new QTabWidget( this /*, "tabBox"*/ );
+    tabBox = new QTabWidget( parent );
 //    tabBox->setFocusPolicy( QTabWidget::NoFocus );
     tabBox->setTabPosition( QTabWidget::North );
     tabBox->setTabShape( QTabWidget::Rounded );
@@ -302,7 +308,7 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     tabBox->addTab( tab_2, QString::fromLatin1("") );
     IScale_DynClampUILayout->addWidget( tabBox );
 
-    protocolEditorListBox = new QListWidget( this );
+    protocolEditorListBox = new QListWidget( parent );
 //    protocolEditorListBox->setVScrollBarMode( QListWidget::AlwaysOn );
 //    protocolEditorListBox->setHScrollBarMode( QListWidget::Auto );
     IScale_DynClampUILayout->addWidget( protocolEditorListBox );

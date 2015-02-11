@@ -7,7 +7,7 @@
  *  Constructs a IScale_DynClampUI as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  */
-IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFlags fl*/ ) : QWidget( parent /*, name, fl */) {
+IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 
 std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
@@ -143,32 +143,24 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     TabPageLayout_2->addWidget( LJPEdit, 4, 1 );
     tabBox->addTab( TabPage_2, QString::fromLatin1("") );
 
+	 // Next tab
     tab = new QWidget( tabBox /*, "tab"*/ );
-//    tabLayout = new QVBoxLayout( tab );
     tabLayout = new QGridLayout( tab );
 	 tab->setLayout(tabLayout);
 
-//    numTrialLayout = new QHBoxLayout; /*( 0, 0, 6, "numTrialLayout"); */
-
     numTrialLabel = new QLabel( "numTrialLabel", tab );
-//    numTrialLabel->setAlignment( Qt::AlignCenter );
     tabLayout->addWidget( numTrialLabel, 0, 0 );
     numTrialEdit = new QLineEdit( "numTrialEdit", tab );
     numTrialEdit->setAlignment( Qt::AlignHCenter );
     tabLayout->addWidget( numTrialEdit, 0, 1 );
-//    tabLayout->addLayout( numTrialLayout );
-
-//    intervalTimeLayout = new QHBoxLayout; /*( 0, 0, 6, "intervalTimeLayout"); */
 
     intervalTimeLabel = new QLabel( "intervalTimeLabel", tab );
-//    intervalTimeLabel->setAlignment( Qt::AlignCenter );
     tabLayout->addWidget( intervalTimeLabel, 1, 0 );
     intervalTimeEdit = new QLineEdit( "intervalTimeEdit", tab );
     intervalTimeEdit->setAlignment( Qt::AlignHCenter );
     tabLayout->addWidget( intervalTimeEdit, 1, 1 );
-//    tabLayout->addLayout( intervalTimeLayout );
 
-    recordDataLayout = new QHBoxLayout; /*( 0, 0, 6, "recordDataLayout"); */
+    recordDataLayout = new QHBoxLayout;
     spacer1a = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     recordDataLayout->addItem( spacer1a );
 
@@ -219,48 +211,28 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     tabBox->addTab( TabPage_3, QString::fromLatin1("") );
 
     tab_2 = new QWidget( tabBox );
-//    tabLayout_2 = new QVBoxLayout( tab_2 );
     tabLayout_2 = new QGridLayout( tab_2 );
 	 tab_2->setLayout(tabLayout_2);
 
-//    APDRepolLayout = new QHBoxLayout;
-
     APDRepolLabel = new QLabel( "APDRepolLabel", tab_2 );
-//    APDRepolLabel->setAlignment( Qt::AlignCenter );
-//    APDRepolLayout->addWidget( APDRepolLabel );
     tabLayout_2->addWidget( APDRepolLabel, 0, 1, 1, 2);
-
     APDRepolEdit = new QLineEdit( "APDRepolEdit", tab_2 );
     APDRepolEdit->setAlignment( Qt::AlignCenter );
     tabLayout_2->addWidget( APDRepolEdit, 0, 3, 1, 1);
- //   APDRepolLayout->addWidget( APDRepolEdit );
- //   tabLayout_2->addLayout( APDRepolLayout );
-
- //   minAPDLayout = new QHBoxLayout; /*( 0, 0, 6, "minAPDLayout"); */
 
     minAPDLabel = new QLabel( "minAPDLabel", tab_2 );
- //   minAPDLabel->setAlignment( Qt::AlignCenter );
     tabLayout_2->addWidget( minAPDLabel, 1, 1, 1, 2);
- //   minAPDLayout->addWidget( minAPDLabel );
 
     minAPDEdit = new QLineEdit( "minAPDEdit", tab_2 );
     minAPDEdit->setAlignment( Qt::AlignCenter );
     tabLayout_2->addWidget( minAPDEdit, 1, 3, 1, 1);
- //   minAPDLayout->addWidget( minAPDEdit );
- //   tabLayout_2->addLayout( minAPDLayout );
-
-//    APDRepolLayout_2 = new QHBoxLayout; /*( 0, 0, 6, "APDRepolLayout_2"); */
 
     stimWindowLabel = new QLabel( "stimWindowLabel", tab_2 );
-//    stimWindowLabel->setAlignment( Qt::AlignCenter );
     tabLayout_2->addWidget( stimWindowLabel, 2, 1, 1, 2);
-//    APDRepolLayout_2->addWidget( stimWindowLabel );
 
     stimWindowEdit = new QLineEdit( "stimWindowEdit", tab_2 );
     stimWindowEdit->setAlignment( Qt::AlignCenter );
     tabLayout_2->addWidget( stimWindowEdit, 2, 3, 1, 1);
-//    APDRepolLayout_2->addWidget( stimWindowEdit );
-//    tabLayout_2->addLayout( APDRepolLayout_2 );
 
     tabBox->addTab( tab_2, QString::fromLatin1("") );
     IScale_DynClampUILayout->addWidget( tabBox );
@@ -270,7 +242,6 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 //    protocolEditorListBox->setHScrollBarMode( QListWidget::Auto );
     IScale_DynClampUILayout->addWidget( protocolEditorListBox );
     languageChange();
-//    resize( QSize(296, 371).expandedTo(minimumSizeHint()) );
 std::cout<<"IScale_DynClampUI constructor returned"<<std::endl;
 }
 
@@ -285,9 +256,7 @@ IScale_DynClampUI::~IScale_DynClampUI() { } // no need to delete child widgets, 
  */
 void IScale_DynClampUI::languageChange() {
 
-
     setWindowTitle( tr( "Current Scaling Dynamic Clamp" ) );
-//    protocolButtonGroup->setTitle( QString::null );
     staticPacingButton->setText( tr( "Pace" ) );
     resetButton->setText( tr( "Reset" ) );
     startProtocolButton->setText( tr( "Protocol" ) );

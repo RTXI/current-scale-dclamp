@@ -36,7 +36,7 @@
 #include <QtGui>
 
 //#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
-#include "/home/user/Projects/rtxi/plugins/data_recorder/data_recorder.h"
+#include "/home/ansel/Projects/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
@@ -503,7 +503,7 @@ std::cout<<"createGUI called"<<std::endl;
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
     subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
 	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
-	 subWindow->setMinimumSize(335,400);
+	 subWindow->setMinimumSize(300,450);
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 

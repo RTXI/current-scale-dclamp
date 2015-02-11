@@ -12,13 +12,7 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent /*, const char* name, WFla
 std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
 	 
-//	 QMdiSubWindow *subWindow = new QMdiSubWindow;
-//	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
-//	 subWindow->setAttribute(Qt::WA_DeleteOnClose);
-//	 MainWindow::getInstance()->createMdi(subWindow);
-//	 subWindow->setWidget(parent);
-
-    IScale_DynClampUILayout = new QVBoxLayout( parent ); /*, 11, 6, "IScale_DynClampUILayout"); */
+    IScale_DynClampUILayout = new QVBoxLayout( parent );
 	 setLayout(IScale_DynClampUILayout);
 
     protocolButtonGroup = new QButtonGroup( parent );
@@ -35,9 +29,6 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 
     protocolGroup = new QGroupBox;
     protocolGroup->setAlignment( Qt::AlignCenter );
-//    protocolGroup->setColumnLayout(0, Qt::Vertical );
-//    protocolGroup->layout()->setSpacing( 6 );
-//    protocolGroup->layout()->setMargin( 11 );
     protocolGroupLayout = new QGridLayout( protocolGroup );
 	 protocolGroup->setLayout(protocolGroupLayout);
     protocolGroupLayout->setAlignment( Qt::AlignTop );
@@ -85,142 +76,97 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     tabBox->setTabShape( QTabWidget::Rounded );
 
     TabPage = new QWidget( tabBox );
-    TabPageLayout = new QVBoxLayout( TabPage );
+    TabPageLayout = new QGridLayout( TabPage );
 	 TabPage->setLayout(TabPageLayout);
 
-    timeLayout = new QHBoxLayout; 
-
     timeLabel = new QLabel( "timeLabel", TabPage );
-    timeLabel->setAlignment( Qt::AlignCenter );
-    timeLayout->addWidget( timeLabel );
-
+    TabPageLayout->addWidget( timeLabel, 0, 0 );
     timeEdit = new QLineEdit( "timeEdit", TabPage );
     timeEdit->setAlignment( Qt::AlignHCenter );
     timeEdit->setReadOnly( TRUE );
-    timeLayout->addWidget( timeEdit );
-    TabPageLayout->addLayout( timeLayout );
-
-    beatNumLayout = new QHBoxLayout; /*( 0, 0, 6, "beatNumLayout"); */
+    TabPageLayout->addWidget( timeEdit, 0, 1 );
 
     beatNumLabel = new QLabel( "beatNumLabel", TabPage );
-    beatNumLabel->setAlignment( Qt::AlignCenter );
-    beatNumLayout->addWidget( beatNumLabel );
-
+    TabPageLayout->addWidget( beatNumLabel, 1, 0 );
     beatNumEdit = new QLineEdit( "beatNumEdit", TabPage );
     beatNumEdit->setAlignment( Qt::AlignHCenter );
     beatNumEdit->setReadOnly( TRUE );
-    beatNumLayout->addWidget( beatNumEdit );
-    TabPageLayout->addLayout( beatNumLayout );
-
-    voltageLayout = new QHBoxLayout; /*( 0, 0, 6, "voltageLayout"); */
+    TabPageLayout->addWidget( beatNumEdit, 1, 1 );
 
     voltageLabel = new QLabel( "voltageLabel", TabPage );
-    voltageLabel->setAlignment( Qt::AlignCenter );
-    voltageLayout->addWidget( voltageLabel );
-
+    TabPageLayout->addWidget( voltageLabel, 2, 0 );
     voltageEdit = new QLineEdit( "voltageEdit", TabPage );
     voltageEdit->setAlignment( Qt::AlignHCenter );
     voltageEdit->setReadOnly( TRUE );
-    voltageLayout->addWidget( voltageEdit );
-    TabPageLayout->addLayout( voltageLayout );
-
-    APDLayout = new QHBoxLayout; /*( 0, 0, 6, "APDLayout"); */
+    TabPageLayout->addWidget( voltageEdit, 2, 1 );
 
     APDLabel = new QLabel( "APDLabel", TabPage );
-    APDLabel->setAlignment( Qt::AlignCenter );
-    APDLayout->addWidget( APDLabel );
-
+    TabPageLayout->addWidget( APDLabel, 3, 0 );
     APDEdit = new QLineEdit( "APDEdit", TabPage );
     APDEdit->setAlignment( Qt::AlignHCenter );
     APDEdit->setReadOnly( TRUE );
-    APDLayout->addWidget( APDEdit );
-    TabPageLayout->addLayout( APDLayout );
+    TabPageLayout->addWidget( APDEdit, 3, 1 );
     tabBox->addTab( TabPage, QString::fromLatin1("") );
-//    tabBox->insertTab( TabPage, QString::fromLatin1("") );
 
     TabPage_2 = new QWidget( tabBox );
-    TabPageLayout_2 = new QVBoxLayout( TabPage_2 );
+    TabPageLayout_2 = new QGridLayout( TabPage_2 );
 	 TabPage_2->setLayout(TabPageLayout_2);
 
-    BCLLayout = new QHBoxLayout; /*( 0, 0, 6, "BCLLayout"); */
-
     BCLLabel = new QLabel(  "BCLLabel", TabPage_2 );
-    BCLLabel->setAlignment( Qt::AlignCenter );
-    BCLLayout->addWidget( BCLLabel );
-
+    TabPageLayout_2->addWidget( BCLLabel, 0, 0 );
     BCLEdit = new QLineEdit( "BCLEdit", TabPage_2 );
     BCLEdit->setAlignment( Qt::AlignHCenter );
-    BCLLayout->addWidget( BCLEdit );
-    TabPageLayout_2->addLayout( BCLLayout );
-
-    stimMagLayout = new QHBoxLayout; /*( 0, 0, 6, "stimMagLayout"); */
+    TabPageLayout_2->addWidget( BCLEdit, 0, 1 );
 
     stimMagLabel = new QLabel( "stimMagLabel", TabPage_2 );
-    stimMagLabel->setAlignment( Qt::AlignCenter );
-    stimMagLayout->addWidget( stimMagLabel );
-
+    TabPageLayout_2->addWidget( stimMagLabel, 1, 0 );
     stimMagEdit = new QLineEdit( "stimMagEdit", TabPage_2 );
     stimMagEdit->setAlignment( Qt::AlignHCenter );
-    stimMagLayout->addWidget( stimMagEdit );
-    TabPageLayout_2->addLayout( stimMagLayout );
-
-    stimLengthLayout = new QHBoxLayout; /*( 0, 0, 6, "stimLengthLayout"); */
+    TabPageLayout_2->addWidget( stimMagEdit, 1, 1 );
 
     stimLengthLabel = new QLabel( "stimLengthLabel", TabPage_2 );
-    stimLengthLabel->setAlignment( Qt::AlignCenter );
-    stimLengthLayout->addWidget( stimLengthLabel );
-
+    TabPageLayout_2->addWidget( stimLengthLabel, 2, 0 );
     stimLengthEdit = new QLineEdit( "stimLengthEdit", TabPage_2 );
     stimLengthEdit->setAlignment( Qt::AlignHCenter );
-    stimLengthLayout->addWidget( stimLengthEdit );
-    TabPageLayout_2->addLayout( stimLengthLayout );
-
-    CmEditLayout = new QHBoxLayout; /*( 0, 0, 6, "CmEditLayout"); */
+    TabPageLayout_2->addWidget( stimLengthEdit, 2, 1 );
 
     CmLabel = new QLabel( "CmLabel", TabPage_2 );
-    CmLabel->setAlignment( Qt::AlignCenter );
-    CmEditLayout->addWidget( CmLabel );
-
+    TabPageLayout_2->addWidget( CmLabel, 3, 0 );
     CmEdit = new QLineEdit( "CmEdit", TabPage_2 );
     CmEdit->setAlignment( Qt::AlignHCenter );
-    CmEditLayout->addWidget( CmEdit );
-    TabPageLayout_2->addLayout( CmEditLayout );
-
-    LJPEditLayout = new QHBoxLayout;
+    TabPageLayout_2->addWidget( CmEdit, 3, 1 );
 
     LJPLabel = new QLabel( "LJPLabel", TabPage_2 );
-    LJPLabel->setAlignment( Qt::AlignCenter );
-    LJPEditLayout->addWidget( LJPLabel );
-
+    TabPageLayout_2->addWidget( LJPLabel, 4, 0 );
     LJPEdit = new QLineEdit( "LJPEdit", TabPage_2 );
     LJPEdit->setAlignment( Qt::AlignHCenter );
-    LJPEditLayout->addWidget( LJPEdit );
-    TabPageLayout_2->addLayout( LJPEditLayout );
+    TabPageLayout_2->addWidget( LJPEdit, 4, 1 );
     tabBox->addTab( TabPage_2, QString::fromLatin1("") );
 
     tab = new QWidget( tabBox /*, "tab"*/ );
-    tabLayout = new QVBoxLayout( tab );
+//    tabLayout = new QVBoxLayout( tab );
+    tabLayout = new QGridLayout( tab );
 	 tab->setLayout(tabLayout);
 
-    numTrialLayout = new QHBoxLayout; /*( 0, 0, 6, "numTrialLayout"); */
+//    numTrialLayout = new QHBoxLayout; /*( 0, 0, 6, "numTrialLayout"); */
 
     numTrialLabel = new QLabel( "numTrialLabel", tab );
-    numTrialLabel->setAlignment( Qt::AlignCenter );
-    numTrialLayout->addWidget( numTrialLabel );
-
+//    numTrialLabel->setAlignment( Qt::AlignCenter );
+    tabLayout->addWidget( numTrialLabel, 0, 0 );
     numTrialEdit = new QLineEdit( "numTrialEdit", tab );
-    numTrialLayout->addWidget( numTrialEdit );
-    tabLayout->addLayout( numTrialLayout );
+    numTrialEdit->setAlignment( Qt::AlignHCenter );
+    tabLayout->addWidget( numTrialEdit, 0, 1 );
+//    tabLayout->addLayout( numTrialLayout );
 
-    intervalTimeLayout = new QHBoxLayout; /*( 0, 0, 6, "intervalTimeLayout"); */
+//    intervalTimeLayout = new QHBoxLayout; /*( 0, 0, 6, "intervalTimeLayout"); */
 
     intervalTimeLabel = new QLabel( "intervalTimeLabel", tab );
-    intervalTimeLabel->setAlignment( Qt::AlignCenter );
-    intervalTimeLayout->addWidget( intervalTimeLabel );
-
+//    intervalTimeLabel->setAlignment( Qt::AlignCenter );
+    tabLayout->addWidget( intervalTimeLabel, 1, 0 );
     intervalTimeEdit = new QLineEdit( "intervalTimeEdit", tab );
-    intervalTimeLayout->addWidget( intervalTimeEdit );
-    tabLayout->addLayout( intervalTimeLayout );
+    intervalTimeEdit->setAlignment( Qt::AlignHCenter );
+    tabLayout->addWidget( intervalTimeEdit, 1, 1 );
+//    tabLayout->addLayout( intervalTimeLayout );
 
     recordDataLayout = new QHBoxLayout; /*( 0, 0, 6, "recordDataLayout"); */
     spacer1a = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -231,7 +177,7 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     recordDataLayout->addWidget( recordDataCheckBox );
     spacer2a = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     recordDataLayout->addItem( spacer2a );
-    tabLayout->addLayout( recordDataLayout );
+    tabLayout->addLayout( recordDataLayout, 2, 0, 1, 2 );
 
     modelGroup = new QGroupBox( "modelGroup", tab );
     modelGroup->setAlignment( Qt::AlignCenter );
@@ -244,7 +190,7 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 
     modelComboBox = new QComboBox( modelGroup );
     modelGroupLayout->addWidget( modelComboBox );
-    tabLayout->addWidget( modelGroup );
+    tabLayout->addWidget( modelGroup, 3, 0, 1, 2 );
     tabBox->addTab( tab, QString::fromLatin1("") );
 
     TabPage_3 = new QWidget( tabBox );
@@ -273,38 +219,49 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     tabBox->addTab( TabPage_3, QString::fromLatin1("") );
 
     tab_2 = new QWidget( tabBox );
-    tabLayout_2 = new QVBoxLayout( tab_2 );
+//    tabLayout_2 = new QVBoxLayout( tab_2 );
+    tabLayout_2 = new QGridLayout( tab_2 );
 	 tab_2->setLayout(tabLayout_2);
 
-    APDRepolLayout = new QHBoxLayout; /*( 0, 0, 6, "APDRepolLayout"); */
+//    APDRepolLayout = new QHBoxLayout;
 
     APDRepolLabel = new QLabel( "APDRepolLabel", tab_2 );
-    APDRepolLabel->setAlignment( Qt::AlignCenter );
-    APDRepolLayout->addWidget( APDRepolLabel );
+//    APDRepolLabel->setAlignment( Qt::AlignCenter );
+//    APDRepolLayout->addWidget( APDRepolLabel );
+    tabLayout_2->addWidget( APDRepolLabel, 0, 1, 1, 2);
 
     APDRepolEdit = new QLineEdit( "APDRepolEdit", tab_2 );
-    APDRepolLayout->addWidget( APDRepolEdit );
-    tabLayout_2->addLayout( APDRepolLayout );
+    APDRepolEdit->setAlignment( Qt::AlignCenter );
+    tabLayout_2->addWidget( APDRepolEdit, 0, 3, 1, 1);
+ //   APDRepolLayout->addWidget( APDRepolEdit );
+ //   tabLayout_2->addLayout( APDRepolLayout );
 
-    minAPDLayout = new QHBoxLayout; /*( 0, 0, 6, "minAPDLayout"); */
+ //   minAPDLayout = new QHBoxLayout; /*( 0, 0, 6, "minAPDLayout"); */
 
     minAPDLabel = new QLabel( "minAPDLabel", tab_2 );
-    minAPDLabel->setAlignment( Qt::AlignCenter );
-    minAPDLayout->addWidget( minAPDLabel );
+ //   minAPDLabel->setAlignment( Qt::AlignCenter );
+    tabLayout_2->addWidget( minAPDLabel, 1, 1, 1, 2);
+ //   minAPDLayout->addWidget( minAPDLabel );
 
     minAPDEdit = new QLineEdit( "minAPDEdit", tab_2 );
-    minAPDLayout->addWidget( minAPDEdit );
-    tabLayout_2->addLayout( minAPDLayout );
+    minAPDEdit->setAlignment( Qt::AlignCenter );
+    tabLayout_2->addWidget( minAPDEdit, 1, 3, 1, 1);
+ //   minAPDLayout->addWidget( minAPDEdit );
+ //   tabLayout_2->addLayout( minAPDLayout );
 
-    APDRepolLayout_2 = new QHBoxLayout; /*( 0, 0, 6, "APDRepolLayout_2"); */
+//    APDRepolLayout_2 = new QHBoxLayout; /*( 0, 0, 6, "APDRepolLayout_2"); */
 
     stimWindowLabel = new QLabel( "stimWindowLabel", tab_2 );
-    stimWindowLabel->setAlignment( Qt::AlignCenter );
-    APDRepolLayout_2->addWidget( stimWindowLabel );
+//    stimWindowLabel->setAlignment( Qt::AlignCenter );
+    tabLayout_2->addWidget( stimWindowLabel, 2, 1, 1, 2);
+//    APDRepolLayout_2->addWidget( stimWindowLabel );
 
     stimWindowEdit = new QLineEdit( "stimWindowEdit", tab_2 );
-    APDRepolLayout_2->addWidget( stimWindowEdit );
-    tabLayout_2->addLayout( APDRepolLayout_2 );
+    stimWindowEdit->setAlignment( Qt::AlignCenter );
+    tabLayout_2->addWidget( stimWindowEdit, 2, 3, 1, 1);
+//    APDRepolLayout_2->addWidget( stimWindowEdit );
+//    tabLayout_2->addLayout( APDRepolLayout_2 );
+
     tabBox->addTab( tab_2, QString::fromLatin1("") );
     IScale_DynClampUILayout->addWidget( tabBox );
 
@@ -320,9 +277,7 @@ std::cout<<"IScale_DynClampUI constructor returned"<<std::endl;
 /*
  *  Destroys the object and frees any allocated resources
  */
-IScale_DynClampUI::~IScale_DynClampUI() {
-    // no need to delete child widgets, Qt does it all for us
-}
+IScale_DynClampUI::~IScale_DynClampUI() { } // no need to delete child widgets, Qt does it all for us
 
 /*
  *  Sets the strings of the subwidgets using the current
@@ -359,8 +314,8 @@ void IScale_DynClampUI::languageChange() {
     addStepButton->setText( tr( "Add Step" ) );
     clearProtocolButton->setText( tr( "Clear Protocol" ) );
     tabBox->setTabText( tabBox->indexOf(TabPage_3), tr( "P. Edit" ) );
-    APDRepolLabel->setText( tr( "APD Repolarization %" ) );
-    minAPDLabel->setText( tr( "Minimum APD (ms)" ) );
+    APDRepolLabel->setText( tr( "APD Repol (%)" ) );
+    minAPDLabel->setText( tr( "Min APD (ms)" ) );
     stimWindowLabel->setText( tr( "Stim Window (ms)" ) );
     tabBox->setTabText( tabBox->indexOf(tab_2), tr( "APD" ) );
 }

@@ -91,7 +91,7 @@ static Workspace::variable_t vars[] = {
 // Number of variables in vars
 static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
-IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), RT::Thread( 0 ), Workspace::Instance( "IScale DynClamp", vars, num_vars ) {
+IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), RT::Thread( 0 ), Workspace::Instance( "Current-scaling Dynamic Clamp", vars, num_vars ) {
 
     // Build Module GUI
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
@@ -501,8 +501,8 @@ void IScale_DynClamp::Module::createGUI( void ) {
 std::cout<<"createGUI called"<<std::endl;
 
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
-    setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
-	 setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
+    subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
+	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 

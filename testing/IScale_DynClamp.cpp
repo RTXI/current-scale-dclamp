@@ -503,6 +503,7 @@ std::cout<<"createGUI called"<<std::endl;
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
     subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
 	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
+	 subWindow->setMinimumSize(335,400);
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 

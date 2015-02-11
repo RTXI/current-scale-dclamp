@@ -282,7 +282,7 @@ void IScale_DynClampUI::languageChange() {
     saveProtocolButton->setText( tr( "Save Protocol" ) );
     addStepButton->setText( tr( "Add Step" ) );
     clearProtocolButton->setText( tr( "Clear Protocol" ) );
-    tabBox->setTabText( tabBox->indexOf(TabPage_3), tr( "P. Edit" ) );
+    tabBox->setTabText( tabBox->indexOf(TabPage_3), tr( "P. Editor" ) );
     APDRepolLabel->setText( tr( "APD Repol (%)" ) );
     minAPDLabel->setText( tr( "Min APD (ms)" ) );
     stimWindowLabel->setText( tr( "Stim Window (ms)" ) );

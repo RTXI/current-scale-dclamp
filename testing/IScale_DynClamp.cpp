@@ -573,8 +573,7 @@ std::cout<<"createGUI called"<<std::endl;
     setData( Workspace::STATE, 4, &targetCurrent );
     setData( Workspace::STATE, 5, &scaledCurrent );
 
-//    resize( minimumSize() ); // Set window to minimum size
-	show();
+	 show();
 std::cout<<"createGUI returned"<<std::endl;
 } // End createGUI()
 

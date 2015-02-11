@@ -61,6 +61,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
+
     case ProtocolStep::SCALE:
         BCLEdit->setEnabled(true);
         numBeatsEdit->setEnabled(true);
@@ -69,6 +70,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
+
     case ProtocolStep::WAIT:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -77,6 +79,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(true);
         modelComboBox->setEnabled(false);
         break;
+
     case ProtocolStep::STARTMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -85,6 +88,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
+
     case ProtocolStep::STOPMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -93,6 +97,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
+
     case ProtocolStep::RESETMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -101,6 +106,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
+
     case ProtocolStep::CHANGEMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -113,6 +119,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 }
 
 void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and checks if they are valid entries
+//std::cout<<"AddStepInputDialog::addStepClicked called"<<std::endl;
     bool check = true;
     BCL = BCLEdit->text();
     stepType = QString::number( stepComboBox->currentIndex() );
@@ -121,7 +128,15 @@ void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and ch
     scalingPercentage = scalingPercentageEdit->text();
     waitTime = waitTimeEdit->text();
     model = QString::number( modelComboBox->currentIndex() );
-    
+
+//std::cout<<"BCL: "<<BCL.toStdString()<<std::endl;
+//std::cout<<"stepType: "<<stepType.toStdString()<<std::endl;
+//std::cout<<"numBeats: "<<numBeats.toStdString()<<std::endl;
+//std::cout<<"currentToScale: "<<currentToScale.toStdString()<<std::endl;
+//std::cout<<"scalingPercentage: "<<scalingPercentage.toStdString()<<std::endl;
+//std::cout<<"waitTime: "<<waitTime.toStdString()<<std::endl;
+//std::cout<<"model: "<<model.toStdString()<<std::endl;
+ 
     switch( stepComboBox->currentIndex() ) {
     case 0: // Pace
         if(BCL == "" || numBeats == "")
@@ -148,26 +163,36 @@ void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and ch
         emit checked();
     else
         QMessageBox::warning( this, "Error", "Invalid Input, please correct." );
+//std::cout<<"AddStepInputDialog::addStepClicked returned"<<std::endl;
 }
 
 vector<QString> AddStepInputDialog::gatherInput( void ) {
-std::cout<<"gatherInput called"<<std::endl;
+//std::cout<<"gatherInput called"<<std::endl;
     std::vector<QString> inputAnswers;
     
     if( exec() == QDialog::Rejected ) {
-std::cout<<"gatherInput returned rejected"<<std::endl;
+//std::cout<<"gatherInput returned rejected"<<std::endl;
         return inputAnswers; // Return an empty vector if step window is closed
 	 }
     else { // QDialog is accepted when addStep button is pressed and inputs are considered valid
-        inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
+//        inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
+        inputAnswers.push_back( stepType );
         inputAnswers.push_back( BCL );
         inputAnswers.push_back( numBeats );
         inputAnswers.push_back( currentToScale );
         inputAnswers.push_back( scalingPercentage );
         inputAnswers.push_back( waitTime );
-        inputAnswers.push_back( QString::number( modelComboBox->currentIndex() ) );
-        return inputAnswers;
+        inputAnswers.push_back( model );
+//        inputAnswers.push_back( QString::number( modelComboBox->currentIndex() ) );
+
+/*std::cout<<"Printing inputAnswers"<<std::endl;
+for (std::vector<QString>::iterator it = inputAnswers.begin(); it != inputAnswers.end(); it++) {
+	std::cout<<it->toStdString()<<std::endl;
+}
+
 std::cout<<"gatherInput returned accepted"<<std::endl;
+*/
+        return inputAnswers;
     }
 }
 
@@ -184,11 +209,9 @@ int ProtocolStep::stepLength( double period ) {
 
 /* Protocol Class */
 
-Protocol::Protocol( void ) {
-}
+Protocol::Protocol( void ) { }
 
-Protocol::~Protocol( void ) {
-}
+Protocol::~Protocol( void ) { }
 
 // Opens input dialogs to gather step information, then adds to protocol container *at the end*
 // Returns true if a step was added
@@ -213,13 +236,14 @@ std::cout<<"Flag: "<<stupidflag<<std::endl; stupidflag++;
                                                                        (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
                                                                        ) ) );
 std::cout<<"Flag: "<<"pushy"<<std::endl; stupidflag++;
+std::cout<<"addStep returned with parent as arg"<<std::endl;
         return true;
     }
     else {
 std::cout<<"Flag: "<<"nada"<<std::endl; stupidflag++;
+std::cout<<"addStep returned with parent as arg"<<std::endl;
         return false; // No step added
 	 }
-std::cout<<"addStep returned with parent as arg"<<std::endl;
 }
 
 // Opens input dialogs to gather step information, then adds to protocol container at *a specific point*

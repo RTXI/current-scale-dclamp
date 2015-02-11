@@ -31,68 +31,56 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
     AddStepDialogLayout->addWidget( stepComboBox );
 
     layout1 = new QHBoxLayout; 
-
     BCLLabel = new QLabel( "Basic Cycle Length (ms)", this );
     BCLLabel->setAlignment( Qt::AlignCenter );
     layout1->addWidget( BCLLabel );
-
-    BCLEdit = new QLineEdit( this );
+    BCLEdit = new QLineEdit( "", this );
 	 BCLEdit->setValidator( new QDoubleValidator(0, 1000, 2, BCLEdit) );
     layout1->addWidget( BCLEdit );
     AddStepDialogLayout->addLayout( layout1 );
 
     layout2 = new QHBoxLayout; //( 0, 0, 6, "layout2"); 
-
     numBeatsLabel = new QLabel( "Number of Beats", this );
     numBeatsLabel->setAlignment( Qt::AlignCenter );
     layout2->addWidget( numBeatsLabel );
-
-    numBeatsEdit = new QLineEdit( this );
+    numBeatsEdit = new QLineEdit( "", this );
 	 numBeatsEdit->setValidator( new QIntValidator(0, 10000, numBeatsEdit) );
     layout2->addWidget( numBeatsEdit );
     AddStepDialogLayout->addLayout( layout2 );
 
     layout3 = new QHBoxLayout; //( 0, 0, 6, "layout3"); 
-
     currentToScaleLabel = new QLabel( "Current to Scale", this );
     currentToScaleLabel->setAlignment( Qt::AlignCenter );
     layout3->addWidget( currentToScaleLabel );
-
-    currentToScaleEdit = new QLineEdit( this );
+    currentToScaleEdit = new QLineEdit( "", this );
 	 QRegExp currentToScaleRegExp("(INa|IKr|ICaL|IK1|IKs|ICaT|INaK|INCX)");
 	 currentToScaleEdit->setValidator( new QRegExpValidator(currentToScaleRegExp, currentToScaleEdit) );
     currentToScaleEdit->setToolTip( tr( "Choices: INa, IKr, IKs, ICaL, IK1, ICaT, INaK, or INCX" ) );
     layout3->addWidget( currentToScaleEdit );
-    AddStepDialogLayout->addLayout( layout3 );
+	 AddStepDialogLayout->addLayout( layout3 );
 
     layout4 = new QHBoxLayout; //( 0, 0, 6, "layout4"); 
-
     scalingPercentageLabel = new QLabel( "Scaling Percentage", this );
     scalingPercentageLabel->setAlignment( Qt::AlignCenter );
     layout4->addWidget( scalingPercentageLabel );
-
-    scalingPercentageEdit = new QLineEdit( this );
+    scalingPercentageEdit = new QLineEdit( "", this );
 	 scalingPercentageEdit->setValidator( new QDoubleValidator(0, 10000, 2, scalingPercentageEdit) );
     layout4->addWidget( scalingPercentageEdit );
     AddStepDialogLayout->addLayout( layout4 );
 
     layout5 = new QHBoxLayout; //( 0, 0, 6, "layout5"); 
-
     waitTimeLabel = new QLabel( "Wait Time (ms)", this );
     waitTimeLabel->setAlignment( Qt::AlignCenter );
     layout5->addWidget( waitTimeLabel );
-
-    waitTimeEdit = new QLineEdit( this );
+    waitTimeEdit = new QLineEdit( "", this );
 	 waitTimeEdit->setValidator( new QDoubleValidator(0, 10000, 2, waitTimeEdit) );
     layout5->addWidget( waitTimeEdit );
     AddStepDialogLayout->addLayout( layout5 );
 
     layout6 = new QHBoxLayout; //( 0, 0, 6, "layout6"); 
-
     modelLabel = new QLabel( "Model", this );
     modelLabel->setAlignment( Qt::AlignCenter );
     layout6->addWidget( modelLabel );
-
     modelComboBox = new QComboBox( this );//( FALSE, this, "modelComboBox" );
     modelComboBox->clear();
     modelComboBox->insertItem( 0, tr( "Livzhitz Rudy 2009" ) );
@@ -134,7 +122,6 @@ AddStepDialog::~AddStepDialog() { } // no need to delete child widgets, Qt does 
  *  language.
  */
 void AddStepDialog::languageChange() {
-
     setWindowTitle( tr( "Add Step to Protocol" ) );
     stepComboBox->clear();
     stepComboBox->insertItem( 0, tr( "Static Pacing" ) );

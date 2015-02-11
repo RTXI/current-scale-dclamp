@@ -16,7 +16,7 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
 
     setWindowTitle( "Add Step to Protocol" );
-    AddStepDialogLayout = new QVBoxLayout( this );/*, 11, 6, "AddStepDialogLayout"); */
+    AddStepDialogLayout = new QVBoxLayout( this );
 
     stepComboBox = new QComboBox( this );
     stepComboBox->clear();
@@ -39,7 +39,7 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
     layout1->addWidget( BCLEdit );
     AddStepDialogLayout->addLayout( layout1 );
 
-    layout2 = new QHBoxLayout; //( 0, 0, 6, "layout2"); 
+    layout2 = new QHBoxLayout;
     numBeatsLabel = new QLabel( "Number of Beats", this );
     numBeatsLabel->setAlignment( Qt::AlignCenter );
     layout2->addWidget( numBeatsLabel );
@@ -48,7 +48,7 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
     layout2->addWidget( numBeatsEdit );
     AddStepDialogLayout->addLayout( layout2 );
 
-    layout3 = new QHBoxLayout; //( 0, 0, 6, "layout3"); 
+    layout3 = new QHBoxLayout; 
     currentToScaleLabel = new QLabel( "Current to Scale", this );
     currentToScaleLabel->setAlignment( Qt::AlignCenter );
     layout3->addWidget( currentToScaleLabel );
@@ -59,16 +59,16 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
     layout3->addWidget( currentToScaleEdit );
 	 AddStepDialogLayout->addLayout( layout3 );
 
-    layout4 = new QHBoxLayout; //( 0, 0, 6, "layout4"); 
+    layout4 = new QHBoxLayout;  
     scalingPercentageLabel = new QLabel( "Scaling Percentage", this );
     scalingPercentageLabel->setAlignment( Qt::AlignCenter );
     layout4->addWidget( scalingPercentageLabel );
     scalingPercentageEdit = new QLineEdit( "", this );
-	 scalingPercentageEdit->setValidator( new QDoubleValidator(0, 10000, 2, scalingPercentageEdit) );
+	 scalingPercentageEdit->setValidator( new QDoubleValidator(-1000, 1000, 2, scalingPercentageEdit) );
     layout4->addWidget( scalingPercentageEdit );
     AddStepDialogLayout->addLayout( layout4 );
 
-    layout5 = new QHBoxLayout; //( 0, 0, 6, "layout5"); 
+    layout5 = new QHBoxLayout;  
     waitTimeLabel = new QLabel( "Wait Time (ms)", this );
     waitTimeLabel->setAlignment( Qt::AlignCenter );
     layout5->addWidget( waitTimeLabel );
@@ -77,11 +77,11 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
     layout5->addWidget( waitTimeEdit );
     AddStepDialogLayout->addLayout( layout5 );
 
-    layout6 = new QHBoxLayout; //( 0, 0, 6, "layout6"); 
+    layout6 = new QHBoxLayout; 
     modelLabel = new QLabel( "Model", this );
     modelLabel->setAlignment( Qt::AlignCenter );
     layout6->addWidget( modelLabel );
-    modelComboBox = new QComboBox( this );//( FALSE, this, "modelComboBox" );
+    modelComboBox = new QComboBox( this );
     modelComboBox->clear();
     modelComboBox->insertItem( 0, tr( "Livzhitz Rudy 2009" ) );
     modelComboBox->insertItem( 1, tr( "Faber Rudy 2000" ) );
@@ -108,7 +108,6 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
 //    exitButton = new QPushButton( "exitButton", buttonGroup );
 //    buttonGroupLayout->addWidget( exitButton );
 //    AddStepDialogLayout->addWidget( buttonGroup );
-//    languageChange();
 std::cout<<"AddStepDialog constructor returned"<<std::endl;
 }
 

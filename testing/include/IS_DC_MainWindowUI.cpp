@@ -77,6 +77,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 
     TabPage = new QWidget( tabBox );
     TabPageLayout = new QGridLayout( TabPage );
+	 TabPageLayout->setColumnStretch( 0, 1);
+	 TabPageLayout->setColumnStretch( 1, 0);
 	 TabPage->setLayout(TabPageLayout);
 
     timeLabel = new QLabel( "timeLabel", TabPage );
@@ -110,6 +112,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 
     TabPage_2 = new QWidget( tabBox );
     TabPageLayout_2 = new QGridLayout( TabPage_2 );
+	 TabPageLayout_2->setColumnStretch( 0, 1);
+	 TabPageLayout_2->setColumnStretch( 1, 0);
 	 TabPage_2->setLayout(TabPageLayout_2);
 
     BCLLabel = new QLabel(  "BCLLabel", TabPage_2 );
@@ -146,6 +150,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 // Next tab
     tab = new QWidget( tabBox /*, "tab"*/ );
     tabLayout = new QGridLayout( tab );
+	 tabLayout->setColumnStretch( 0, 1);
+	 tabLayout->setColumnStretch( 1, 0);
 	 tab->setLayout(tabLayout);
 
     numTrialLabel = new QLabel( "numTrialLabel", tab );
@@ -212,6 +218,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 
     tab_2 = new QWidget( tabBox );
     tabLayout_2 = new QGridLayout( tab_2 );
+	 tabLayout_2->setColumnStretch( 0, 1);
+	 tabLayout_2->setColumnStretch( 1, 0);
 	 tab_2->setLayout(tabLayout_2);
 
     APDRepolLabel = new QLabel( "APDRepolLabel", tab_2 );

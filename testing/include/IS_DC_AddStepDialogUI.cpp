@@ -37,6 +37,7 @@ std::cout<<"AddStepDialog constructor called"<<std::endl;
     layout1->addWidget( BCLLabel );
 
     BCLEdit = new QLineEdit( this );
+	 BCLEdit->setValidator( new QDoubleValidator(0, 1000, 2, BCLEdit) );
     layout1->addWidget( BCLEdit );
     AddStepDialogLayout->addLayout( layout1 );
 

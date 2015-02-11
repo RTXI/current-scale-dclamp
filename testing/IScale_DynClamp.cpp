@@ -405,10 +405,13 @@ void IScale_DynClamp::Module::clearProtocol( void ) {
 }
 
 void IScale_DynClamp::Module::toggleThreshold( void ) {
+std::cout<<"toggleThreshold called"<<std::endl;
     thresholdOn = mainWindow->thresholdButton->isChecked();
     
     ToggleThresholdEvent event( this, thresholdOn );
+std::cout<<"before postEvent of ToggleThresholdEvent"<<std::endl;
     RT::System::getInstance()->postEvent( &event );
+std::cout<<"toggleThreshold returned"<<std::endl;
 }
 
 void IScale_DynClamp::Module::toggleProtocol( void ) {

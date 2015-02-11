@@ -38,7 +38,6 @@ class AddStepDialog : public QDialog {
 		QHBoxLayout* layout6;
 		QHBoxLayout* buttonGroupLayout;
 		QHBoxLayout* buttonGroupBoxLayout;
-
 };
 
 #endif // ADDSTEPDIALOG_H

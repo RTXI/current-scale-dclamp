@@ -255,7 +255,6 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     protocolEditorListBox->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     protocolEditorListBox->setHorizontalScrollBarPolicy( Qt::ScrollBarAsNeeded );
     IScale_DynClampUILayout->addWidget( protocolEditorListBox );
-//    languageChange();
 std::cout<<"IScale_DynClampUI constructor returned"<<std::endl;
 }
 

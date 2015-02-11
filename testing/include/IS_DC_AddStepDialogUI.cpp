@@ -127,9 +127,7 @@ std::cout<<"AddStepDialog constructor returned"<<std::endl;
 /*
  *  Destroys the object and frees any allocated resources
  */
-AddStepDialog::~AddStepDialog() {
-    // no need to delete child widgets, Qt does it all for us
-}
+AddStepDialog::~AddStepDialog() { } // no need to delete child widgets, Qt does it all for us
 
 /*
  *  Sets the strings of the subwidgets using the current

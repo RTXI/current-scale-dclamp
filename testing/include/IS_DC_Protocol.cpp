@@ -36,10 +36,10 @@ using namespace std;
 
 /* AddStepInputDialog Class */
 AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent ) /*, 0, TRUE )*/ {
-    QValidator* validator = new QIntValidator(this);
-    BCLEdit->setValidator(validator);
-    numBeatsEdit->setValidator(validator);
-    scalingPercentageEdit->setValidator(validator);
+//    QValidator* validator = new QIntValidator(this);
+//    BCLEdit->setValidator(validator);
+//    numBeatsEdit->setValidator(validator);
+//    scalingPercentageEdit->setValidator(validator);
     
     QObject::connect( addStepButton,SIGNAL(clicked(void)),this,SLOT(addStepClicked(void)) );
     QObject::connect( exitButton, SIGNAL(clicked(void)), this, SLOT( reject() ) );
@@ -49,8 +49,7 @@ AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent
     stepComboBoxUpdate(0);
 }
 
-AddStepInputDialog::~AddStepInputDialog( void ) { 
-}
+AddStepInputDialog::~AddStepInputDialog( void ) { }
 
 void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     switch( (ProtocolStep::stepType_t)selection ) {
@@ -152,10 +151,13 @@ void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and ch
 }
 
 vector<QString> AddStepInputDialog::gatherInput( void ) {
+std::cout<<"gatherInput called"<<std::endl;
     std::vector<QString> inputAnswers;
     
-    if( exec() == QDialog::Rejected )
+    if( exec() == QDialog::Rejected ) {
+std::cout<<"gatherInput returned rejected"<<std::endl;
         return inputAnswers; // Return an empty vector if step window is closed
+	 }
     else { // QDialog is accepted when addStep button is pressed and inputs are considered valid
         inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
         inputAnswers.push_back( BCL );
@@ -165,6 +167,7 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
         inputAnswers.push_back( waitTime );
         inputAnswers.push_back( QString::number( modelComboBox->currentIndex() ) );
         return inputAnswers;
+std::cout<<"gatherInput returned accepted"<<std::endl;
     }
 }
 
@@ -190,9 +193,13 @@ Protocol::~Protocol( void ) {
 // Opens input dialogs to gather step information, then adds to protocol container *at the end*
 // Returns true if a step was added
 bool Protocol::addStep( QWidget *parent ) {
+std::cout<<"addStep called with parent as arg"<<std::endl;
+int stupidflag = 1;
+std::cout<<"Flag: "<<stupidflag<<std::endl; stupidflag++;
     AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
     vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
-    delete dlg;
+//    delete dlg;
+std::cout<<"Flag: "<<stupidflag<<std::endl; stupidflag++;
     
     if( inputAnswers.size() > 0 ) {
         // Add a new step to protocol container
@@ -205,15 +212,20 @@ bool Protocol::addStep( QWidget *parent ) {
                                                                        inputAnswers[5].toInt(), // waitTime
                                                                        (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
                                                                        ) ) );
+std::cout<<"Flag: "<<"pushy"<<std::endl; stupidflag++;
         return true;
     }
-    else
+    else {
+std::cout<<"Flag: "<<"nada"<<std::endl; stupidflag++;
         return false; // No step added
+	 }
+std::cout<<"addStep returned with parent as arg"<<std::endl;
 }
 
 // Opens input dialogs to gather step information, then adds to protocol container at *a specific point*
 // Returns true if a step was added
 bool Protocol::addStep( QWidget *parent, int idx ) {
+std::cout<<"addStep called with parent and index as args"<<std::endl;
     AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
     vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
     delete dlg;
@@ -235,6 +247,7 @@ bool Protocol::addStep( QWidget *parent, int idx ) {
     }
     else
         return false; // No step added
+std::cout<<"addStep returned with parent and index as args"<<std::endl;
 }
 
     // Deletes a step

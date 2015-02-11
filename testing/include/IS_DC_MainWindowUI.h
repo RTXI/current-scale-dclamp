@@ -83,9 +83,6 @@ class IScale_DynClampUI : public QWidget {
 		QSpacerItem* spacer1;
 		QSpacerItem* spacer2;
 		QGridLayout* tabLayout_2;
-
-	protected slots:
-		virtual void languageChange();
 };
 
 #endif // ISCALE_DYNCLAMPUI_H

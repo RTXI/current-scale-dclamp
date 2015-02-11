@@ -116,31 +116,3 @@ std::cout<<"AddStepDialog constructor returned"<<std::endl;
  *  Destroys the object and frees any allocated resources
  */
 AddStepDialog::~AddStepDialog() { } // no need to delete child widgets, Qt does it all for us
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void AddStepDialog::languageChange() {
-    setWindowTitle( tr( "Add Step to Protocol" ) );
-    stepComboBox->clear();
-    stepComboBox->insertItem( 0, tr( "Static Pacing" ) );
-    stepComboBox->insertItem( 1, tr( "Current Scaling" ) );
-    stepComboBox->insertItem( 2, tr( "Wait" ) );
-    stepComboBox->insertItem( 3, tr( "Model: Start" ) );
-    stepComboBox->insertItem( 4, tr( "Model: Stop" ) );
-    stepComboBox->insertItem( 5, tr( "Model: Reset" ) );
-    stepComboBox->insertItem( 6, tr( "Model: Change" ) );
-    BCLLabel->setText( tr( "Basic Cycle Length (ms)" ) );
-    numBeatsLabel->setText( tr( "Number of Beats" ) );
-    currentToScaleLabel->setText( tr( "Current to Scale" ) );
-    currentToScaleEdit->setToolTip( tr( "INa IKr IKs ICaL IK1 ICaT INaK INCX" ) );
-    scalingPercentageLabel->setText( tr( "Scaling Percentage" ) );
-    waitTimeLabel->setText( tr( "Wait Time (ms)" ) );
-    modelLabel->setText( tr( "Model" ) );
-    modelComboBox->clear();
-    modelComboBox->insertItem( 0, tr( "Livzhitz Rudy 2009" ) );
-    modelComboBox->insertItem( 1, tr( "Faber Rudy 2000" ) );
-    addStepButton->setText( tr( "Add Step" ) );
-    exitButton->setText( tr( "Exit" ) );
-}

@@ -39,8 +39,6 @@ class AddStepDialog : public QDialog {
 		QHBoxLayout* buttonGroupLayout;
 		QHBoxLayout* buttonGroupBoxLayout;
 
-	protected slots:
-		virtual void languageChange();
 };
 
 #endif // ADDSTEPDIALOG_H

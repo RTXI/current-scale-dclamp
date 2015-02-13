@@ -13,10 +13,12 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle( tr( "Current Scaling Dynamic Clamp" ) );
 	 
-    IScale_DynClampUILayout = new QVBoxLayout( parent );
+    IScale_DynClampUILayout = new QVBoxLayout( this );
+//    IScale_DynClampUILayout = new QVBoxLayout( parent );
 	 setLayout(IScale_DynClampUILayout);
 
-    protocolButtonGroup = new QButtonGroup( parent );
+//    protocolButtonGroup = new QButtonGroup( parent );
+    protocolButtonGroup = new QButtonGroup( this );
 //    protocolButtonGroup->setAlignment( Qt::AlignCenter );
 //    protocolButtonGroup->setColumnLayout(0, Qt::Vertical );
 //    protocolButtonGroup->layout()->setSpacing( 6 );
@@ -71,7 +73,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     protocolGroupLayout->addItem( spacer6b, 0, 0 );
     IScale_DynClampUILayout->addWidget( protocolGroup );
 
-    tabBox = new QTabWidget( parent );
+//    tabBox = new QTabWidget( parent );
+    tabBox = new QTabWidget( this );
 //    tabBox->setFocusPolicy( QTabWidget::NoFocus );
     tabBox->setTabPosition( QTabWidget::North );
     tabBox->setTabShape( QTabWidget::Rounded );
@@ -251,7 +254,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 tabBox->setTabText( tabBox->indexOf(tab_2), "APD" );
     IScale_DynClampUILayout->addWidget( tabBox );
 
-    protocolEditorListBox = new QListWidget( parent );
+//    protocolEditorListBox = new QListWidget( parent );
+    protocolEditorListBox = new QListWidget( this );
     protocolEditorListBox->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     protocolEditorListBox->setHorizontalScrollBarPolicy( Qt::ScrollBarAsNeeded );
     IScale_DynClampUILayout->addWidget( protocolEditorListBox );

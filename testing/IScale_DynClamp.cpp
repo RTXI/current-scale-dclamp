@@ -408,9 +408,9 @@ void IScale_DynClamp::Module::toggleThreshold( void ) {
 std::cout<<"toggleThreshold called"<<std::endl;
     thresholdOn = mainWindow->thresholdButton->isChecked();
     
-    ToggleThresholdEvent event( this, thresholdOn );
-std::cout<<"before postEvent of ToggleThresholdEvent"<<std::endl;
-    RT::System::getInstance()->postEvent( &event );
+    ToggleThresholdEvent *event = new ToggleThresholdEvent( this, thresholdOn );
+std::cout<<"before postEvent called for type: "<<std::endl;//event->getName()<<std::endl;
+    RT::System::getInstance()->postEvent( event );
 std::cout<<"toggleThreshold returned"<<std::endl;
 }
 
@@ -510,10 +510,12 @@ std::cout<<"createGUI called"<<std::endl;
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 
+//    mainWindow = new IScale_DynClampUI(this);
     mainWindow = new IScale_DynClampUI(subWindow);
     // Construct Main Layout - vertical layout
-    QBoxLayout *layout = new QVBoxLayout(subWindow);
-	 setLayout(layout);
+//    QBoxLayout *layout = new QVBoxLayout(subWindow);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+//	 setLayout(layout);
 	 layout->addWidget(mainWindow);
 
     // Model Combo Box
@@ -522,7 +524,7 @@ std::cout<<"createGUI called"<<std::endl;
 
     // Set GUI refresh rate
     QTimer *timer = new QTimer(this);
-    timer->start(1000);
+    timer->start(500);
 
     // Set validators
     mainWindow->APDRepolEdit->setValidator( new QIntValidator(mainWindow->APDRepolEdit) );
@@ -794,6 +796,7 @@ int IScale_DynClamp::Module::ModifyEvent::callback( void ) {
 
 // Event handling
 void IScale_DynClamp::Module::receiveEvent( const ::Event::Object *event ) {
+std::cout<<"receiveEvent called for type: "<<event->getName()<<std::endl;
     if( event->getName() == Event::RT_POSTPERIOD_EVENT ) {
         period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
         BCLInt = BCL / period;
@@ -807,6 +810,7 @@ void IScale_DynClamp::Module::receiveEvent( const ::Event::Object *event ) {
 }
 
 void IScale_DynClamp::Module::receiveEventRT( const ::Event::Object *event ) {
+std::cout<<"receiveEventRT called for type: "<<event->getName()<<std::endl;
     if( event->getName() == Event::RT_POSTPERIOD_EVENT ) {
         period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
         BCLInt = BCL / period;

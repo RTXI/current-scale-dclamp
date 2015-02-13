@@ -408,9 +408,9 @@ void IScale_DynClamp::Module::toggleThreshold( void ) {
 std::cout<<"toggleThreshold called"<<std::endl;
     thresholdOn = mainWindow->thresholdButton->isChecked();
     
-    ToggleThresholdEvent *event = new ToggleThresholdEvent( this, thresholdOn );
+    ToggleThresholdEvent event( this, thresholdOn );
 std::cout<<"before postEvent called for type: "<<std::endl;//event->getName()<<std::endl;
-    RT::System::getInstance()->postEvent( event );
+    RT::System::getInstance()->postEvent( &event );
 std::cout<<"toggleThreshold returned"<<std::endl;
 }
 

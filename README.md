@@ -3,7 +3,7 @@
 **Requirements:** None
 **Limitations:** None
 
-![Module GUI](current-scale-dclamp)
+![Module GUI](current-scale-dclamp.png)
 
 <!--start-->
 This module is used to inject artificial conductances into a guinea pig cardiomyocytes through dynamic current clamp. An embedded guinea pig ventricular cardiomyocyte model is voltage clamped to the membrane potential of a patch clamped cardiomyocyte. Using one of the calculated currents of the model, an artificial current is scaled and injected into the patch clamped cell. This allows for artificial block or increase of a particular current through dynamic clamp. Currently, the Livshitz Rudy 2009 and Faber Rudy 2000 guinea pig models have been implemented in the module.

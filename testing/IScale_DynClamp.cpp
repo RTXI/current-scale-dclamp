@@ -410,7 +410,7 @@ std::cout<<"toggleThreshold called"<<std::endl;
     
     ToggleThresholdEvent event( this, thresholdOn );
 std::cout<<"before postEvent called for type: "<<std::endl;//event->getName()<<std::endl;
-    RT::System::getInstance()->postEvent( &event );
+    RT::System::getInstance()->postEvent( &event, false );
 std::cout<<"toggleThreshold returned"<<std::endl;
 }
 

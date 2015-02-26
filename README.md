@@ -1,7 +1,7 @@
 ###Cardiac Conductance-Scaling Dynamic Clamp
 
-**Requirements:** None
-**Limitations:** None
+**Requirements:** None  
+**Limitations:** None  
 
 ![Module GUI](current-scale-dclamp.png)
 

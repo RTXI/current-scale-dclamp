@@ -51,8 +51,8 @@ namespace IScale_DynClamp {
         Module( void );
         ~Module(void);        
         void execute( void );
-        void receiveEvent( const ::Event::Object * );
-        void receiveEventRT( const ::Event::Object * );
+//        void receiveEvent( const ::Event::Object * );
+//        void receiveEventRT( const ::Event::Object * );
                          
     public slots:
         void modify( void ); // Updates parameters
@@ -179,7 +179,7 @@ namespace IScale_DynClamp {
             bool recordDataValue;
 
         }; // class ModifyEvent
-
+/*
         class ToggleProtocolEvent : public RT::Event {
         public:
             ToggleProtocolEvent( Module *, bool );
@@ -215,7 +215,7 @@ namespace IScale_DynClamp {
             Module *module;
             bool on;            
         }; // class ToggleThresholdEvent
-
+*/
     protected:
         void doLoad( const Settings::Object::State & );
         void doSave( Settings::Object::State & ) const;

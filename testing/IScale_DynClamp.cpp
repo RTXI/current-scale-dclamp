@@ -410,7 +410,7 @@ std::cout<<"toggleThreshold called"<<std::endl;
     
     ToggleThresholdEvent event( this, thresholdOn );
 std::cout<<"before postEvent called for type: "<<std::endl;//event->getName()<<std::endl;
-    RT::System::getInstance()->postEvent( &event, false );
+    RT::System::getInstance()->postEvent( &event );
 std::cout<<"toggleThreshold returned"<<std::endl;
 }
 
@@ -693,7 +693,7 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
         }        
     }
 }
-
+/*
 // RT::Events - Called from GUI thread, handled by RT thread
 IScale_DynClamp::Module::ToggleProtocolEvent::ToggleProtocolEvent( Module *m, bool o )
     : module( m ), on( o ) {
@@ -711,7 +711,7 @@ int IScale_DynClamp::Module::ToggleProtocolEvent::callback( void ) {
         module->stepTracker = -1; // Used to highlight the current step in list box, -1 to force first step to be highlighted
         module->protocolMode = STEPINIT; 
         module->executeMode = PROTOCOL;
-        module->setActive( true );
+//        module->setActive( true );
     }
     else { // Stop protocol, only called when protocol button is unclicked in the middle of a run
         if( module->recording ) { // Stop data recorder if recording
@@ -719,7 +719,7 @@ int IScale_DynClamp::Module::ToggleProtocolEvent::callback( void ) {
             ::Event::Manager::getInstance()->postEventRT(&event);
         }        
         module->executeMode = IDLE;
-        module->setActive( false );
+//        module->setActive( false );
     }
     
     return 0;
@@ -770,7 +770,7 @@ int IScale_DynClamp::Module::ToggleThresholdEvent::callback( void ) {
     
     return 0;
 }
- 
+
 IScale_DynClamp::Module::ModifyEvent::ModifyEvent( Module *m, int APDr, int mAPD, int sw,
                                                    int nt, int it, int b, double sm, double sl, double c, double ljp, bool rd )
     : module( m ), APDRepolValue( APDr ), minAPDValue( mAPD ), stimWindowValue( sw ),
@@ -793,7 +793,9 @@ int IScale_DynClamp::Module::ModifyEvent::callback( void ) {
     
     return 0;
 }
+*/
 
+/*
 // Event handling
 void IScale_DynClamp::Module::receiveEvent( const ::Event::Object *event ) {
 std::cout<<"receiveEvent called for type: "<<event->getName()<<std::endl;
@@ -822,3 +824,4 @@ std::cout<<"receiveEventRT called for type: "<<event->getName()<<std::endl;
     if( event->getName() == Event::STOP_RECORDING_EVENT )
         recording = false;
 }
+*/

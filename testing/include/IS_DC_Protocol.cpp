@@ -360,7 +360,7 @@ QString Protocol::loadProtocol( QWidget *parent ) {
                                                     "Open a protocol",
                                                     "~/",
                                                     "XML Files (*.xml)");
-    QDomDocument doc( "protocol" );
+    QDomDocument doc( "IS_DC_Protocol" );
     QFile file( fileName );
 
     if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
@@ -427,7 +427,7 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
                              | QMessageBox::Escape) != QMessageBox::Yes )
         return ; // Return if answer is no
 
-    QDomDocument doc( "protocol" );
+    QDomDocument doc( "IS_DC_Protocol" );
     QFile file( fileName );
 
     if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user

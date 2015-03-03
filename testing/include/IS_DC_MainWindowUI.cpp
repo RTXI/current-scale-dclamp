@@ -41,32 +41,30 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     protocolGroupLayout->addItem( spacer2b, 1, 4 );
 
     staticPacingButton = new QPushButton( "Pace", protocolGroup );
-	 protocolButtonGroup->addButton(staticPacingButton);
-    staticPacingButton->setCheckable( TRUE );
-
+//	 protocolButtonGroup->addButton(staticPacingButton);
+    staticPacingButton->setCheckable( true );
     protocolGroupLayout->addWidget( staticPacingButton, 0, 3 );
 
     resetButton = new QPushButton( "Reset", protocolGroup );
-	 protocolButtonGroup->addButton(resetButton);
-    resetButton->setCheckable( FALSE );
-
+//	 protocolButtonGroup->addButton(resetButton);
+    resetButton->setCheckable( false );
     protocolGroupLayout->addWidget( resetButton, 1, 3 );
+
     spacer3b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     protocolGroupLayout->addItem( spacer3b, 0, 2 );
     spacer4b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     protocolGroupLayout->addItem( spacer4b, 1, 2 );
 
     startProtocolButton = new QPushButton( "Protocol", protocolGroup );
-	 protocolButtonGroup->addButton(startProtocolButton);
-    startProtocolButton->setCheckable( TRUE );
-
+//	 protocolButtonGroup->addButton(startProtocolButton);
+    startProtocolButton->setCheckable( true );
     protocolGroupLayout->addWidget( startProtocolButton, 1, 1 );
 
     thresholdButton = new QPushButton( "Threshold", protocolGroup );
-	 protocolButtonGroup->addButton(thresholdButton);
-    thresholdButton->setCheckable( TRUE );
-
+//	 protocolButtonGroup->addButton(thresholdButton);
+    thresholdButton->setCheckable( true );
     protocolGroupLayout->addWidget( thresholdButton, 0, 1 );
+
     spacer5b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     protocolGroupLayout->addItem( spacer5b, 1, 0 );
     spacer6b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -89,28 +87,28 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     TabPageLayout->addWidget( timeLabel, 0, 0 );
     timeEdit = new QLineEdit( "", TabPage );
     timeEdit->setAlignment( Qt::AlignHCenter );
-    timeEdit->setReadOnly( TRUE );
+    timeEdit->setReadOnly( true );
     TabPageLayout->addWidget( timeEdit, 0, 1 );
 
     beatNumLabel = new QLabel( "Beat Number", TabPage );
     TabPageLayout->addWidget( beatNumLabel, 1, 0 );
     beatNumEdit = new QLineEdit( "", TabPage );
     beatNumEdit->setAlignment( Qt::AlignHCenter );
-    beatNumEdit->setReadOnly( TRUE );
+    beatNumEdit->setReadOnly( true );
     TabPageLayout->addWidget( beatNumEdit, 1, 1 );
 
     voltageLabel = new QLabel( "Voltage (mV)", TabPage );
     TabPageLayout->addWidget( voltageLabel, 2, 0 );
     voltageEdit = new QLineEdit( "", TabPage );
     voltageEdit->setAlignment( Qt::AlignHCenter );
-    voltageEdit->setReadOnly( TRUE );
+    voltageEdit->setReadOnly( true );
     TabPageLayout->addWidget( voltageEdit, 2, 1 );
 
     APDLabel = new QLabel( "APD (ms)", TabPage );
     TabPageLayout->addWidget( APDLabel, 3, 0 );
     APDEdit = new QLineEdit( "", TabPage );
     APDEdit->setAlignment( Qt::AlignHCenter );
-    APDEdit->setReadOnly( TRUE );
+    APDEdit->setReadOnly( true );
     TabPageLayout->addWidget( APDEdit, 3, 1 );
     tabBox->addTab( TabPage, QString::fromLatin1("") );
 	 tabBox->setTabText( tabBox->indexOf(TabPage), "States" );
@@ -177,7 +175,7 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     recordDataLayout->addItem( spacer1a );
 
     recordDataCheckBox = new QCheckBox( "Record Data", tab );
-    recordDataCheckBox->setTristate( FALSE );
+    recordDataCheckBox->setTristate( false );
     recordDataLayout->addWidget( recordDataCheckBox );
     spacer2a = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     recordDataLayout->addItem( spacer2a );

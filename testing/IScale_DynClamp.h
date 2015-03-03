@@ -51,8 +51,8 @@ namespace IScale_DynClamp {
         Module( void );
         ~Module(void);        
         void execute( void );
-//        void receiveEvent( const ::Event::Object * );
-//        void receiveEventRT( const ::Event::Object * );
+        void receiveEvent( const ::Event::Object * );
+        void receiveEventRT( const ::Event::Object * );
                          
     public slots:
         void modify( void ); // Updates parameters

@@ -40,6 +40,15 @@
 
 using namespace std;
 
+namespace {
+	class IScale_DynClamp_SyncEvent : public RT::Event {
+		public:
+			int callback(void) {
+				return 0;
+			}
+	};
+}
+
 // Create Module Instance
 extern "C" Plugin::Object *createRTXIPlugin(void) {
     return new IScale_DynClamp::Module();
@@ -106,6 +115,9 @@ IScale_DynClamp::Module::~Module(void) {
     modelCell = NULL;
     delete livshitzRudy2009;
     delete faberRudy2000;
+	 setActive(false);
+	 IScale_DynClamp_SyncEvent event;
+	 RT::System::getInstance()->postEvent(&event);
 } // End destructor
 
 void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
@@ -190,6 +202,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             if( recordData && !recording && currentStep == 0 ) { // Record data if dataRecord is toggled
                 Event::Object event(Event::START_RECORDING_EVENT);
                 Event::Manager::getInstance()->postEventRT(&event);
+					 recording = true;
             }
             
             modelInit = true;                                
@@ -288,6 +301,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             if(recording == true) {
                 Event::Object event(Event::STOP_RECORDING_EVENT);
                 Event::Manager::getInstance()->postEventRT(&event);
+					 recording = false;
             }
             protocolOn = false;
             executeMode = IDLE;
@@ -297,7 +311,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 } // end execute()
 
 void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, protocol, and model cell
-std::cout<<"initialize called"<<std::endl;
     protocol = new Protocol();
     livshitzRudy2009 = new ModelCell();
     livshitzRudy2009->changeModel( ModelCell::LIVRUDY2009 );
@@ -314,6 +327,7 @@ std::cout<<"initialize called"<<std::endl;
     APD = 0;
     targetCurrent = 0;
     scaledCurrent = 0;
+//	 executeMode = IDLE;
 
     // Parameters
     APDRepol = 90;    
@@ -348,7 +362,6 @@ std::cout<<"initialize called"<<std::endl;
 
     // APD parameters
    upstrokeThreshold = -40;
-std::cout<<"initialize returned"<<std::endl;
 }
 
 void IScale_DynClamp::Module::reset( void ) {
@@ -405,35 +418,93 @@ void IScale_DynClamp::Module::clearProtocol( void ) {
 }
 
 void IScale_DynClamp::Module::toggleThreshold( void ) {
-std::cout<<"toggleThreshold called"<<std::endl;
     thresholdOn = mainWindow->thresholdButton->isChecked();
-    
-    ToggleThresholdEvent event( this, thresholdOn );
-std::cout<<"before postEvent called for type: "<<std::endl;//event->getName()<<std::endl;
-    RT::System::getInstance()->postEvent( &event );
-std::cout<<"toggleThreshold returned"<<std::endl;
+	 
+    setActive(false); //breakage maybe...
+	 IScale_DynClamp_SyncEvent event;
+	 RT::System::getInstance()->postEvent(&event);
+
+    if( thresholdOn ) { // Start protocol, reinitialize parameters to start values
+        executeMode = THRESHOLD;
+        reset();
+        Vrest = input(0) * 1e3;
+        peakVoltageT = Vrest;
+        stimulusLevel = 2.0; // na
+        responseDuration = 0;
+        responseTime = 0;
+        setActive( true );
+    }
+    else { // Stop protocol, only called when pace button is unclicked in the middle of a run
+        executeMode = IDLE;
+        setActive( false );
+    }
+  
+//    ToggleThresholdEvent event( this, thresholdOn );
+//    RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::toggleProtocol( void ) {
-    protocolOn = mainWindow->startProtocolButton->isChecked();
-    
+    bool protocolOn = mainWindow->startProtocolButton->isChecked();
+
+	 setActive(false);
+	 IScale_DynClamp_SyncEvent event;
+	 RT::System::getInstance()->postEvent(&event);
+
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
-            QMessageBox::warning( this, "Error", "Protocol has yet to be defined." );
+            QMessageBox::warning( this, "Error", "I need a protocol first, buddy." );
             mainWindow->startProtocolButton->setChecked( false );
             protocolOn = false;
-        }
-    }
+        } else {
+			  executeMode = IDLE; // Keep on IDLE until update is finished
+			  voltageClamp = false;
+			  modelInit = true;
+			  reset();
+			  modelCell->resetModel();
+			  beatNum = 0; // beatNum is changed at beginning of protocol, so it must start at 0 instead of 1
+			  stepTracker = -1; // Used to highlight the current step in list box, -1 to force first step to be highlighted
+			  protocolMode = STEPINIT; 
+			  executeMode = PROTOCOL;
+			  setActive( true );
+		  }
+	 } else { // Stop protocol, only called when protocol button is unclicked in the middle of a run
+		  if( recording ) { // Stop data recorder if recording
+            ::Event::Object event(::Event::STOP_RECORDING_EVENT);
+            ::Event::Manager::getInstance()->postEventRT(&event);
+				recording = false;
+        } 
+        executeMode = IDLE;
+        setActive( false );
+	 }
 
-    ToggleProtocolEvent event( this, protocolOn );
-    RT::System::getInstance()->postEvent( &event );
+//    ToggleProtocolEvent event( this, protocolOn );
+//    RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::togglePace( void ) {
     paceOn = mainWindow->staticPacingButton->isChecked();
 
-    TogglePaceEvent event( this, paceOn );
-    RT::System::getInstance()->postEvent( &event );
+	 setActive(false);
+	 IScale_DynClamp_SyncEvent event;
+	 RT::System::getInstance()->postEvent(&event);
+    
+	 if( paceOn ) { // Start protocol, reinitialize parameters to start values
+        reset();
+        executeMode = PACE;
+        setActive( true );
+    }
+    else { // Stop protocol, only called when pace button is unclicked in the middle of a run
+        if( recording ) { // Stop data recorder if recording
+            ::Event::Object event(::Event::STOP_RECORDING_EVENT);
+            ::Event::Manager::getInstance()->postEventRT(&event);
+				recording = false;
+        }        
+        executeMode = IDLE;
+        setActive( false );
+    }
+
+//    TogglePaceEvent event( this, paceOn );
+//    RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::changeModel( int idx ) {
@@ -501,7 +572,6 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 }
 /* Build Module GUI */
 void IScale_DynClamp::Module::createGUI( void ) {
-std::cout<<"createGUI called"<<std::endl;
 
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
     subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
@@ -515,7 +585,7 @@ std::cout<<"createGUI called"<<std::endl;
     // Construct Main Layout - vertical layout
 //    QBoxLayout *layout = new QVBoxLayout(subWindow);
     QVBoxLayout *layout = new QVBoxLayout(this);
-//	 setLayout(layout);
+	 setLayout(layout);
 	 layout->addWidget(mainWindow);
 
     // Model Combo Box
@@ -545,7 +615,7 @@ std::cout<<"createGUI called"<<std::endl;
     QObject::connect( mainWindow->loadProtocolButton, SIGNAL(clicked(void)), this, SLOT( loadProtocol(void)) );
     QObject::connect( mainWindow->clearProtocolButton, SIGNAL(clicked(void)), this, SLOT( clearProtocol(void)) );
     QObject::connect( mainWindow->recordDataCheckBox, SIGNAL(clicked(void)), this, SLOT( modify(void)) );
-    QObject::connect( mainWindow->startProtocolButton, SIGNAL(clicked(void)), this, SLOT( toggleProtocol(void)) );
+    QObject::connect( mainWindow->startProtocolButton, SIGNAL(toggled(bool)), this, SLOT( toggleProtocol(void)) );
     QObject::connect( mainWindow->thresholdButton, SIGNAL(clicked(void)), this, SLOT( toggleThreshold(void)) );
     QObject::connect( mainWindow->staticPacingButton, SIGNAL(clicked(void)), this, SLOT( togglePace(void)) );
     QObject::connect( mainWindow->resetButton, SIGNAL(clicked(void)), this, SLOT( reset(void)) );
@@ -578,8 +648,7 @@ std::cout<<"createGUI called"<<std::endl;
     setData( Workspace::STATE, 4, &targetCurrent );
     setData( Workspace::STATE, 5, &scaledCurrent );
 
-	 show();
-std::cout<<"createGUI returned"<<std::endl;
+	 subWindow->show();
 } // End createGUI()
 
 // Load from Settings
@@ -689,10 +758,11 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
     else if( executeMode == PROTOCOL ) {
         if( stepTracker != currentStep ) {
             stepTracker = currentStep;
-            mainWindow->protocolEditorListBox->setCurrentRow( currentStep);
+            mainWindow->protocolEditorListBox->setCurrentRow( currentStep );
         }        
     }
 }
+
 /*
 // RT::Events - Called from GUI thread, handled by RT thread
 IScale_DynClamp::Module::ToggleProtocolEvent::ToggleProtocolEvent( Module *m, bool o )
@@ -770,13 +840,17 @@ int IScale_DynClamp::Module::ToggleThresholdEvent::callback( void ) {
     
     return 0;
 }
+*/
 
-IScale_DynClamp::Module::ModifyEvent::ModifyEvent( Module *m, int APDr, int mAPD, int sw,
-                                                   int nt, int it, int b, double sm, double sl, double c, double ljp, bool rd )
-    : module( m ), APDRepolValue( APDr ), minAPDValue( mAPD ), stimWindowValue( sw ),
-      numTrialsValue( nt ), intervalTimeValue( it ), BCLValue( b ), stimMagValue( sm ),
-      stimLengthValue( sl ), CmValue( c ), LJPValue( ljp ), recordDataValue( rd ) {
-}
+IScale_DynClamp::Module::ModifyEvent::ModifyEvent( Module *m, int APDr, int mAPD, int sw, int nt, int it,
+                                                   int b, double sm, double sl, double c, double ljp, 
+																	bool rd ) 
+                                                 : module( m ), APDRepolValue( APDr ), 
+																   minAPDValue( mAPD ), stimWindowValue( sw ),
+                                                   numTrialsValue( nt ), intervalTimeValue( it ), 
+																	BCLValue( b ), stimMagValue( sm ), 
+																	stimLengthValue( sl ), CmValue( c ), 
+																	LJPValue( ljp ), recordDataValue( rd ) { }
 
 int IScale_DynClamp::Module::ModifyEvent::callback( void ) {
     module->APDRepol = APDRepolValue;
@@ -793,35 +867,28 @@ int IScale_DynClamp::Module::ModifyEvent::callback( void ) {
     
     return 0;
 }
-*/
 
-/*
 // Event handling
 void IScale_DynClamp::Module::receiveEvent( const ::Event::Object *event ) {
-std::cout<<"receiveEvent called for type: "<<event->getName()<<std::endl;
     if( event->getName() == Event::RT_POSTPERIOD_EVENT ) {
         period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
         BCLInt = BCL / period;
         stimLengthInt = stimLength / period;
         modelCell->setModelRate(100000, period);
     }
-    if( event->getName() == Event::START_RECORDING_EVENT )
-        recording = true;
-    if( event->getName() == Event::STOP_RECORDING_EVENT )
-        recording = false;
+
+    if( event->getName() == Event::START_RECORDING_EVENT ) recording = true;
+    if( event->getName() == Event::STOP_RECORDING_EVENT ) recording = false;
 }
 
 void IScale_DynClamp::Module::receiveEventRT( const ::Event::Object *event ) {
-std::cout<<"receiveEventRT called for type: "<<event->getName()<<std::endl;
     if( event->getName() == Event::RT_POSTPERIOD_EVENT ) {
         period = RT::System::getInstance()->getPeriod()*1e-6; // Grabs RTXI thread period and converts to ms (from ns)
         BCLInt = BCL / period;
         stimLengthInt = stimLength / period;
         modelCell->setModelRate(100000, period);
     }
-    if( event->getName() == Event::START_RECORDING_EVENT )
-        recording = true;
-    if( event->getName() == Event::STOP_RECORDING_EVENT )
-        recording = false;
+
+    if( event->getName() == Event::START_RECORDING_EVENT ) recording = true;
+    if( event->getName() == Event::STOP_RECORDING_EVENT ) recording = false;
 }
-*/

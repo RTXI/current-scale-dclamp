@@ -36,7 +36,7 @@
 #include <QtGui>
 
 //#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
-#include "/home/ansel/Projects/rtxi/plugins/data_recorder/data_recorder.h"
+//#include "/home/user/Projects/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
@@ -751,7 +751,6 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
 
 
     if( executeMode == IDLE ) {
-std::cout<<"protocolOn = "<<protocolOn<<std::endl;
         if( mainWindow->startProtocolButton->isChecked() && !protocolOn )
             mainWindow->startProtocolButton->setChecked( false );
         else if( mainWindow->thresholdButton->isChecked() && !thresholdOn ) {

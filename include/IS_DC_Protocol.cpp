@@ -139,30 +139,24 @@ void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and ch
  
     switch( stepComboBox->currentIndex() ) {
     case 0: // Pace
-        if(BCL == "" || numBeats == "")
-            check = false;
+        if (BCL == "" || numBeats == "") check = false;
         break;
         
     case 1: // Scale
-        if(BCL == "" || numBeats == "" || currentToScale == "")
-            check = false;
+        if (BCL == "" || numBeats == "" || currentToScale == "") check = false;
         break;
         
     case 2: // Wait
-        if(waitTime == "")
-            check = false;
+        if (waitTime == "") check = false;
         break;
 
     case 7: // Change Model
-        if(model == "")
-            check = false;
+        if (model == "") check = false;
         break;
     }
 
-    if(check)
-        emit checked();
-    else
-        QMessageBox::warning( this, "Error", "Invalid Input, please correct." );
+    if (check) emit checked();
+    else QMessageBox::warning( this, "Error", "Invalid Input, please correct." );
 //std::cout<<"AddStepInputDialog::addStepClicked returned"<<std::endl;
 }
 
@@ -189,7 +183,6 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 for (std::vector<QString>::iterator it = inputAnswers.begin(); it != inputAnswers.end(); it++) {
 	std::cout<<it->toStdString()<<std::endl;
 }
-
 std::cout<<"gatherInput returned accepted"<<std::endl;
 */
         return inputAnswers;
@@ -197,9 +190,9 @@ std::cout<<"gatherInput returned accepted"<<std::endl;
 }
 
 /* Protocol Step Class */
-
 ProtocolStep::ProtocolStep( stepType_t st, int bcl, int nb, string c, int sp, int w, modelType_t(mt) ) :
-    stepType(st), BCL(bcl), numBeats(nb), currentToScale(c), scalingPercentage(sp), waitTime(w), modelType(mt) { }
+		stepType(st), BCL(bcl), numBeats(nb), currentToScale(c), scalingPercentage(sp), 
+		waitTime(w), modelType(mt) { }
 
 ProtocolStep::~ProtocolStep( void ) { }
 
@@ -208,7 +201,6 @@ int ProtocolStep::stepLength( double period ) {
 }
 
 /* Protocol Class */
-
 Protocol::Protocol( void ) { }
 
 Protocol::~Protocol( void ) { }
@@ -226,15 +218,16 @@ std::cout<<"Flag: "<<stupidflag<<std::endl; stupidflag++;
     
     if( inputAnswers.size() > 0 ) {
         // Add a new step to protocol container
-        protocolContainer.push_back( ProtocolStepPtr( new ProtocolStep(
-                                                                       (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-                                                                       inputAnswers[1].toInt(), // BCL
-                                                                       inputAnswers[2].toInt(), // numBeats
-                                                                       inputAnswers[3].toStdString(), // currentToScale
-                                                                       inputAnswers[4].toInt(), // scalingPercentage
-                                                                       inputAnswers[5].toInt(), // waitTime
-                                                                       (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
-                                                                       ) ) );
+        protocolContainer.push_back( 
+            ProtocolStepPtr( new ProtocolStep (
+                (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
+                inputAnswers[1].toInt(), // BCL
+                inputAnswers[2].toInt(), // numBeats
+                inputAnswers[3].toStdString(), // currentToScale
+                inputAnswers[4].toInt(), // scalingPercentage
+                inputAnswers[5].toInt(), // waitTime
+                (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
+            ) ) );
 std::cout<<"Flag: "<<"pushy"<<std::endl; stupidflag++;
 std::cout<<"addStep returned with parent as arg"<<std::endl;
         return true;
@@ -258,19 +251,19 @@ std::cout<<"addStep called with parent and index as args"<<std::endl;
     
     if( inputAnswers.size() > 0 ) {
         // Add a new step to protocol container
-        protocolContainer.insert( it+idx+1, ProtocolStepPtr( new ProtocolStep(
-                                                                       (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-                                                                       inputAnswers[1].toInt(), // BCL
-                                                                       inputAnswers[2].toInt(), // numBeats
-                                                                       inputAnswers[3].toStdString(), // currentToScale
-                                                                       inputAnswers[4].toInt(), // scalingPercentage
-                                                                       inputAnswers[5].toInt(), // waitTime
-                                                                       (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
-                                                                       ) ) );
+        protocolContainer.insert( 
+		      it+idx+1, ProtocolStepPtr( new ProtocolStep(
+                (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
+                inputAnswers[1].toInt(), // BCL
+                inputAnswers[2].toInt(), // numBeats
+                inputAnswers[3].toStdString(), // currentToScale
+                inputAnswers[4].toInt(), // scalingPercentage
+                inputAnswers[5].toInt(), // waitTime
+                (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
+            ) ) );
         return true;
     }
-    else
-        return false; // No step added
+    else return false; // No step added
 std::cout<<"addStep returned with parent and index as args"<<std::endl;
 }
 
@@ -278,27 +271,21 @@ std::cout<<"addStep returned with parent and index as args"<<std::endl;
 void Protocol::deleteStep( QWidget *parent, int stepNumber ) {
     // Message box asking for confirmation whether step should be deleted
     QString text = "Do you wish to delete step " + QString::number(stepNumber+1) + "?"; // Text pointing out specific step
-    if( QMessageBox::question(parent,
-                              "Delete Step Confirmation",
-                              text,
-                              "Yes",
-                              "No") )
+    if( QMessageBox::question(parent,"Delete Step Confirmation",text,"Yes","No") ) {
         return ; // Answer is no
+	 }
 
-    if( protocolContainer.size() == 1 ) // If only 1 step exists, explicitly clear step pointer
-        protocolContainer.clear();
-    else 
-        protocolContainer.erase(protocolContainer.begin() + stepNumber);
-    
+    // If only 1 step exists, explicitly clear step pointer
+    if( protocolContainer.size() == 1 ) protocolContainer.clear();
+    else protocolContainer.erase(protocolContainer.begin() + stepNumber);
+
 }
 
 void Protocol::saveProtocol( QWidget *parent ) {
 
     // Make sure protocol has at least one segment with one step
     if( protocolContainer.size() == 0 ) { 
-        QMessageBox::warning(parent,
-                             "Error",
-                             "A protocol must contain at least one step" );
+        QMessageBox::warning(parent,"Error","A protocol must contain at least one step" );
         return;
     }
     
@@ -308,16 +295,12 @@ void Protocol::saveProtocol( QWidget *parent ) {
     protocolDoc.appendChild(root);   
     
     // Save dialog to retrieve desired filename and location
-    QString fileName = QFileDialog::getSaveFileName(
-	 							parent,
-								"Save the protocol",
-								"~/",
-								"XML Files (*.xml)" );
+    QString fileName = QFileDialog::getSaveFileName(parent,"Save protocol","~/","XML Files (*.xml)" );
 
     // If filename does not include .xml extension, add extension
-    if( !(fileName.endsWith(".xml")) )
-        fileName.append(".xml");
-    // If filename exists, warn user
+    if( !(fileName.endsWith(".xml")) ) fileName.append(".xml");
+    
+	 // If filename exists, warn user
     if ( QFileInfo(fileName).exists() &&
          QMessageBox::warning(
                               parent,
@@ -334,12 +317,11 @@ void Protocol::saveProtocol( QWidget *parent ) {
     // Save protocol to file
     QFile file(fileName); // Open file
     if( !file.open(QIODevice::WriteOnly) ) { // Open file, return error if unable to do so
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Unable to save file: Please check folder permissions." );
+        QMessageBox::warning(parent,"Error","Unable to save file: Please check folder permissions." );
         return ;
     }
-    QTextStream ts(&file); // Open text stream
+    
+	 QTextStream ts(&file); // Open text stream
     ts << protocolDoc.toString(); // Write to file
     file.close(); // Close file
 }
@@ -355,34 +337,26 @@ QString Protocol::loadProtocol( QWidget *parent ) {
         return ""; // Return if answer is no
 
     // Save dialog to retrieve desired filename and location
-    QString fileName = QFileDialog::getOpenFileName(
-                                                    parent,
-                                                    "Open a protocol",
-                                                    "~/",
-                                                    "XML Files (*.xml)");
+    QString fileName = QFileDialog::getOpenFileName(parent,"Open a protocol","~/","XML Files (*.xml)");
     QDomDocument doc( "IS_DC_Protocol" );
     QFile file( fileName );
 
     if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Unable to open protocol file" );
+        QMessageBox::warning(parent, "Error", "Unable to open protocol file" );
         return "";
     }   
-    if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
-            QMessageBox::warning(parent,
-                                 "Error",
-                                 "Unable to set file contents to document" );
-            file.close();
-            return "";
-        }
-    file.close();
+    
+	 if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
+        QMessageBox::warning(parent, "Error", "Unable to set file contents to document" );
+        file.close();
+        return "";
+    }
+    
+	 file.close();
 
     QDomElement root = doc.documentElement(); // Get root element from document
     if( root.tagName() != "IS_DC_protocol-v1.0" ) { // Check if tagname is correct for this module version
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Incompatible XML file" );
+        QMessageBox::warning(parent, "Error", "Incompatible XML file" );
         return "";
     }
 
@@ -390,28 +364,28 @@ QString Protocol::loadProtocol( QWidget *parent ) {
     QDomNode stepNode = root.firstChild(); // Retrieve first segment
     protocolContainer.clear(); // Clear vector containing protocol
           
-    while( !stepNode.isNull() ) {// Step iteration
+    while( !stepNode.isNull() ) { // Step iteration
         QDomElement stepElement = stepNode.toElement();
 
         // Add new step to protocol container
-        protocolContainer.push_back( ProtocolStepPtr( new ProtocolStep(
-                                                      (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-                                                      stepElement.attribute( "BCL" ).toInt(),
-                                                      stepElement.attribute( "numBeats" ).toInt(),
-                                                      stepElement.attribute( "currentToScale" ).toStdString(),
-                                                      stepElement.attribute( "scalingPercentage" ).toInt(),
-                                                      stepElement.attribute( "waitTime" ).toInt(),
-                                                      (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
-                                                      ) ) ); // Add step to segment container            
+        protocolContainer.push_back( 
+		      ProtocolStepPtr( new ProtocolStep(
+                (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
+                stepElement.attribute( "BCL" ).toInt(),
+                stepElement.attribute( "numBeats" ).toInt(),
+                stepElement.attribute( "currentToScale" ).toStdString(),
+                stepElement.attribute( "scalingPercentage" ).toInt(),
+                stepElement.attribute( "waitTime" ).toInt(),
+                (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
+            ) ) ); // Add step to segment container            
 
         stepNode = stepNode.nextSibling(); // Move to next step
     } // End step iteration
 
     // Update segment summary and table
-    if( protocolContainer.size() == 0 )
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Protocol did not contain any steps" );
+    if( protocolContainer.size() == 0 ) {
+        QMessageBox::warning(parent, "Error", "Protocol did not contain any steps" );
+	 }
 
     return fileName;
 }
@@ -431,25 +405,21 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
     QFile file( fileName );
 
     if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Unable to open protocol file" );
+        QMessageBox::warning(parent, "Error", "Unable to open protocol file" );
         return ;
     }   
     if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
-            QMessageBox::warning(parent,
-                                 "Error",
-                                 "Unable to set file contents to document" );
-            file.close();
-            return ;
-        }
+        QMessageBox::warning(parent, "Error", "Unable to set file contents to document" );
+        file.close();
+        return ;
+    }
     file.close();
 
-    QDomElement root = doc.documentElement(); // Get root element from document
-    if( root.tagName() != "IS_DC_protocol-v1.0" ) { // Check if tagname is correct for this module version
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Incompatible XML file" );
+    QDomElement root = doc.documentElement(); // Get root element from documen
+	 
+	 // Check if tagname is correct for this module versiont
+    if( root.tagName() != "IS_DC_protocol-v1.0" ) { 
+        QMessageBox::warning(parent, "Error", "Incompatible XML file" );
         return;
     }
 
@@ -461,24 +431,24 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
         QDomElement stepElement = stepNode.toElement();
 
         // Add new step to protocol container
-        protocolContainer.push_back( ProtocolStepPtr( new ProtocolStep(
-                                                      (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-                                                      stepElement.attribute( "BCL" ).toInt(),
-                                                      stepElement.attribute( "numBeats" ).toInt(),
-                                                      stepElement.attribute( "currentToScale" ).toStdString(),
-                                                      stepElement.attribute( "scalingPercentage" ).toInt(),
-                                                      stepElement.attribute( "waitTime" ).toInt(),
-                                                      (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
-                                                      ) ) ); // Add step to segment container            
+        protocolContainer.push_back( 
+		      ProtocolStepPtr( new ProtocolStep(
+                (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
+                stepElement.attribute( "BCL" ).toInt(),
+                stepElement.attribute( "numBeats" ).toInt(),
+                stepElement.attribute( "currentToScale" ).toStdString(),
+                stepElement.attribute( "scalingPercentage" ).toInt(),
+                stepElement.attribute( "waitTime" ).toInt(),
+                (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
+            ) ) ); // Add step to segment container            
 
         stepNode = stepNode.nextSibling(); // Move to next step
     } // End step iteration
 
     // Update segment summary and table
-    if( protocolContainer.size() == 0 )
-        QMessageBox::warning(parent,
-                             "Error",
-                             "Protocol did not contain any steps" );
+    if( protocolContainer.size() == 0 ) {
+        QMessageBox::warning(parent, "Error", "Protocol did not contain any steps" );
+	 }
 }
 
 QDomElement Protocol::stepToNode( QDomDocument &doc, const ProtocolStepPtr stepPtr, int stepNumber ) {

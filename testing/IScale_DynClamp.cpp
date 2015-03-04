@@ -327,7 +327,7 @@ void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, pro
     APD = 0;
     targetCurrent = 0;
     scaledCurrent = 0;
-//	 executeMode = IDLE;
+	 executeMode = IDLE;
 
     // Parameters
     APDRepol = 90;    
@@ -445,6 +445,7 @@ void IScale_DynClamp::Module::toggleThreshold( void ) {
 
 void IScale_DynClamp::Module::toggleProtocol( void ) {
     bool protocolOn = mainWindow->startProtocolButton->isChecked();
+std::cout<<"toggleprotocl protocolOn = "<<protocolOn<<std::endl;
 
 	 setActive(false);
 	 IScale_DynClamp_SyncEvent event;
@@ -453,6 +454,7 @@ void IScale_DynClamp::Module::toggleProtocol( void ) {
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
             QMessageBox::warning( this, "Error", "I need a protocol first, buddy." );
+std::cout<<"what the fuck"<<std::endl;
             mainWindow->startProtocolButton->setChecked( false );
             protocolOn = false;
         } else {
@@ -707,6 +709,7 @@ void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     s.saveDouble( "Cm", Cm );
     s.saveDouble( "LJP", LJP );
 }
+
 void IScale_DynClamp::Module::modify(void) {
     int APDr = mainWindow->APDRepolEdit->text().toInt();
     int mAPD = mainWindow->minAPDEdit->text().toInt();
@@ -746,7 +749,9 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
     mainWindow->beatNumEdit->setText( QString::number(beatNum) );
     mainWindow->APDEdit->setText( QString::number(APD) );
 
+
     if( executeMode == IDLE ) {
+std::cout<<"protocolOn = "<<protocolOn<<std::endl;
         if( mainWindow->startProtocolButton->isChecked() && !protocolOn )
             mainWindow->startProtocolButton->setChecked( false );
         else if( mainWindow->thresholdButton->isChecked() && !thresholdOn ) {

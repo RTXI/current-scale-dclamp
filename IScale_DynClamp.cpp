@@ -445,7 +445,6 @@ void IScale_DynClamp::Module::toggleThreshold( void ) {
 
 void IScale_DynClamp::Module::toggleProtocol( void ) {
     bool protocolOn = mainWindow->startProtocolButton->isChecked();
-std::cout<<"toggleprotocl protocolOn = "<<protocolOn<<std::endl;
 
 	 setActive(false);
 	 IScale_DynClamp_SyncEvent event;
@@ -454,7 +453,6 @@ std::cout<<"toggleprotocl protocolOn = "<<protocolOn<<std::endl;
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
             QMessageBox::warning( this, "Error", "I need a protocol first, buddy." );
-std::cout<<"what the fuck"<<std::endl;
             mainWindow->startProtocolButton->setChecked( false );
             protocolOn = false;
         } else {

@@ -452,7 +452,13 @@ void IScale_DynClamp::Module::toggleProtocol( void ) {
 
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
-//            QMessageBox::warning( this, "Error", "I need a protocol first, buddy." );
+				QMessageBox * msgBox = new QMessageBox;
+				msgBox->setWindowTitle("Error");
+				msgBox->setText("I need a protocol first, buddy");
+				msgBox->setStandardButtons(QMessageBox::Ok);
+				msgBox->setDefaultButton(QMessageBox::NoButton);
+				msgBox->setWindowModality(Qt::WindowModal);
+				msgBox->open();
             protocolOn = false;
 				executeMode = IDLE;
         } else {
@@ -749,13 +755,13 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
 
 
     if( executeMode == IDLE ) {
-        if( mainWindow->startProtocolButton->isChecked() && !protocolOn )
+        if( mainWindow->startProtocolButton->isChecked() && !protocolOn ) {
             mainWindow->startProtocolButton->setChecked( false );
-        else if( mainWindow->thresholdButton->isChecked() && !thresholdOn ) {
+		  } else if( mainWindow->thresholdButton->isChecked() && !thresholdOn ) {
             mainWindow->thresholdButton->setChecked( false );
             mainWindow->stimMagEdit->setText( QString::number( stimMag ) );
             modify();
-        }
+		  }
     }
     else if( executeMode == PROTOCOL ) {
         if( stepTracker != currentStep ) {

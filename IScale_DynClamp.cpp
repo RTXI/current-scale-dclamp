@@ -452,9 +452,9 @@ void IScale_DynClamp::Module::toggleProtocol( void ) {
 
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
-            QMessageBox::warning( this, "Error", "I need a protocol first, buddy." );
-            mainWindow->startProtocolButton->setChecked( false );
+//            QMessageBox::warning( this, "Error", "I need a protocol first, buddy." );
             protocolOn = false;
+				executeMode = IDLE;
         } else {
 			  executeMode = IDLE; // Keep on IDLE until update is finished
 			  voltageClamp = false;

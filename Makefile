@@ -1,4 +1,5 @@
-PLUGIN_NAME = current_scale_dclamp
+
+PLUGIN_NAME = IScale_DynClamp
 
 HEADERS = IScale_DynClamp.h
 
@@ -27,10 +28,6 @@ clean:
 	rm -f $(PLUGIN_NAME).la
 	rm -f $(PLUGIN_NAME).o
 	rm -rf .libs
-	rm -rf include/.libs
-	rm -rf include/*/.libs
-	rm -rf include/*/*/.libs
-	rm -rf include/*/*/*/.libs
 	rm -f include/*.o
 	rm -f include/moc_*
 	rm include/*/*.o

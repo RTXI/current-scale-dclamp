@@ -23,6 +23,10 @@
  *
  * Author: Francis A. Ortega (2011)
  *
+ *** NOTES
+ *
+ * v1.0 - Initial Version
+ *
  ***/
 
 #ifndef ISCALE_DYNCLAMP_H
@@ -38,15 +42,17 @@
 #include <event.h>
 #include <plugin.h>
 
-#include <QtGui>
+#include <qwidget.h>
+#include <qobject.h>
 
 namespace IScale_DynClamp {
-    class Module: public QWidget, public RT::Thread, public Plugin::Object, 
-                  public Workspace::Instance, public Event::Handler, public Event::RTHandler {
+    class Module:
+        public QWidget, public RT::Thread, public Plugin::Object, public Workspace::Instance,
+        public Event::Handler,public Event::RTHandler {
     
         Q_OBJECT // macro needed if slots are implemented
     
-    public:
+        public:
     
         Module( void );
         ~Module(void);        
@@ -179,7 +185,7 @@ namespace IScale_DynClamp {
             bool recordDataValue;
 
         }; // class ModifyEvent
-/*
+
         class ToggleProtocolEvent : public RT::Event {
         public:
             ToggleProtocolEvent( Module *, bool );
@@ -215,7 +221,7 @@ namespace IScale_DynClamp {
             Module *module;
             bool on;            
         }; // class ToggleThresholdEvent
-*/
+
     protected:
         void doLoad( const Settings::Object::State & );
         void doSave( Settings::Object::State & ) const;

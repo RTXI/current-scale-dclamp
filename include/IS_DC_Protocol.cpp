@@ -29,17 +29,22 @@
 
 #include "IS_DC_Protocol.h"
 #include <iostream>
-
-#include <QtGui>
+#include <qvalidator.h>
+#include <qlineedit.h>
+#include <qcombobox.h>
+#include <qpushbutton.h>
+#include <qmessagebox.h>
+#include <qfiledialog.h>
 
 using namespace std;
 
 /* AddStepInputDialog Class */
-AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent ) /*, 0, TRUE )*/ {
-//    QValidator* validator = new QIntValidator(this);
-//    BCLEdit->setValidator(validator);
-//    numBeatsEdit->setValidator(validator);
-//    scalingPercentageEdit->setValidator(validator);
+AddStepInputDialog::AddStepInputDialog(QWidget* parent ) :
+    AddStepDialog( parent, 0, TRUE ) {
+    QValidator* validator = new QIntValidator(this);
+    BCLEdit->setValidator(validator);
+    numBeatsEdit->setValidator(validator);
+    scalingPercentageEdit->setValidator(validator);
     
     QObject::connect( addStepButton,SIGNAL(clicked(void)),this,SLOT(addStepClicked(void)) );
     QObject::connect( exitButton, SIGNAL(clicked(void)), this, SLOT( reject() ) );
@@ -49,7 +54,8 @@ AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent
     stepComboBoxUpdate(0);
 }
 
-AddStepInputDialog::~AddStepInputDialog( void ) { }
+AddStepInputDialog::~AddStepInputDialog( void ) { 
+}
 
 void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     switch( (ProtocolStep::stepType_t)selection ) {
@@ -61,7 +67,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
-
     case ProtocolStep::SCALE:
         BCLEdit->setEnabled(true);
         numBeatsEdit->setEnabled(true);
@@ -70,7 +75,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
-
     case ProtocolStep::WAIT:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -79,7 +83,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(true);
         modelComboBox->setEnabled(false);
         break;
-
     case ProtocolStep::STARTMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -88,7 +91,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
-
     case ProtocolStep::STOPMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -97,7 +99,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
-
     case ProtocolStep::RESETMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -106,7 +107,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
         waitTimeEdit->setEnabled(false);
         modelComboBox->setEnabled(false);
         break;
-
     case ProtocolStep::CHANGEMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
@@ -119,130 +119,108 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 }
 
 void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and checks if they are valid entries
-//std::cout<<"AddStepInputDialog::addStepClicked called"<<std::endl;
     bool check = true;
     BCL = BCLEdit->text();
-    stepType = QString::number( stepComboBox->currentIndex() );
+    stepType = QString::number( stepComboBox->currentItem() );
     numBeats = numBeatsEdit->text();
     currentToScale = currentToScaleEdit->text();
     scalingPercentage = scalingPercentageEdit->text();
     waitTime = waitTimeEdit->text();
-    model = QString::number( modelComboBox->currentIndex() );
-
-//std::cout<<"BCL: "<<BCL.toStdString()<<std::endl;
-//std::cout<<"stepType: "<<stepType.toStdString()<<std::endl;
-//std::cout<<"numBeats: "<<numBeats.toStdString()<<std::endl;
-//std::cout<<"currentToScale: "<<currentToScale.toStdString()<<std::endl;
-//std::cout<<"scalingPercentage: "<<scalingPercentage.toStdString()<<std::endl;
-//std::cout<<"waitTime: "<<waitTime.toStdString()<<std::endl;
-//std::cout<<"model: "<<model.toStdString()<<std::endl;
- 
-    switch( stepComboBox->currentIndex() ) {
+    model = QString::number( modelComboBox->currentItem() );
+    
+    switch( stepComboBox->currentItem() ) {
     case 0: // Pace
-        if (BCL == "" || numBeats == "") check = false;
+        if(BCL == "" || numBeats == "")
+            check = false;
         break;
         
     case 1: // Scale
-        if (BCL == "" || numBeats == "" || currentToScale == "") check = false;
+        if(BCL == "" || numBeats == "" || currentToScale == "")
+            check = false;
         break;
         
     case 2: // Wait
-        if (waitTime == "") check = false;
+        if(waitTime == "")
+            check = false;
         break;
 
     case 7: // Change Model
-        if (model == "") check = false;
+        if(model == "")
+            check = false;
         break;
     }
 
-    if (check) emit checked();
-    else QMessageBox::warning( this, "Error", "Invalid Input, please correct." );
-//std::cout<<"AddStepInputDialog::addStepClicked returned"<<std::endl;
+    if(check)
+        emit checked();
+    else
+        QMessageBox::warning( this, "Error", "Invalid Input, please correct." );
 }
 
 vector<QString> AddStepInputDialog::gatherInput( void ) {
-//std::cout<<"gatherInput called"<<std::endl;
     std::vector<QString> inputAnswers;
     
-    if( exec() == QDialog::Rejected ) {
-//std::cout<<"gatherInput returned rejected"<<std::endl;
+    if( exec() == QDialog::Rejected )
         return inputAnswers; // Return an empty vector if step window is closed
-	 }
     else { // QDialog is accepted when addStep button is pressed and inputs are considered valid
-//        inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
-        inputAnswers.push_back( stepType );
+        inputAnswers.push_back( QString::number( stepComboBox->currentItem() ) );
         inputAnswers.push_back( BCL );
         inputAnswers.push_back( numBeats );
         inputAnswers.push_back( currentToScale );
         inputAnswers.push_back( scalingPercentage );
         inputAnswers.push_back( waitTime );
-        inputAnswers.push_back( model );
-//        inputAnswers.push_back( QString::number( modelComboBox->currentIndex() ) );
-
-/*std::cout<<"Printing inputAnswers"<<std::endl;
-for (std::vector<QString>::iterator it = inputAnswers.begin(); it != inputAnswers.end(); it++) {
-	std::cout<<it->toStdString()<<std::endl;
-}
-std::cout<<"gatherInput returned accepted"<<std::endl;
-*/
+        inputAnswers.push_back( QString::number( modelComboBox->currentItem() ) );
         return inputAnswers;
     }
 }
 
 /* Protocol Step Class */
-ProtocolStep::ProtocolStep( stepType_t st, int bcl, int nb, string c, int sp, int w, modelType_t(mt) ) :
-		stepType(st), BCL(bcl), numBeats(nb), currentToScale(c), scalingPercentage(sp), 
-		waitTime(w), modelType(mt) { }
 
-ProtocolStep::~ProtocolStep( void ) { }
+ProtocolStep::ProtocolStep( stepType_t st, int bcl, int nb, string c, int sp, int w, modelType_t(mt) ) :
+    stepType(st), BCL(bcl), numBeats(nb), currentToScale(c), scalingPercentage(sp), waitTime(w), modelType(mt) {
+}
+
+ProtocolStep::~ProtocolStep( void ) {
+}
 
 int ProtocolStep::stepLength( double period ) {
     return 0;
 }
 
 /* Protocol Class */
-Protocol::Protocol( void ) { }
 
-Protocol::~Protocol( void ) { }
+Protocol::Protocol( void ) {
+}
+
+Protocol::~Protocol( void ) {
+}
 
 // Opens input dialogs to gather step information, then adds to protocol container *at the end*
 // Returns true if a step was added
 bool Protocol::addStep( QWidget *parent ) {
-std::cout<<"addStep called with parent as arg"<<std::endl;
-int stupidflag = 1;
-std::cout<<"Flag: "<<stupidflag<<std::endl; stupidflag++;
     AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
     vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
-//    delete dlg;
-std::cout<<"Flag: "<<stupidflag<<std::endl; stupidflag++;
+    delete dlg;
     
     if( inputAnswers.size() > 0 ) {
         // Add a new step to protocol container
-        protocolContainer.push_back( 
-            ProtocolStepPtr( new ProtocolStep (
-                (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-                inputAnswers[1].toInt(), // BCL
-                inputAnswers[2].toInt(), // numBeats
-                inputAnswers[3].toStdString(), // currentToScale
-                inputAnswers[4].toInt(), // scalingPercentage
-                inputAnswers[5].toInt(), // waitTime
-                (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
-            ) ) );
-std::cout<<"Flag: "<<"pushy"<<std::endl; stupidflag++;
-std::cout<<"addStep returned with parent as arg"<<std::endl;
+        protocolContainer.push_back( ProtocolStepPtr( new ProtocolStep(
+                                                                       (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
+                                                                       inputAnswers[1].toInt(), // BCL
+                                                                       inputAnswers[2].toInt(), // numBeats
+                                                                       inputAnswers[3], // currentToScale
+                                                                       inputAnswers[4].toInt(), // scalingPercentage
+                                                                       inputAnswers[5].toInt(), // waitTime
+                                                                       (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
+                                                                       ) ) );
         return true;
     }
-    else {
-std::cout<<"Flag: "<<"nada"<<std::endl; stupidflag++;
-std::cout<<"addStep returned with parent as arg"<<std::endl;
+    else
         return false; // No step added
-	 }
 }
 
 // Opens input dialogs to gather step information, then adds to protocol container at *a specific point*
 // Returns true if a step was added
 bool Protocol::addStep( QWidget *parent, int idx ) {
-std::cout<<"addStep called with parent and index as args"<<std::endl;
     AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
     vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
     delete dlg;
@@ -251,41 +229,45 @@ std::cout<<"addStep called with parent and index as args"<<std::endl;
     
     if( inputAnswers.size() > 0 ) {
         // Add a new step to protocol container
-        protocolContainer.insert( 
-		      it+idx+1, ProtocolStepPtr( new ProtocolStep(
-                (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-                inputAnswers[1].toInt(), // BCL
-                inputAnswers[2].toInt(), // numBeats
-                inputAnswers[3].toStdString(), // currentToScale
-                inputAnswers[4].toInt(), // scalingPercentage
-                inputAnswers[5].toInt(), // waitTime
-                (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
-            ) ) );
+        protocolContainer.insert( it+idx+1, ProtocolStepPtr( new ProtocolStep(
+                                                                       (ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
+                                                                       inputAnswers[1].toInt(), // BCL
+                                                                       inputAnswers[2].toInt(), // numBeats
+                                                                       inputAnswers[3], // currentToScale
+                                                                       inputAnswers[4].toInt(), // scalingPercentage
+                                                                       inputAnswers[5].toInt(), // waitTime
+                                                                       (ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
+                                                                       ) ) );
         return true;
     }
-    else return false; // No step added
-std::cout<<"addStep returned with parent and index as args"<<std::endl;
+    else
+        return false; // No step added
 }
 
     // Deletes a step
 void Protocol::deleteStep( QWidget *parent, int stepNumber ) {
     // Message box asking for confirmation whether step should be deleted
     QString text = "Do you wish to delete step " + QString::number(stepNumber+1) + "?"; // Text pointing out specific step
-    if( QMessageBox::question(parent,"Delete Step Confirmation",text,"Yes","No") ) {
+    if( QMessageBox::question(parent,
+                              "Delete Step Confirmation",
+                              text,
+                              "Yes",
+                              "No") )
         return ; // Answer is no
-	 }
 
-    // If only 1 step exists, explicitly clear step pointer
-    if( protocolContainer.size() == 1 ) protocolContainer.clear();
-    else protocolContainer.erase(protocolContainer.begin() + stepNumber);
-
+    if( protocolContainer.size() == 1 ) // If only 1 step exists, explicitly clear step pointer
+        protocolContainer.clear();
+    else 
+        protocolContainer.erase(protocolContainer.begin() + stepNumber);
+    
 }
 
 void Protocol::saveProtocol( QWidget *parent ) {
-
     // Make sure protocol has at least one segment with one step
     if( protocolContainer.size() == 0 ) { 
-        QMessageBox::warning(parent,"Error","A protocol must contain at least one step" );
+        QMessageBox::warning(parent,
+                             "Error",
+                             "A protocol must contain at least one step" );
         return;
     }
     
@@ -295,12 +277,17 @@ void Protocol::saveProtocol( QWidget *parent ) {
     protocolDoc.appendChild(root);   
     
     // Save dialog to retrieve desired filename and location
-    QString fileName = QFileDialog::getSaveFileName(parent,"Save protocol","~/","XML Files (*.xml)" );
+    QString fileName = QFileDialog::getSaveFileName(
+                                                    "~/",
+                                                    "XML Files (*.xml)",
+                                                    parent,
+                                                    "save file dialog",
+                                                    "Save the protocol" );
 
     // If filename does not include .xml extension, add extension
-    if( !(fileName.endsWith(".xml")) ) fileName.append(".xml");
-    
-	 // If filename exists, warn user
+    if( !(fileName.endsWith(".xml")) )
+        fileName.append(".xml");
+    // If filename exists, warn user
     if ( QFileInfo(fileName).exists() &&
          QMessageBox::warning(
                               parent,
@@ -316,12 +303,13 @@ void Protocol::saveProtocol( QWidget *parent ) {
 
     // Save protocol to file
     QFile file(fileName); // Open file
-    if( !file.open(QIODevice::WriteOnly) ) { // Open file, return error if unable to do so
-        QMessageBox::warning(parent,"Error","Unable to save file: Please check folder permissions." );
+    if( !file.open(IO_WriteOnly) ) { // Open file, return error if unable to do so
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Unable to save file: Please check folder permissions." );
         return ;
     }
-    
-	 QTextStream ts(&file); // Open text stream
+    QTextStream ts(&file); // Open text stream
     ts << protocolDoc.toString(); // Write to file
     file.close(); // Close file
 }
@@ -337,26 +325,35 @@ QString Protocol::loadProtocol( QWidget *parent ) {
         return ""; // Return if answer is no
 
     // Save dialog to retrieve desired filename and location
-    QString fileName = QFileDialog::getOpenFileName(parent,"Open a protocol","~/","XML Files (*.xml)");
-    QDomDocument doc( "IS_DC_Protocol" );
+    QString fileName = QFileDialog::getOpenFileName(
+                                                    "~/",
+                                                    "XML Files (*.xml)",
+                                                    parent,
+                                                    "open file dialog",
+                                                    "Open a protocol" );
+    QDomDocument doc( "protocol" );
     QFile file( fileName );
 
-    if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
-        QMessageBox::warning(parent, "Error", "Unable to open protocol file" );
+    if( !file.open( IO_ReadOnly ) ) { // Make sure file can be opened, if not, warn user
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Unable to open protocol file" );
         return "";
     }   
-    
-	 if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
-        QMessageBox::warning(parent, "Error", "Unable to set file contents to document" );
-        file.close();
-        return "";
-    }
-    
-	 file.close();
+    if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
+            QMessageBox::warning(parent,
+                                 "Error",
+                                 "Unable to set file contents to document" );
+            file.close();
+            return "";
+        }
+    file.close();
 
     QDomElement root = doc.documentElement(); // Get root element from document
     if( root.tagName() != "IS_DC_protocol-v1.0" ) { // Check if tagname is correct for this module version
-        QMessageBox::warning(parent, "Error", "Incompatible XML file" );
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Incompatible XML file" );
         return "";
     }
 
@@ -364,28 +361,28 @@ QString Protocol::loadProtocol( QWidget *parent ) {
     QDomNode stepNode = root.firstChild(); // Retrieve first segment
     protocolContainer.clear(); // Clear vector containing protocol
           
-    while( !stepNode.isNull() ) { // Step iteration
+    while( !stepNode.isNull() ) {// Step iteration
         QDomElement stepElement = stepNode.toElement();
 
         // Add new step to protocol container
-        protocolContainer.push_back( 
-		      ProtocolStepPtr( new ProtocolStep(
-                (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-                stepElement.attribute( "BCL" ).toInt(),
-                stepElement.attribute( "numBeats" ).toInt(),
-                stepElement.attribute( "currentToScale" ).toStdString(),
-                stepElement.attribute( "scalingPercentage" ).toInt(),
-                stepElement.attribute( "waitTime" ).toInt(),
-                (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
-            ) ) ); // Add step to segment container            
+        protocolContainer.push_back( ProtocolStepPtr( new ProtocolStep(
+                                                      (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
+                                                      stepElement.attribute( "BCL" ).toInt(),
+                                                      stepElement.attribute( "numBeats" ).toInt(),
+                                                      stepElement.attribute( "currentToScale" ),
+                                                      stepElement.attribute( "scalingPercentage" ).toInt(),
+                                                      stepElement.attribute( "waitTime" ).toInt(),
+                                                      (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
+                                                      ) ) ); // Add step to segment container            
 
         stepNode = stepNode.nextSibling(); // Move to next step
     } // End step iteration
 
     // Update segment summary and table
-    if( protocolContainer.size() == 0 ) {
-        QMessageBox::warning(parent, "Error", "Protocol did not contain any steps" );
-	 }
+    if( protocolContainer.size() == 0 )
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Protocol did not contain any steps" );
 
     return fileName;
 }
@@ -401,25 +398,29 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
                              | QMessageBox::Escape) != QMessageBox::Yes )
         return ; // Return if answer is no
 
-    QDomDocument doc( "IS_DC_Protocol" );
+    QDomDocument doc( "protocol" );
     QFile file( fileName );
 
-    if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
-        QMessageBox::warning(parent, "Error", "Unable to open protocol file" );
+    if( !file.open( IO_ReadOnly ) ) { // Make sure file can be opened, if not, warn user
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Unable to open protocol file" );
         return ;
     }   
     if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
-        QMessageBox::warning(parent, "Error", "Unable to set file contents to document" );
-        file.close();
-        return ;
-    }
+            QMessageBox::warning(parent,
+                                 "Error",
+                                 "Unable to set file contents to document" );
+            file.close();
+            return ;
+        }
     file.close();
 
-    QDomElement root = doc.documentElement(); // Get root element from documen
-	 
-	 // Check if tagname is correct for this module versiont
-    if( root.tagName() != "IS_DC_protocol-v1.0" ) { 
-        QMessageBox::warning(parent, "Error", "Incompatible XML file" );
+    QDomElement root = doc.documentElement(); // Get root element from document
+    if( root.tagName() != "IS_DC_protocol-v1.0" ) { // Check if tagname is correct for this module version
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Incompatible XML file" );
         return;
     }
 
@@ -431,24 +432,24 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
         QDomElement stepElement = stepNode.toElement();
 
         // Add new step to protocol container
-        protocolContainer.push_back( 
-		      ProtocolStepPtr( new ProtocolStep(
-                (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-                stepElement.attribute( "BCL" ).toInt(),
-                stepElement.attribute( "numBeats" ).toInt(),
-                stepElement.attribute( "currentToScale" ).toStdString(),
-                stepElement.attribute( "scalingPercentage" ).toInt(),
-                stepElement.attribute( "waitTime" ).toInt(),
-                (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
-            ) ) ); // Add step to segment container            
+        protocolContainer.push_back( ProtocolStepPtr( new ProtocolStep(
+                                                      (ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
+                                                      stepElement.attribute( "BCL" ).toInt(),
+                                                      stepElement.attribute( "numBeats" ).toInt(),
+                                                      stepElement.attribute( "currentToScale" ),
+                                                      stepElement.attribute( "scalingPercentage" ).toInt(),
+                                                      stepElement.attribute( "waitTime" ).toInt(),
+                                                      (ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
+                                                      ) ) ); // Add step to segment container            
 
         stepNode = stepNode.nextSibling(); // Move to next step
     } // End step iteration
 
     // Update segment summary and table
-    if( protocolContainer.size() == 0 ) {
-        QMessageBox::warning(parent, "Error", "Protocol did not contain any steps" );
-	 }
+    if( protocolContainer.size() == 0 )
+        QMessageBox::warning(parent,
+                             "Error",
+                             "Protocol did not contain any steps" );
 }
 
 QDomElement Protocol::stepToNode( QDomDocument &doc, const ProtocolStepPtr stepPtr, int stepNumber ) {
@@ -458,7 +459,7 @@ QDomElement Protocol::stepToNode( QDomDocument &doc, const ProtocolStepPtr stepP
     stepElement.setAttribute( "stepType", QString::number( stepPtr->stepType ) );
     stepElement.setAttribute( "BCL", QString::number( stepPtr->BCL ) );
     stepElement.setAttribute( "numBeats", QString::number( stepPtr->numBeats ) );
-    stepElement.setAttribute( "currentToScale", QString::fromStdString( stepPtr->currentToScale ) );
+    stepElement.setAttribute( "currentToScale", stepPtr->currentToScale );
     stepElement.setAttribute( "scalingPercentage", stepPtr->scalingPercentage );
     stepElement.setAttribute( "waitTime", stepPtr->waitTime );
     stepElement.setAttribute( "modelType", stepPtr->modelType );
@@ -484,7 +485,7 @@ QString Protocol::getStepDescription( int stepNumber ) {
         break;
             
     case ProtocolStep::SCALE:
-        type = "Scale " + QString::fromStdString(step->currentToScale) + "(" + QString::number( step->scalingPercentage ) + "%)";
+        type = "Scale " + step->currentToScale + "(" + QString::number( step->scalingPercentage ) + "%)";
         description = type + ": " + QString::number( step->numBeats ) + " beats - " + QString::number( step->BCL ) + "ms BCL";
         break;
                 

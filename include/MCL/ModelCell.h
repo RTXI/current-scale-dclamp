@@ -37,7 +37,7 @@
 #define MODELCELL_H
 
 #include <string.h>
-#include <QtGui>
+#include <qstringlist.h>
 #include "models/include/default_model.h"
 
 class ModelCell {

@@ -33,21 +33,20 @@
 #include <math.h>
 #include <main_window.h>
 
-#include <QtGui>
+#include <qtimer.h>
+#include <qcheckbox.h>
+#include <qpushbutton.h>
+#include <qmessagebox.h>
+#include <qlabel.h>
+#include <qvalidator.h>
+#include <qlineedit.h>
+#include <qlistbox.h>
+#include <qcombobox.h>
+#include <qlayout.h>
 
-//#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
-//#include "/home/user/Projects/rtxi/plugins/data_recorder/data_recorder.h"
+#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
-
-namespace {
-	class IScale_DynClamp_SyncEvent : public RT::Event {
-		public:
-			int callback(void) {
-				return 0;
-			}
-	};
-}
 
 // Create Module Instance
 extern "C" Plugin::Object *createRTXIPlugin(void) {
@@ -100,10 +99,12 @@ static Workspace::variable_t vars[] = {
 // Number of variables in vars
 static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
-IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), RT::Thread( 0 ), Workspace::Instance( "Current-scaling Dynamic Clamp", vars, num_vars ) {
+IScale_DynClamp::Module::Module(void) :
+    QWidget( MainWindow::getInstance()->centralWidget(), 0, Qt::WStyle_NormalBorder | Qt::WDestructiveClose ),
+    RT::Thread( 0 ),
+    Workspace::Instance( "IScale DynClamp", vars, num_vars ) {
 
     // Build Module GUI
-	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
     createGUI();        
     initialize(); // Initialize parameters, initialize states, reset model, and update rate
     refreshDisplay();
@@ -115,9 +116,6 @@ IScale_DynClamp::Module::~Module(void) {
     modelCell = NULL;
     delete livshitzRudy2009;
     delete faberRudy2000;
-	 setActive(false);
-	 IScale_DynClamp_SyncEvent event;
-	 RT::System::getInstance()->postEvent(&event);
 } // End destructor
 
 void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
@@ -202,7 +200,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             if( recordData && !recording && currentStep == 0 ) { // Record data if dataRecord is toggled
                 Event::Object event(Event::START_RECORDING_EVENT);
                 Event::Manager::getInstance()->postEventRT(&event);
-					 recording = true;
             }
             
             modelInit = true;                                
@@ -301,7 +298,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             if(recording == true) {
                 Event::Object event(Event::STOP_RECORDING_EVENT);
                 Event::Manager::getInstance()->postEventRT(&event);
-					 recording = false;
             }
             protocolOn = false;
             executeMode = IDLE;
@@ -327,7 +323,6 @@ void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, pro
     APD = 0;
     targetCurrent = 0;
     scaledCurrent = 0;
-	 executeMode = IDLE;
 
     // Parameters
     APDRepol = 90;    
@@ -384,7 +379,7 @@ void IScale_DynClamp::Module::reset( void ) {
 }
 
 void IScale_DynClamp::Module::addStep( void ) {
-    int idx = mainWindow->protocolEditorListBox->currentRow();
+    int idx = mainWindow->protocolEditorListBox->currentItem();
     if( idx == -1 ) { // Protocol is empty or nothing is selected, add step to end
         if( protocol->addStep( this ) )   // Update protocolEditorListBox if a step was added
             rebuildListBox();
@@ -395,7 +390,7 @@ void IScale_DynClamp::Module::addStep( void ) {
 }
 
 void IScale_DynClamp::Module::deleteStep( void ) {
-    int idx = mainWindow->protocolEditorListBox->currentRow();
+    int idx = mainWindow->protocolEditorListBox->currentItem();
     if( idx == -1 ) // Protocol is empty or nothing is selected, return
         return ;
     
@@ -418,99 +413,32 @@ void IScale_DynClamp::Module::clearProtocol( void ) {
 }
 
 void IScale_DynClamp::Module::toggleThreshold( void ) {
-    thresholdOn = mainWindow->thresholdButton->isChecked();
-	 
-    setActive(false); //breakage maybe...
-	 IScale_DynClamp_SyncEvent event;
-	 RT::System::getInstance()->postEvent(&event);
-
-    if( thresholdOn ) { // Start protocol, reinitialize parameters to start values
-        executeMode = THRESHOLD;
-        reset();
-        Vrest = input(0) * 1e3;
-        peakVoltageT = Vrest;
-        stimulusLevel = 2.0; // na
-        responseDuration = 0;
-        responseTime = 0;
-        setActive( true );
-    }
-    else { // Stop protocol, only called when pace button is unclicked in the middle of a run
-        executeMode = IDLE;
-        setActive( false );
-    }
-  
-//    ToggleThresholdEvent event( this, thresholdOn );
-//    RT::System::getInstance()->postEvent( &event );
+    thresholdOn = mainWindow->thresholdButton->isOn();
+    
+    ToggleThresholdEvent event( this, thresholdOn );
+    RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::toggleProtocol( void ) {
-    bool protocolOn = mainWindow->startProtocolButton->isChecked();
-
-	 setActive(false);
-	 IScale_DynClamp_SyncEvent event;
-	 RT::System::getInstance()->postEvent(&event);
-
+    protocolOn = mainWindow->startProtocolButton->isOn();
+    
     if( protocolOn ){
         if( protocolContainer->size() <= 0 ) {
-				QMessageBox * msgBox = new QMessageBox;
-				msgBox->setWindowTitle("Error");
-				msgBox->setText("I need a protocol first, buddy");
-				msgBox->setStandardButtons(QMessageBox::Ok);
-				msgBox->setDefaultButton(QMessageBox::NoButton);
-				msgBox->setWindowModality(Qt::WindowModal);
-				msgBox->open();
+            QMessageBox::warning( this, "Error", "Protocol has yet to be defined." );
+            mainWindow->startProtocolButton->setOn( false );
             protocolOn = false;
-				executeMode = IDLE;
-        } else {
-			  executeMode = IDLE; // Keep on IDLE until update is finished
-			  voltageClamp = false;
-			  modelInit = true;
-			  reset();
-			  modelCell->resetModel();
-			  beatNum = 0; // beatNum is changed at beginning of protocol, so it must start at 0 instead of 1
-			  stepTracker = -1; // Used to highlight the current step in list box, -1 to force first step to be highlighted
-			  protocolMode = STEPINIT; 
-			  executeMode = PROTOCOL;
-			  setActive( true );
-		  }
-	 } else { // Stop protocol, only called when protocol button is unclicked in the middle of a run
-		  if( recording ) { // Stop data recorder if recording
-            ::Event::Object event(::Event::STOP_RECORDING_EVENT);
-            ::Event::Manager::getInstance()->postEventRT(&event);
-				recording = false;
-        } 
-        executeMode = IDLE;
-        setActive( false );
-	 }
+        }
+    }
 
-//    ToggleProtocolEvent event( this, protocolOn );
-//    RT::System::getInstance()->postEvent( &event );
+    ToggleProtocolEvent event( this, protocolOn );
+    RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::togglePace( void ) {
-    paceOn = mainWindow->staticPacingButton->isChecked();
+    paceOn = mainWindow->staticPacingButton->isOn();
 
-	 setActive(false);
-	 IScale_DynClamp_SyncEvent event;
-	 RT::System::getInstance()->postEvent(&event);
-    
-	 if( paceOn ) { // Start protocol, reinitialize parameters to start values
-        reset();
-        executeMode = PACE;
-        setActive( true );
-    }
-    else { // Stop protocol, only called when pace button is unclicked in the middle of a run
-        if( recording ) { // Stop data recorder if recording
-            ::Event::Object event(::Event::STOP_RECORDING_EVENT);
-            ::Event::Manager::getInstance()->postEventRT(&event);
-				recording = false;
-        }        
-        executeMode = IDLE;
-        setActive( false );
-    }
-
-//    TogglePaceEvent event( this, paceOn );
-//    RT::System::getInstance()->postEvent( &event );
+    TogglePaceEvent event( this, paceOn );
+    RT::System::getInstance()->postEvent( &event );
 }
 
 void IScale_DynClamp::Module::changeModel( int idx ) {
@@ -573,30 +501,20 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 
     // Rebuild list box
     for( int i = 0; i < protocolContainer->size(); i++ ) {
-        mainWindow->protocolEditorListBox->insertItem( i,  protocol->getStepDescription( i ) );
+        mainWindow->protocolEditorListBox->insertItem( protocol->getStepDescription( i ) );
     }
 }
 /* Build Module GUI */
 void IScale_DynClamp::Module::createGUI( void ) {
-
-    QMdiSubWindow *subWindow  = new QMdiSubWindow;
-    subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
-	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
-	 subWindow->setMinimumSize(300,450);
-	 MainWindow::getInstance()->createMdi(subWindow); 
-	 subWindow->setWidget(this);
-
-//    mainWindow = new IScale_DynClampUI(this);
-    mainWindow = new IScale_DynClampUI(subWindow);
+    mainWindow = new IScale_DynClampUI(this);
     // Construct Main Layout - vertical layout
-//    QBoxLayout *layout = new QVBoxLayout(subWindow);
-    QVBoxLayout *layout = new QVBoxLayout(this);
-	 setLayout(layout);
-	 layout->addWidget(mainWindow);
+    QBoxLayout *layout = new QVBoxLayout(this);
+
+    setCaption( QString::number( getID() ) + " Current Scaling Dyn Clamp" );
 
     // Model Combo Box
-    mainWindow->modelComboBox->addItem("LivRudy 2009");
-    mainWindow->modelComboBox->addItem("FaberRudy 2000");
+    mainWindow->modelComboBox->insertItem("LivRudy 2009");
+    mainWindow->modelComboBox->insertItem("FaberRudy 2000");
 
     // Set GUI refresh rate
     QTimer *timer = new QTimer(this);
@@ -621,7 +539,7 @@ void IScale_DynClamp::Module::createGUI( void ) {
     QObject::connect( mainWindow->loadProtocolButton, SIGNAL(clicked(void)), this, SLOT( loadProtocol(void)) );
     QObject::connect( mainWindow->clearProtocolButton, SIGNAL(clicked(void)), this, SLOT( clearProtocol(void)) );
     QObject::connect( mainWindow->recordDataCheckBox, SIGNAL(clicked(void)), this, SLOT( modify(void)) );
-    QObject::connect( mainWindow->startProtocolButton, SIGNAL(toggled(bool)), this, SLOT( toggleProtocol(void)) );
+    QObject::connect( mainWindow->startProtocolButton, SIGNAL(clicked(void)), this, SLOT( toggleProtocol(void)) );
     QObject::connect( mainWindow->thresholdButton, SIGNAL(clicked(void)), this, SLOT( toggleThreshold(void)) );
     QObject::connect( mainWindow->staticPacingButton, SIGNAL(clicked(void)), this, SLOT( togglePace(void)) );
     QObject::connect( mainWindow->resetButton, SIGNAL(clicked(void)), this, SLOT( reset(void)) );
@@ -646,6 +564,8 @@ void IScale_DynClamp::Module::createGUI( void ) {
     QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), mainWindow->thresholdButton, SLOT( setDisabled(bool)) );
     QObject::connect( mainWindow->staticPacingButton, SIGNAL(toggled(bool)), mainWindow->startProtocolButton, SLOT( setDisabled(bool)) );
                       
+    layout->addWidget(mainWindow);
+    
     // Connect states to workspace
     setData( Workspace::STATE, 0, &time );
     setData( Workspace::STATE, 1, &voltage );
@@ -654,7 +574,8 @@ void IScale_DynClamp::Module::createGUI( void ) {
     setData( Workspace::STATE, 4, &targetCurrent );
     setData( Workspace::STATE, 5, &scaledCurrent );
 
-	 subWindow->show();
+    resize( minimumSize() ); // Set window to minimum size
+	show();
 } // End createGUI()
 
 // Load from Settings
@@ -669,7 +590,7 @@ void IScale_DynClamp::Module::doLoad(const Settings::Object::State &s) {
         parentWidget()->move(s.loadInteger("X"), s.loadInteger("Y"));
     }
 
-    loadedFile = QString::fromStdString(s.loadString("Protocol"));
+    loadedFile = s.loadString("Protocol");
     if( loadedFile != "" ) {        
         protocol->loadProtocol( this, loadedFile );
         rebuildListBox();
@@ -701,7 +622,7 @@ void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     s.saveInteger( "Y", pos.y() );
     s.saveInteger( "W", width() );
     s.saveInteger( "H", height() );
-    s.saveString( "Protocol", loadedFile.toStdString() );
+    s.saveString( "Protocol", loadedFile );
     s.saveInteger( "APD Repol", APDRepol );
     s.saveInteger( "Min APD", minAPD );
     s.saveInteger( "Stim Window", stimWindow );
@@ -713,7 +634,6 @@ void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     s.saveDouble( "Cm", Cm );
     s.saveDouble( "LJP", LJP );
 }
-
 void IScale_DynClamp::Module::modify(void) {
     int APDr = mainWindow->APDRepolEdit->text().toInt();
     int mAPD = mainWindow->minAPDEdit->text().toInt();
@@ -725,7 +645,7 @@ void IScale_DynClamp::Module::modify(void) {
     double sl = mainWindow->stimLengthEdit->text().toDouble();
     double c = mainWindow->CmEdit->text().toDouble();
     double ljp = mainWindow->LJPEdit->text().toDouble();
-    bool rd = mainWindow->recordDataCheckBox->isChecked();
+    bool rd = mainWindow->recordDataCheckBox->isOn();
 
     if( APDr == APDRepol && mAPD == minAPD && sw == stimWindow && nt == numTrials && it == intervalTime
         && b == BCL && sm == stimMag && sl == stimLength && c == Cm && ljp == LJP && rd == recordData ) // If nothing has changed
@@ -753,25 +673,23 @@ void IScale_DynClamp::Module::refreshDisplay(void) {
     mainWindow->beatNumEdit->setText( QString::number(beatNum) );
     mainWindow->APDEdit->setText( QString::number(APD) );
 
-
     if( executeMode == IDLE ) {
-        if( mainWindow->startProtocolButton->isChecked() && !protocolOn ) {
-            mainWindow->startProtocolButton->setChecked( false );
-		  } else if( mainWindow->thresholdButton->isChecked() && !thresholdOn ) {
-            mainWindow->thresholdButton->setChecked( false );
+        if( mainWindow->startProtocolButton->isOn() && !protocolOn )
+            mainWindow->startProtocolButton->setOn( false );
+        else if( mainWindow->thresholdButton->isOn() && !thresholdOn ) {
+            mainWindow->thresholdButton->setOn( false );
             mainWindow->stimMagEdit->setText( QString::number( stimMag ) );
             modify();
-		  }
+        }
     }
     else if( executeMode == PROTOCOL ) {
         if( stepTracker != currentStep ) {
             stepTracker = currentStep;
-            mainWindow->protocolEditorListBox->setCurrentRow( currentStep );
+            mainWindow->protocolEditorListBox->setSelected( currentStep, true );
         }        
     }
 }
 
-/*
 // RT::Events - Called from GUI thread, handled by RT thread
 IScale_DynClamp::Module::ToggleProtocolEvent::ToggleProtocolEvent( Module *m, bool o )
     : module( m ), on( o ) {
@@ -789,7 +707,7 @@ int IScale_DynClamp::Module::ToggleProtocolEvent::callback( void ) {
         module->stepTracker = -1; // Used to highlight the current step in list box, -1 to force first step to be highlighted
         module->protocolMode = STEPINIT; 
         module->executeMode = PROTOCOL;
-//        module->setActive( true );
+        module->setActive( true );
     }
     else { // Stop protocol, only called when protocol button is unclicked in the middle of a run
         if( module->recording ) { // Stop data recorder if recording
@@ -797,7 +715,7 @@ int IScale_DynClamp::Module::ToggleProtocolEvent::callback( void ) {
             ::Event::Manager::getInstance()->postEventRT(&event);
         }        
         module->executeMode = IDLE;
-//        module->setActive( false );
+        module->setActive( false );
     }
     
     return 0;
@@ -848,17 +766,13 @@ int IScale_DynClamp::Module::ToggleThresholdEvent::callback( void ) {
     
     return 0;
 }
-*/
-
-IScale_DynClamp::Module::ModifyEvent::ModifyEvent( Module *m, int APDr, int mAPD, int sw, int nt, int it,
-                                                   int b, double sm, double sl, double c, double ljp, 
-																	bool rd ) 
-                                                 : module( m ), APDRepolValue( APDr ), 
-																   minAPDValue( mAPD ), stimWindowValue( sw ),
-                                                   numTrialsValue( nt ), intervalTimeValue( it ), 
-																	BCLValue( b ), stimMagValue( sm ), 
-																	stimLengthValue( sl ), CmValue( c ), 
-																	LJPValue( ljp ), recordDataValue( rd ) { }
+ 
+IScale_DynClamp::Module::ModifyEvent::ModifyEvent( Module *m, int APDr, int mAPD, int sw,
+                                                   int nt, int it, int b, double sm, double sl, double c, double ljp, bool rd )
+    : module( m ), APDRepolValue( APDr ), minAPDValue( mAPD ), stimWindowValue( sw ),
+      numTrialsValue( nt ), intervalTimeValue( it ), BCLValue( b ), stimMagValue( sm ),
+      stimLengthValue( sl ), CmValue( c ), LJPValue( ljp ), recordDataValue( rd ) {
+}
 
 int IScale_DynClamp::Module::ModifyEvent::callback( void ) {
     module->APDRepol = APDRepolValue;
@@ -884,9 +798,10 @@ void IScale_DynClamp::Module::receiveEvent( const ::Event::Object *event ) {
         stimLengthInt = stimLength / period;
         modelCell->setModelRate(100000, period);
     }
-
-    if( event->getName() == Event::START_RECORDING_EVENT ) recording = true;
-    if( event->getName() == Event::STOP_RECORDING_EVENT ) recording = false;
+    if( event->getName() == Event::START_RECORDING_EVENT )
+        recording = true;
+    if( event->getName() == Event::STOP_RECORDING_EVENT )
+        recording = false;
 }
 
 void IScale_DynClamp::Module::receiveEventRT( const ::Event::Object *event ) {
@@ -896,7 +811,8 @@ void IScale_DynClamp::Module::receiveEventRT( const ::Event::Object *event ) {
         stimLengthInt = stimLength / period;
         modelCell->setModelRate(100000, period);
     }
-
-    if( event->getName() == Event::START_RECORDING_EVENT ) recording = true;
-    if( event->getName() == Event::STOP_RECORDING_EVENT ) recording = false;
+    if( event->getName() == Event::START_RECORDING_EVENT )
+        recording = true;
+    if( event->getName() == Event::STOP_RECORDING_EVENT )
+        recording = false;
 }

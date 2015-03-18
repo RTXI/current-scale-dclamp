@@ -562,10 +562,9 @@ void LivRudy2009::setParam( int paramNum, double value ) {
 QStringList LivRudy2009::paramList( void ) {
     QStringList list;
     
-    for( std::map<std::string, double*>::iterator it = parameterMap.begin(); 
-	 	   it != parameterMap.end(); it++ ) {// Iterate through the map
-       list << QString::fromStdString(it->first); // Add string key to the list
-	 }
+    for( std::map<std::string, double*>::iterator it = parameterMap.begin();
+         it != parameterMap.end(); it++ ) // Iterate through the map
+        list << it->first; // Add string key to the list
         
     return list;
 }

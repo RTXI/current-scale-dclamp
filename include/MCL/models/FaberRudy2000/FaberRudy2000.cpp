@@ -644,7 +644,7 @@ QStringList FaberRudy2000::paramList( void ) {
     
     for( std::map<std::string, double*>::iterator it = parameterMap.begin();
          it != parameterMap.end(); it++ ) // Iterate through the map
-        list << QString::fromStdString(it->first); // Add string key to the list
+        list << it->first; // Add string key to the list
         
     return list;
 }

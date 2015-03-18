@@ -44,7 +44,7 @@
 #define FABERRUDY2000_H
 
 #include <map>
-#include <QtGui>
+#include <qstringlist.h>
 #include "../include/default_model.h" // default_model base class
 
 /*** FaberRudy2000 Class ***/

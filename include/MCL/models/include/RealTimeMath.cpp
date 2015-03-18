@@ -1,9 +1,7 @@
 #include "RealTimeMath.h"
 #include <math.h>
 #include <iostream>
-
 using namespace std;
-
 RealTimeMath::RealTimeMath(){
     powFast = new PowFast(18);
     }

@@ -32,9 +32,10 @@
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
+#include <qwidget.h>
+#include <qstring.h>
 #include <string>
 #include <qdom.h>
-#include <QtGui>
 #include "IS_DC_AddStepDialogUI.h"
 
 class AddStepInputDialog: public AddStepDialog {

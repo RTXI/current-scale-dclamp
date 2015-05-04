@@ -38,7 +38,7 @@
 #include <event.h>
 #include <plugin.h>
 
-#include <QtGui>
+#include <QtWidgets>
 
 namespace IScale_DynClamp {
     class Module: public QWidget, public RT::Thread, public Plugin::Object, 

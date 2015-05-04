@@ -34,7 +34,7 @@
 #include <vector>
 #include <string>
 #include <qdom.h>
-#include <QtGui>
+#include <QtWidgets>
 #include "IS_DC_AddStepDialogUI.h"
 
 class AddStepInputDialog: public AddStepDialog {

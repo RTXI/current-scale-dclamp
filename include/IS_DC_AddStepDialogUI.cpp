@@ -1,6 +1,6 @@
 #include "IS_DC_AddStepDialogUI.h"
 
-#include <QtGui>
+#include <QtWidgets>
 #include <iostream>
 
 /*

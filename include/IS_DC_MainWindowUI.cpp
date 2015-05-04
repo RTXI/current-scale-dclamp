@@ -1,6 +1,6 @@
 #include "IS_DC_MainWindowUI.h"
 
-#include <QtGui>
+#include <QtWidgets>
 #include <iostream>
 
 /*

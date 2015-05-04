@@ -33,7 +33,7 @@
 #include <math.h>
 #include <main_window.h>
 
-#include <QtGui>
+#include <QtWidgets>
 
 //#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
 //#include "/home/user/Projects/rtxi/plugins/data_recorder/data_recorder.h"

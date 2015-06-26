@@ -1,7 +1,6 @@
 #include "IS_DC_MainWindowUI.h"
 
 #include <QtWidgets>
-#include <iostream>
 
 /*
  *  Constructs a IScale_DynClampUI as a child of 'parent', with the
@@ -9,7 +8,6 @@
  */
 IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 
-std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle( tr( "Current Scaling Dynamic Clamp" ) );
 	 
@@ -30,15 +28,12 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 //    spacer2b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 //    protocolButtonGroupLayout->addItem( spacer2b, 1, 4 );
 
-    protocolGroup = new QGroupBox;
-    protocolGroup->setAlignment( Qt::AlignCenter );
+    protocolGroup = new QWidget;
+//    protocolGroup = new QGroupBox;
+//    protocolGroup->setAlignment( Qt::AlignCenter );
     protocolGroupLayout = new QGridLayout( protocolGroup );
 	 protocolGroup->setLayout(protocolGroupLayout);
     protocolGroupLayout->setAlignment( Qt::AlignTop );
-    spacer1b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    protocolGroupLayout->addItem( spacer1b, 0, 4 );
-    spacer2b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    protocolGroupLayout->addItem( spacer2b, 1, 4 );
 
     staticPacingButton = new QPushButton( "Pace", protocolGroup );
 //	 protocolButtonGroup->addButton(staticPacingButton);
@@ -50,11 +45,6 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     resetButton->setCheckable( false );
     protocolGroupLayout->addWidget( resetButton, 1, 3 );
 
-    spacer3b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    protocolGroupLayout->addItem( spacer3b, 0, 2 );
-    spacer4b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    protocolGroupLayout->addItem( spacer4b, 1, 2 );
-
     startProtocolButton = new QPushButton( "Protocol", protocolGroup );
 //	 protocolButtonGroup->addButton(startProtocolButton);
     startProtocolButton->setCheckable( true );
@@ -64,12 +54,8 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
 //	 protocolButtonGroup->addButton(thresholdButton);
     thresholdButton->setCheckable( true );
     protocolGroupLayout->addWidget( thresholdButton, 0, 1 );
-
-    spacer5b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    protocolGroupLayout->addItem( spacer5b, 1, 0 );
-    spacer6b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    protocolGroupLayout->addItem( spacer6b, 0, 0 );
-    IScale_DynClampUILayout->addWidget( protocolGroup );
+    
+	 IScale_DynClampUILayout->addWidget( protocolGroup );
 
 //    tabBox = new QTabWidget( parent );
     tabBox = new QTabWidget( this );
@@ -257,7 +243,6 @@ std::cout<<"IScale_DynClampUI constructor called"<<std::endl;
     protocolEditorListBox->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     protocolEditorListBox->setHorizontalScrollBarPolicy( Qt::ScrollBarAsNeeded );
     IScale_DynClampUILayout->addWidget( protocolEditorListBox );
-std::cout<<"IScale_DynClampUI constructor returned"<<std::endl;
 }
 
 /*

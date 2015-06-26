@@ -582,7 +582,9 @@ void IScale_DynClamp::Module::createGUI( void ) {
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
     subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
 	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
-	 subWindow->setMinimumSize(300,450);
+	 subWindow->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint | 
+	                           Qt::WindowMinimizeButtonHint );
+//	 subWindow->setMinimumSize(300,450);
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 
@@ -655,6 +657,7 @@ void IScale_DynClamp::Module::createGUI( void ) {
     setData( Workspace::STATE, 5, &scaledCurrent );
 
 	 subWindow->show();
+	 subWindow->adjustSize();
 } // End createGUI()
 
 // Load from Settings

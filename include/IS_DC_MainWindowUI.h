@@ -11,7 +11,8 @@ class IScale_DynClampUI : public QWidget {
 		~IScale_DynClampUI();
 
 		QButtonGroup* protocolButtonGroup;
-		QGroupBox* protocolGroup;
+//		QGroupBox* protocolGroup;
+		QWidget* protocolGroup;
 		QPushButton* staticPacingButton;
 		QPushButton* resetButton;
 		QPushButton* startProtocolButton;

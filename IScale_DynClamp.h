@@ -42,7 +42,8 @@
 
 namespace IScale_DynClamp {
     class Module: public QWidget, public RT::Thread, public Plugin::Object, 
-                  public Workspace::Instance, public Event::Handler, public Event::RTHandler {
+                  public Workspace::Instance, public Event::Handler, 
+                  public Event::RTHandler {
     
         Q_OBJECT // macro needed if slots are implemented
     

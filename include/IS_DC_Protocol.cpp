@@ -52,6 +52,7 @@ AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent
 AddStepInputDialog::~AddStepInputDialog( void ) { }
 
 void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
+
 	switch( (ProtocolStep::stepType_t)selection ) {
 	
 	case ProtocolStep::PACE:
@@ -146,6 +147,10 @@ void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and ch
 	case 7: // Change Model
 		if (model == "") check = false;
 		break;
+
+	default: 
+		std::cout<<"default called in addStepClicked() - something went horribly wrong."<<std::endl;
+		break;
 	}
 
 	if (check) emit checked();
@@ -195,6 +200,7 @@ Protocol::~Protocol( void ) { }
 bool Protocol::addStep( QWidget *parent ) {
 	AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
 	vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
+	delete dlg;
 
 	if( inputAnswers.size() > 0 ) {
 		// Add a new step to protocol container

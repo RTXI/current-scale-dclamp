@@ -1,6 +1,6 @@
 #include "IS_DC_MainWindowUI.h"
 
-#include <QtWidgets>
+#include <QtGui>
 
 /*
  *  Constructs a IScale_DynClampUI as a child of 'parent', with the

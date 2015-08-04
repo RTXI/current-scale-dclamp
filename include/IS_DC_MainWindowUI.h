@@ -1,7 +1,7 @@
 #ifndef ISCALE_DYNCLAMPUI_H
 #define ISCALE_DYNCLAMPUI_H
 
-#include <QtWidgets>
+#include <QtGui>
 
 class IScale_DynClampUI : public QWidget {
 	Q_OBJECT

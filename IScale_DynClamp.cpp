@@ -32,7 +32,7 @@
 #include <math.h>
 #include <main_window.h>
 
-#include <QtWidgets>
+#include <QtGui>
 #include <data_recorder.h>
 
 using namespace std;

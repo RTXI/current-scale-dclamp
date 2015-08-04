@@ -1,6 +1,6 @@
 #include "IS_DC_AddStepDialogUI.h"
 
-#include <QtWidgets>
+#include <QtGui>
 
 /*
  *  Constructs a AddStepDialog as a child of 'parent', with the

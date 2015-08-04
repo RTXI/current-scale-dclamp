@@ -1,7 +1,7 @@
 #ifndef ADDSTEPDIALOG_H
 #define ADDSTEPDIALOG_H
 
-#include <QtWidgets>
+#include <QtGui>
 
 class AddStepDialog : public QDialog {
 	Q_OBJECT

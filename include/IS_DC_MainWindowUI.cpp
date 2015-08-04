@@ -12,54 +12,34 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 	setWindowTitle( tr( "Current Scaling Dynamic Clamp" ) );
 
 	IScale_DynClampUILayout = new QVBoxLayout( this );
-//	IScale_DynClampUILayout = new QVBoxLayout( parent );
 	setLayout(IScale_DynClampUILayout);
 
-//	protocolButtonGroup = new QButtonGroup( parent );
 	protocolButtonGroup = new QButtonGroup( this );
-//	protocolButtonGroup->setAlignment( Qt::AlignCenter );
-//	protocolButtonGroup->setColumnLayout(0, Qt::Vertical );
-//	protocolButtonGroup->layout()->setSpacing( 6 );
-//	protocolButtonGroup->layout()->setMargin( 11 );
-//	protocolButtonGroupLayout = new QGridLayout( protocolButtonGroup->layout() );
-//	protocolButtonGroupLayout->setAlignment( Qt::AlignTop );
-//	spacer1b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-//	protocolButtonGroupLayout->addItem( spacer1b, 0, 4 );
-//	spacer2b = new QSpacerItem( 0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-//	protocolButtonGroupLayout->addItem( spacer2b, 1, 4 );
 
 	protocolGroup = new QWidget;
-//	protocolGroup = new QGroupBox;
-//	protocolGroup->setAlignment( Qt::AlignCenter );
 	protocolGroupLayout = new QGridLayout( protocolGroup );
 	protocolGroup->setLayout(protocolGroupLayout);
 	protocolGroupLayout->setAlignment( Qt::AlignTop );
 
 	staticPacingButton = new QPushButton( "Pace", protocolGroup );
-//	protocolButtonGroup->addButton(staticPacingButton);
 	staticPacingButton->setCheckable( true );
 	protocolGroupLayout->addWidget( staticPacingButton, 0, 3 );
 
 	resetButton = new QPushButton( "Reset", protocolGroup );
-//	protocolButtonGroup->addButton(resetButton);
 	resetButton->setCheckable( false );
 	protocolGroupLayout->addWidget( resetButton, 1, 3 );
 
 	startProtocolButton = new QPushButton( "Protocol", protocolGroup );
-//	protocolButtonGroup->addButton(startProtocolButton);
 	startProtocolButton->setCheckable( true );
 	protocolGroupLayout->addWidget( startProtocolButton, 1, 1 );
 
 	thresholdButton = new QPushButton( "Threshold", protocolGroup );
-//	protocolButtonGroup->addButton(thresholdButton);
 	thresholdButton->setCheckable( true );
 	protocolGroupLayout->addWidget( thresholdButton, 0, 1 );
 
 	IScale_DynClampUILayout->addWidget( protocolGroup );
 
-//	tabBox = new QTabWidget( parent );
 	tabBox = new QTabWidget( this );
-//	tabBox->setFocusPolicy( QTabWidget::NoFocus );
 	tabBox->setTabPosition( QTabWidget::North );
 	tabBox->setTabShape( QTabWidget::Rounded );
 
@@ -169,9 +149,6 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 
 	modelGroup = new QGroupBox( "Dynamic Clamp Model", tab );
 	modelGroup->setAlignment( Qt::AlignCenter );
-//	modelGroup->setColumnLayout( 0, Qt::Vertical );
-//	modelGroup->layout()->setSpacing( 6 );
-//	modelGroup->layout()->setMargin( 11 );
 	modelGroupLayout = new QVBoxLayout( modelGroup );
 	modelGroup->setLayout(modelGroupLayout);
 	modelGroupLayout->setAlignment( Qt::AlignTop );
@@ -238,7 +215,6 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 	tabBox->setTabText( tabBox->indexOf(tab_2), "APD" );
 	IScale_DynClampUILayout->addWidget( tabBox );
 
-//	protocolEditorListBox = new QListWidget( parent );
 	protocolEditorListBox = new QListWidget( this );
 	protocolEditorListBox->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
 	protocolEditorListBox->setHorizontalScrollBarPolicy( Qt::ScrollBarAsNeeded );

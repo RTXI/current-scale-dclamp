@@ -45,122 +45,123 @@ using namespace std;
 
 /*** ModelCell Constructor ***/
 ModelCell::ModelCell(){
-    // Default model is LivshitzRudy2009
-    model = new LivRudy2009();
+	// Default model is LivshitzRudy2009
+	model = new LivRudy2009();
 }
 
 /*** ModelCell Destructor ***/
 ModelCell::~ModelCell(){
-    delete model;
+	delete model;
 }
 
 /*** resetModel Function ***/
 // Resets model to initial conditions
 void ModelCell::resetModel(){
-    model->reset();
+	model->reset();
 }
+
 // Resets model to a specific set of initial conditions, returns int describing which set was chosen
 int ModelCell::resetModel(double x){
-    int y;
-    y = model->reset(x);
-    return y;
+	int y;
+	y = model->reset(x);
+	return y;
 }
 
 void ModelCell::resetModel(double *x){ // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
-    model->reset(x);
+	model->reset(x);
 }
 
 /*** changeModel Function ***/
 // Deletes existing model, and then initializes new model based on parameter
 void ModelCell::changeModel(model_t newModel){
 
-    delete model;
+	delete model;
 
-    switch (newModel){
+	switch (newModel) {
 
-    case LIVRUDY2009:
-        model = new LivRudy2009();
-        break;
-        
-    case FABERRUDY2000:
-        model = new FaberRudy2000();
-        break;
+	case LIVRUDY2009:
+		model = new LivRudy2009();
+		break;
+	  
+	case FABERRUDY2000:
+		model = new FaberRudy2000();
+		break;
 
-    case WANGSOBIE:
-        model = new WangSobie();
-        break;
+	case WANGSOBIE:
+		model = new WangSobie();
+		break;
 
-    case PANDIT:
-        model = new Pandit();
-        break;
+	case PANDIT:
+		model = new Pandit();
+		break;
 
-    case TENTUSSCHER2006:
-        model = new TenTusscher2006();
-        break;
+	case TENTUSSCHER2006:
+		model = new TenTusscher2006();
+		break;
 
-    }
+	}
 }
 
 /*** setModelRate Function ***/
 // Updates DT and steps based on desired model integration rate and RTXI period
 void ModelCell::setModelRate(double modelRate, double RTperiod){
-    DT = (1/modelRate)*1000; // Calculates DT (ms)
-    model->setDT(DT);
+	DT = (1/modelRate)*1000; // Calculates DT (ms)
+	model->setDT(DT);
 	steps = static_cast<int>(ceil(RTperiod/DT)); // Determines number of iterations model solver will run based on RTXI thread rate
-    model->setSteps(steps);
+	model->setSteps(steps);
 }
 
 void ModelCell::setModelRate(double modelRate){
-    DT = (1/modelRate)*1000; // Calculates DT (ms)
-    model->setDT(DT);
-    model->setSteps(1);
+	DT = (1/modelRate)*1000; // Calculates DT (ms)
+	model->setDT(DT);
+	model->setSteps(1);
 }
 
 /*** currentClamp Function ***/
 // Passes current to model, runs its iClamp() function, and returns voltage
 double ModelCell::currentClamp(double current){
-    return model->iClamp(current);
+	return model->iClamp(current);
 }
 
 /*** voltageClamp Function ***/
 // Passes voltage to model, runs its vClamp() function, and returns current
 double ModelCell::voltageClamp(double voltage){
-    return model->vClamp(voltage);
+	return model->vClamp(voltage);
 }
 
 /*** returnCurrent Function ***/
 // Return a model current, see list of currents in model folders
 double ModelCell::getCurrent(int current){
-    return model->current(current);
+	return model->current(current);
 }
 
 /*** returnConcentration Function ***/
 // Return a model ion concentration, see list of currents in model folders
 double ModelCell::getConcentration(int concentration){
-    return model->concentration(concentration);
+	return model->concentration(concentration);
 }
 
 
 // Return a model parameter, see list of parameters in model folders or use define list
 double ModelCell::getParameter( int paramNum ) {
-    return model->param(paramNum);
+	return model->param(paramNum);
 }
 
 /*** Return Parameter Function ***/
 // Uses a map for better code readability
 double ModelCell::getParameter( string paramNum ) {
-   return model->param(paramNum);
+	return model->param(paramNum);
 }
 
 
 /*** Set Parameter Function ***/
 // Sets a model parameter, see list of parameters in model folders or use define list
 void ModelCell::setParameter( int paramNum, double value ) {
-    model->setParam(paramNum, value);
+	model->setParam(paramNum, value);
 }
 
 /*** Get Parameter List Function ***/
 // Returns a list of parameters available for retrieval
 QStringList ModelCell::getParameterList( void ) {
-    return model->paramList();
+	return model->paramList();
 }

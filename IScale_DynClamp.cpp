@@ -29,14 +29,11 @@
 
 /* Include */
 #include <IScale_DynClamp.h>
-#include <iostream>
 #include <math.h>
 #include <main_window.h>
 
-#include <QtGui>
-
-//#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
-//#include "/home/user/Projects/rtxi/plugins/data_recorder/data_recorder.h"
+#include <QtWidgets>
+#include <data_recorder.h>
 
 using namespace std;
 
@@ -100,10 +97,13 @@ static Workspace::variable_t vars[] = {
 // Number of variables in vars
 static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
-IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), RT::Thread( 0 ), Workspace::Instance( "Current-scaling Dynamic Clamp", vars, num_vars ) {
+IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), 
+                                        RT::Thread( 0 ), 
+                                        Workspace::Instance( "Current-scaling Dynamic Clamp", vars, num_vars ) {
 
     // Build Module GUI
-	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
+//	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
+    setWindowTitle(QString::number( getID() ) + "Current-scaling Dynamic Clamp");
     createGUI();        
     initialize(); // Initialize parameters, initialize states, reset model, and update rate
     refreshDisplay();
@@ -386,12 +386,14 @@ void IScale_DynClamp::Module::reset( void ) {
 void IScale_DynClamp::Module::addStep( void ) {
     int idx = mainWindow->protocolEditorListBox->currentRow();
     if( idx == -1 ) { // Protocol is empty or nothing is selected, add step to end
-        if( protocol->addStep( this ) )   // Update protocolEditorListBox if a step was added
+        if( protocol->addStep( this ) ) {   // Update protocolEditorListBox if a step was added
             rebuildListBox();
+		  }
     }
     else // If a step is selected, add step after
-        if( protocol->addStep( this, idx ) )   // Update protocolEditorListBox if a step was added
-            rebuildListBox();            
+        if( protocol->addStep( this, idx ) ) {  // Update protocolEditorListBox if a step was added
+            rebuildListBox();
+		  }
 }
 
 void IScale_DynClamp::Module::deleteStep( void ) {
@@ -576,13 +578,16 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
         mainWindow->protocolEditorListBox->insertItem( i,  protocol->getStepDescription( i ) );
     }
 }
+
 /* Build Module GUI */
 void IScale_DynClamp::Module::createGUI( void ) {
 
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
-    subWindow->setWindowTitle( QString::number( getID() ) + " Current Scaling Dynamic Clamp" );
+    subWindow->setWindowTitle( QString::number( getID() ) + " Current-scaling Dynamic Clamp" );
 	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
-	 subWindow->setMinimumSize(300,450);
+	 subWindow->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint | 
+	                           Qt::WindowMinimizeButtonHint );
+//	 subWindow->setMinimumSize(300,450);
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 
@@ -655,6 +660,7 @@ void IScale_DynClamp::Module::createGUI( void ) {
     setData( Workspace::STATE, 5, &scaledCurrent );
 
 	 subWindow->show();
+	 subWindow->adjustSize();
 } // End createGUI()
 
 // Load from Settings

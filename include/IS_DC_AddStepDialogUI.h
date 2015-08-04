@@ -29,13 +29,7 @@ class AddStepDialog : public QDialog {
 		QPushButton* exitButton;
 
 	protected:
-		QVBoxLayout* AddStepDialogLayout;
-		QHBoxLayout* layout1;
-		QHBoxLayout* layout2;
-		QHBoxLayout* layout3;
-		QHBoxLayout* layout4;
-		QHBoxLayout* layout5;
-		QHBoxLayout* layout6;
+		QGridLayout* AddStepDialogLayout;
 		QHBoxLayout* buttonGroupLayout;
 		QHBoxLayout* buttonGroupBoxLayout;
 };

@@ -9,7 +9,6 @@
 IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 
 	QWidget::setAttribute(Qt::WA_DeleteOnClose);
-	setWindowTitle( tr( "Current Scaling Dynamic Clamp" ) );
 
 	IScale_DynClampUILayout = new QVBoxLayout( this );
 	setLayout(IScale_DynClampUILayout);

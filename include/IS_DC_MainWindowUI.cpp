@@ -8,7 +8,7 @@
  */
 IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 
-	QWidget::setAttribute(Qt::WA_DeleteOnClose);
+//	QWidget::setAttribute(Qt::WA_DeleteOnClose);
 
 	IScale_DynClampUILayout = new QVBoxLayout( this );
 	setLayout(IScale_DynClampUILayout);

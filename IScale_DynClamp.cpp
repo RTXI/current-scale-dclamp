@@ -99,11 +99,11 @@ static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
 IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), 
                                         RT::Thread( 0 ), 
-                                        Workspace::Instance( "Current-scaling Dynamic Clamp", vars, num_vars ) {
+                                        Workspace::Instance( " Current-scaling Dynamic Clamp", vars, num_vars ) {
 
     // Build Module GUI
 //	 QWidget::setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(QString::number( getID() ) + "Current-scaling Dynamic Clamp");
+    setWindowTitle(QString::number( getID() ) + " Current-scaling Dynamic Clamp");
     createGUI();        
     initialize(); // Initialize parameters, initialize states, reset model, and update rate
     refreshDisplay();
@@ -115,9 +115,14 @@ IScale_DynClamp::Module::~Module(void) {
     modelCell = NULL;
     delete livshitzRudy2009;
     delete faberRudy2000;
+	 
+/*
 	 setActive(false);
 	 IScale_DynClamp_SyncEvent event;
 	 RT::System::getInstance()->postEvent(&event);
+	 Plugin::Manager::getInstance()->unload(this);
+	 mainWindow->close();
+*/
 } // End destructor
 
 void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
@@ -583,11 +588,11 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 void IScale_DynClamp::Module::createGUI( void ) {
 
     QMdiSubWindow *subWindow  = new QMdiSubWindow;
-    subWindow->setWindowTitle( QString::number( getID() ) + " Current-scaling Dynamic Clamp" );
+	 subWindow->setAttribute(Qt::WA_DeleteOnClose);
+//    subWindow->setWindowTitle( QString::number( getID() ) + " Current-scaling Dynamic Clamp" );
 	 subWindow->setWindowIcon(QIcon("/usr/local/lib/rtxi/RTXI-widget-icon.png"));
 	 subWindow->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint | 
 	                           Qt::WindowMinimizeButtonHint );
-//	 subWindow->setMinimumSize(300,450);
 	 MainWindow::getInstance()->createMdi(subWindow); 
 	 subWindow->setWidget(this);
 

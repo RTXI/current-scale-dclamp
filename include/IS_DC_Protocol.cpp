@@ -30,7 +30,7 @@
 #include "IS_DC_Protocol.h"
 #include <iostream>
 
-#include <QtGui>
+#include <QtWidgets>
 
 using namespace std;
 

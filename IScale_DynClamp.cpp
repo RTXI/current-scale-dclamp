@@ -99,7 +99,7 @@ static size_t num_vars = sizeof(vars) / sizeof(Workspace::variable_t);
 
 IScale_DynClamp::Module::Module(void) : QWidget( MainWindow::getInstance()->centralWidget() ), 
                                         RT::Thread( 0 ), 
-                                        Workspace::Instance( " Current-scaling Dynamic Clamp", vars, num_vars ) {
+                                        Workspace::Instance( "Current-scaling Dynamic Clamp", vars, num_vars ) {
 
     // Build Module GUI
 //	 QWidget::setAttribute(Qt::WA_DeleteOnClose);

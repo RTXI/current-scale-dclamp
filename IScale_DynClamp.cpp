@@ -618,7 +618,8 @@ void IScale_DynClamp::Module::createGUI( void ) {
     mainWindow->stimWindowEdit->setValidator( new QIntValidator(mainWindow->stimWindowEdit) );
     mainWindow->numTrialEdit->setValidator( new QIntValidator(mainWindow->numTrialEdit) );
     mainWindow->intervalTimeEdit->setValidator( new QIntValidator(mainWindow->intervalTimeEdit) );
-    mainWindow->BCLEdit->setValidator( new QIntValidator(mainWindow->BCLEdit) );
+//    mainWindow->BCLEdit->setValidator( new QIntValidator(mainWindow->BCLEdit) );
+    mainWindow->BCLEdit->setValidator( new QDoubleValidator(mainWindow->BCLEdit) );
     mainWindow->stimMagEdit->setValidator( new QDoubleValidator(mainWindow->stimMagEdit) );
     mainWindow->stimLengthEdit->setValidator( new QDoubleValidator(mainWindow->stimLengthEdit) );
     mainWindow->CmEdit->setValidator( new QDoubleValidator(mainWindow->CmEdit) );
@@ -691,7 +692,7 @@ void IScale_DynClamp::Module::doLoad(const Settings::Object::State &s) {
     mainWindow->stimWindowEdit->setText( QString::number( s.loadInteger("Stim Window") ) );
     mainWindow->numTrialEdit->setText( QString::number( s.loadInteger("Num Trials") ) );
     mainWindow->intervalTimeEdit->setText( QString::number( s.loadInteger("Interval Time") ) );
-    mainWindow->BCLEdit->setText( QString::number( s.loadInteger("BCL") ) );
+    mainWindow->BCLEdit->setText( QString::number( s.loadDouble("BCL") ) );
     mainWindow->stimMagEdit->setText( QString::number( s.loadInteger("Stim Mag") ) );
     mainWindow->stimLengthEdit->setText( QString::number( s.loadInteger("Stim Length") ) );
     mainWindow->CmEdit->setText( QString::number( s.loadInteger("Cm") ) );
@@ -718,7 +719,7 @@ void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     s.saveInteger( "Stim Window", stimWindow );
     s.saveInteger( "Num Trials", numTrials);
     s.saveInteger( "Interval Time", intervalTime );
-    s.saveInteger( "BCL", BCL );
+    s.saveDouble( "BCL", BCL );
     s.saveDouble( "Stim Mag", stimMag );
     s.saveDouble( "Stim Length", stimLength );
     s.saveDouble( "Cm", Cm );
@@ -731,7 +732,7 @@ void IScale_DynClamp::Module::modify(void) {
     int sw = mainWindow->stimWindowEdit->text().toInt();
     int nt = mainWindow->numTrialEdit->text().toInt();
     int it = mainWindow->intervalTimeEdit->text().toInt();
-    int b = mainWindow->BCLEdit->text().toInt();
+    int b = mainWindow->BCLEdit->text().toDouble();
     double sm = mainWindow->stimMagEdit->text().toDouble();
     double sl = mainWindow->stimLengthEdit->text().toDouble();
     double c = mainWindow->CmEdit->text().toDouble();

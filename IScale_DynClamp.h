@@ -102,7 +102,7 @@ namespace IScale_DynClamp {
         int stimWindow; // Window of time after stimulus ignored by APD calculation
         int numTrials; // Number of trials to be run
         int intervalTime; // Time between trials
-        int BCL; // Basic cycle length
+        double BCL; // Basic cycle length
         double stimMag; // Stimulation magnitude (nA)
         double stimLength; // Stimulation length (ms)
         double Cm; // Membrane capacitance (pF)

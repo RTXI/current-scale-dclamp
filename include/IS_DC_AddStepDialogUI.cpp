@@ -28,7 +28,10 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 	BCLLabel = new QLabel( "Basic Cycle Length (ms)", this );
 	AddStepDialogLayout->addWidget( BCLLabel, 1, 0);
 	BCLEdit = new QLineEdit( "", this );
-	BCLEdit->setValidator( new QDoubleValidator(0, 1000, 2, BCLEdit) );
+//	QDoubleValidator* BCLValidator = new QDoubleValidator(0.00, 1000.00, 2, BCLEdit);
+	BCLEdit->setValidator( new QDoubleValidator(0, 1000, 10, BCLEdit) );
+//	BCLValidator->setNotation(QDoubleValidator::StandardNotation);
+//	BCLEdit->setValidator( BCLValidator );
 	AddStepDialogLayout->addWidget( BCLEdit, 1, 1);
 
 	numBeatsLabel = new QLabel( "Number of Beats", this );

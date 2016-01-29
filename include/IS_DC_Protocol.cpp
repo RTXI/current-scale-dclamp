@@ -36,7 +36,8 @@ using namespace std;
 
 /* AddStepInputDialog Class */
 AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent ) /*, 0, TRUE )*/ {
-	QValidator* validator = new QIntValidator(this);
+	QValidator* validator = new QDoubleValidator(this);
+//	QValidator* validator = new QIntValidator(this);
 	BCLEdit->setValidator(validator);
 	numBeatsEdit->setValidator(validator);
 	scalingPercentageEdit->setValidator(validator);
@@ -178,7 +179,7 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 }
 
 /* Protocol Step Class */
-ProtocolStep::ProtocolStep( stepType_t st, int bcl, int nb, string c, int sp, 
+ProtocolStep::ProtocolStep( stepType_t st, double bcl, int nb, string c, int sp, 
                             int w, modelType_t(mt) ) :
                             stepType(st), BCL(bcl), numBeats(nb), 
                             currentToScale(c), scalingPercentage(sp), 
@@ -207,7 +208,7 @@ bool Protocol::addStep( QWidget *parent ) {
 		protocolContainer.push_back( 
 			ProtocolStepPtr( new ProtocolStep (
 			(ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-			inputAnswers[1].toInt(), // BCL
+			inputAnswers[1].toDouble(), // BCL
 			inputAnswers[2].toInt(), // numBeats
 			inputAnswers[3].toStdString(), // currentToScale
 			inputAnswers[4].toInt(), // scalingPercentage
@@ -235,7 +236,7 @@ bool Protocol::addStep( QWidget *parent, int idx ) {
 		protocolContainer.insert( 
 			it+idx+1, ProtocolStepPtr( new ProtocolStep(
 			(ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-			inputAnswers[1].toInt(), // BCL
+			inputAnswers[1].toDouble(), // BCL
 			inputAnswers[2].toInt(), // numBeats
 			inputAnswers[3].toStdString(), // currentToScale
 			inputAnswers[4].toInt(), // scalingPercentage
@@ -348,7 +349,7 @@ QString Protocol::loadProtocol( QWidget *parent ) {
 		protocolContainer.push_back( 
 		ProtocolStepPtr( new ProtocolStep(
 			(ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-				stepElement.attribute( "BCL" ).toInt(),
+				stepElement.attribute( "BCL" ).toDouble(),
 				stepElement.attribute( "numBeats" ).toInt(),
 				stepElement.attribute( "currentToScale" ).toStdString(),
 				stepElement.attribute( "scalingPercentage" ).toInt(),
@@ -410,7 +411,7 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
 		protocolContainer.push_back( 
 		ProtocolStepPtr( new ProtocolStep(
 			(ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-			stepElement.attribute( "BCL" ).toInt(),
+			stepElement.attribute( "BCL" ).toDouble(),
 			stepElement.attribute( "numBeats" ).toInt(),
 			stepElement.attribute( "currentToScale" ).toStdString(),
 			stepElement.attribute( "scalingPercentage" ).toInt(),

@@ -43,7 +43,7 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 	currentToScaleLabel = new QLabel( "Current to Scale", this );
 	AddStepDialogLayout->addWidget( currentToScaleLabel, 3, 0);
 	currentToScaleEdit = new QLineEdit( "", this );
-	QRegExp currentToScaleRegExp("(INa|IKr|ICaL|IK1|IKs|ICaT|INaK|INCX)");
+	QRegExp currentToScaleRegExp("(INa|IKr|ICaL|IK1|IKs|ICaT|INaK|INCX|IpCA)");
 	currentToScaleEdit->setValidator( new QRegExpValidator(currentToScaleRegExp, currentToScaleEdit) );
 	currentToScaleEdit->setToolTip( tr( "Choices: INa, IKr, IKs, ICaL, IK1, ICaT, INaK, or INCX" ) );
 	AddStepDialogLayout->addWidget( currentToScaleEdit, 3, 1);

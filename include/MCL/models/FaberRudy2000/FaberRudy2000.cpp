@@ -651,11 +651,14 @@ QStringList FaberRudy2000::paramList( void ) {
 
 void FaberRudy2000::makeMap( void ) {    
     parameterMap["INa"] = &I_Na;
-    parameterMap["IKr"] = &I_Kr;
-    parameterMap["IKs"] = &I_Ks;
     parameterMap["ICaL"] = &I_Ca_L;
-    parameterMap["IK1"] = &I_K1;
     parameterMap["ICaT"] = &I_Ca_T;
+	 parameterMap["IKr"] = &I_Kr;
+    parameterMap["IKs"] = &I_Ks;
+    parameterMap["IK1"] = &I_K1;
+	 parameterMap["IKp"] = &I_Kp;
+    parameterMap["IpCA"] = &I_p_Ca;
+    
     parameterMap["INaK"] = &I_Na_K;
     parameterMap["INCX"] = &I_Na_Ca;
 }

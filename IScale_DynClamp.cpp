@@ -31,9 +31,14 @@
 #include <IScale_DynClamp.h>
 #include <math.h>
 #include <main_window.h>
-
-#include <QtWidgets>
 #include <data_recorder.h>
+
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 using namespace std;
 

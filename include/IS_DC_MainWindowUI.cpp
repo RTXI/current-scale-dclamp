@@ -18,7 +18,12 @@
 
 #include "IS_DC_MainWindowUI.h"
 
-#include <QtWidgets>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 /*
  *  Constructs a IScale_DynClampUI as a child of 'parent', with the

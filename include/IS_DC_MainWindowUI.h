@@ -19,7 +19,12 @@
 #ifndef ISCALE_DYNCLAMPUI_H
 #define ISCALE_DYNCLAMPUI_H
 
-#include <QtWidgets>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 class IScale_DynClampUI : public QWidget {
 	Q_OBJECT

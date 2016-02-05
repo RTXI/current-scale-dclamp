@@ -18,7 +18,12 @@
 
 #include "IS_DC_AddStepDialogUI.h"
 
-#include <QtWidgets>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 /*
  *  Constructs a AddStepDialog as a child of 'parent', with the
@@ -46,10 +51,7 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 	BCLLabel = new QLabel( "Basic Cycle Length (ms)", this );
 	AddStepDialogLayout->addWidget( BCLLabel, 1, 0);
 	BCLEdit = new QLineEdit( "", this );
-//	QDoubleValidator* BCLValidator = new QDoubleValidator(0.00, 1000.00, 2, BCLEdit);
 	BCLEdit->setValidator( new QDoubleValidator(0, 1000, 10, BCLEdit) );
-//	BCLValidator->setNotation(QDoubleValidator::StandardNotation);
-//	BCLEdit->setValidator( BCLValidator );
 	AddStepDialogLayout->addWidget( BCLEdit, 1, 1);
 
 	numBeatsLabel = new QLabel( "Number of Beats", this );

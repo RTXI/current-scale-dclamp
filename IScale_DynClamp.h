@@ -38,7 +38,12 @@
 #include <event.h>
 #include <plugin.h>
 
-#include <QtWidgets>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 namespace IScale_DynClamp {
     class Module: public QWidget, public RT::Thread, public Plugin::Object, 

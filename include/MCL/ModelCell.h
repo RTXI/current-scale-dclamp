@@ -37,8 +37,14 @@
 #define MODELCELL_H
 
 #include <string.h>
-#include <QtWidgets>
 #include "models/include/default_model.h"
+
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 class ModelCell {
 	

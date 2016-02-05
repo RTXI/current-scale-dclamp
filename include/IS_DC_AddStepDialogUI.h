@@ -19,7 +19,12 @@
 #ifndef ADDSTEPDIALOG_H
 #define ADDSTEPDIALOG_H
 
-#include <QtWidgets>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 class AddStepDialog : public QDialog {
 	Q_OBJECT

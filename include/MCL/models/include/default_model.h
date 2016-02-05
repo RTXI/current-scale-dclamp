@@ -37,8 +37,14 @@
 #define DEFAULT_MODEL_H
 
 #include <string>
-#include <QtWidgets>
 #include "../include/RealTimeMath.h" // RealTimeMath library
+
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 /*** Class default_model ***/
 class default_model{

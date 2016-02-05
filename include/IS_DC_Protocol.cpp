@@ -30,7 +30,12 @@
 #include "IS_DC_Protocol.h"
 #include <iostream>
 
-#include <QtWidgets>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 using namespace std;
 

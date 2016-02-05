@@ -34,8 +34,14 @@
 #include <vector>
 #include <string>
 #include <qdom.h>
-#include <QtWidgets>
 #include "IS_DC_AddStepDialogUI.h"
+
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 class AddStepInputDialog: public AddStepDialog {
 	Q_OBJECT

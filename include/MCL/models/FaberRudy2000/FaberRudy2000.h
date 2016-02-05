@@ -44,8 +44,14 @@
 #define FABERRUDY2000_H
 
 #include <map>
-#include <QtWidgets>
 #include "../include/default_model.h" // default_model base class
+
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+	#include <QtGui>
+#endif
 
 /*** FaberRudy2000 Class ***/
 class FaberRudy2000 : public default_model { // Base class is default_model

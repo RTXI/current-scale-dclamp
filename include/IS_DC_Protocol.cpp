@@ -41,10 +41,11 @@ using namespace std;
 
 /* AddStepInputDialog Class */
 AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent ) /*, 0, TRUE )*/ {
-	QValidator* validator = new QDoubleValidator(this);
-	BCLEdit->setValidator(validator);
-	numBeatsEdit->setValidator(validator);
-	scalingPercentageEdit->setValidator(validator);
+//	QValidator* validator = new QDoubleValidator(this);
+//	BCLEdit->setValidator(validator);
+//	DIEdit->setValidator(validator);
+//	numBeatsEdit->setValidator(validator);
+//	scalingPercentageEdit->setValidator(validator);
 
 	QObject::connect( addStepButton,SIGNAL(clicked(void)),this,SLOT(addStepClicked(void)) );
 	QObject::connect( exitButton, SIGNAL(clicked(void)), this, SLOT( reject() ) );
@@ -67,6 +68,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	case ProtocolStep::PACE:
 		BCLEdit->setEnabled(true);
 		numBeatsEdit->setEnabled(true);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(false);
 		scalingPercentageEdit->setEnabled(false);
 		waitTimeEdit->setEnabled(false);
@@ -76,6 +78,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	case ProtocolStep::SCALE:
 		BCLEdit->setEnabled(true);
 		numBeatsEdit->setEnabled(true);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(true);
 		scalingPercentageEdit->setEnabled(true);
 		waitTimeEdit->setEnabled(false);
@@ -85,15 +88,37 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	case ProtocolStep::WAIT:
 		BCLEdit->setEnabled(false);
 		numBeatsEdit->setEnabled(false);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(false);
 		scalingPercentageEdit->setEnabled(false);
 		waitTimeEdit->setEnabled(true);
 		modelComboBox->setEnabled(false);
 		break;
 
+	case ProtocolStep::DIPACE:
+		BCLEdit->setEnabled(false);
+		numBeatsEdit->setEnabled(true);
+		DIEdit->setEnabled(true);
+		currentToScaleEdit->setEnabled(false);
+		scalingPercentageEdit->setEnabled(false);
+		waitTimeEdit->setEnabled(false);
+		modelComboBox->setEnabled(false);
+		break;
+
+	case ProtocolStep::DISCALE:
+		BCLEdit->setEnabled(false);
+		numBeatsEdit->setEnabled(true);
+		DIEdit->setEnabled(true);
+		currentToScaleEdit->setEnabled(true);
+		scalingPercentageEdit->setEnabled(true);
+		waitTimeEdit->setEnabled(false);
+		modelComboBox->setEnabled(false);
+		break;
+
 	case ProtocolStep::STARTMODEL:
 		BCLEdit->setEnabled(false);
 		numBeatsEdit->setEnabled(false);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(false);
 		scalingPercentageEdit->setEnabled(false);
 		waitTimeEdit->setEnabled(false);
@@ -103,6 +128,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	case ProtocolStep::STOPMODEL:
 		BCLEdit->setEnabled(false);
 		numBeatsEdit->setEnabled(false);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(false);
 		scalingPercentageEdit->setEnabled(false);
 		waitTimeEdit->setEnabled(false);
@@ -112,6 +138,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	case ProtocolStep::RESETMODEL:
 		BCLEdit->setEnabled(false);
 		numBeatsEdit->setEnabled(false);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(false);
 		scalingPercentageEdit->setEnabled(false);
 		waitTimeEdit->setEnabled(false);
@@ -121,6 +148,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	case ProtocolStep::CHANGEMODEL:
 		BCLEdit->setEnabled(false);
 		numBeatsEdit->setEnabled(false);
+		DIEdit->setEnabled(false);
 		currentToScaleEdit->setEnabled(false);
 		scalingPercentageEdit->setEnabled(false);
 		waitTimeEdit->setEnabled(false);
@@ -133,6 +161,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 void AddStepInputDialog::addStepClicked( void ) { 
 	bool check = true;
 	BCL = BCLEdit->text();
+	DI = DIEdit->text();
 	stepType = QString::number( stepComboBox->currentIndex() );
 	numBeats = numBeatsEdit->text();
 	currentToScale = currentToScaleEdit->text();
@@ -142,19 +171,27 @@ void AddStepInputDialog::addStepClicked( void ) {
 
 	switch( stepComboBox->currentIndex() ) {
 	
-	case 0: // Pace
+	case ProtocolStep::PACE: // Pace
 		if (BCL == "" || numBeats == "") check = false;
 		break;
 
-	case 1: // Scale
+	case ProtocolStep::SCALE: // Scale
 		if (BCL == "" || numBeats == "" || currentToScale == "") check = false;
 		break;
 
-	case 2: // Wait
+	case ProtocolStep::WAIT: // Wait
 		if (waitTime == "") check = false;
 		break;
 
-	case 7: // Change Model
+	case ProtocolStep::DIPACE: // DI
+		if (DI == "" || numBeats == "") check = false;
+		break;
+
+	case ProtocolStep::DISCALE: // DI + Scaling
+		if (BCL == "" || numBeats == "" || currentToScale == "") check = false;
+		break;
+
+	case ProtocolStep::CHANGEMODEL: // Change Model
 		if (model == "") check = false;
 		break;
 
@@ -179,6 +216,7 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 		inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
 		//inputAnswers.push_back( stepType );
 		inputAnswers.push_back( BCL );
+		inputAnswers.push_back( DI );
 		inputAnswers.push_back( numBeats );
 		inputAnswers.push_back( currentToScale );
 		inputAnswers.push_back( scalingPercentage );
@@ -190,9 +228,9 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 }
 
 /* Protocol Step Class */
-ProtocolStep::ProtocolStep( stepType_t st, double bcl, int nb, string c, int sp, 
-                            int w, modelType_t(mt) ) :
-                            stepType(st), BCL(bcl), numBeats(nb), 
+ProtocolStep::ProtocolStep( stepType_t st, double bcl, double di, int nb, 
+                            string c, int sp, int w, modelType_t(mt) ) :
+                            stepType(st), BCL(bcl), DI(di), numBeats(nb), 
                             currentToScale(c), scalingPercentage(sp), 
                             waitTime(w), modelType(mt) { }
 
@@ -223,11 +261,12 @@ bool Protocol::addStep( QWidget *parent ) {
 			ProtocolStepPtr( new ProtocolStep (
 			(ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
 			inputAnswers[1].toDouble(), // BCL
-			inputAnswers[2].toInt(), // numBeats
-			inputAnswers[3].toStdString(), // currentToScale
-			inputAnswers[4].toInt(), // scalingPercentage
-			inputAnswers[5].toInt(), // waitTime
-			(ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
+			inputAnswers[2].toDouble(), // DI
+			inputAnswers[3].toInt(), // numBeats
+			inputAnswers[4].toStdString(), // currentToScale
+			inputAnswers[5].toInt(), // scalingPercentage
+			inputAnswers[6].toInt(), // waitTime
+			(ProtocolStep::modelType_t)( inputAnswers[7].toInt() ) // model
 		) ) );
 		return true;
 	}
@@ -251,15 +290,19 @@ bool Protocol::addStep( QWidget *parent, int idx ) {
 	if( inputAnswers.size() > 0 ) {
 		// Add a new step to protocol container
 		protocolContainer.insert( 
-			it+idx+1, ProtocolStepPtr( new ProtocolStep(
-			(ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), // stepType
-			inputAnswers[1].toDouble(), // BCL
-			inputAnswers[2].toInt(), // numBeats
-			inputAnswers[3].toStdString(), // currentToScale
-			inputAnswers[4].toInt(), // scalingPercentage
-			inputAnswers[5].toInt(), // waitTime
-			(ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) // model
-		) ) );
+			it+idx+1, ProtocolStepPtr( 
+				new ProtocolStep(
+					(ProtocolStep::stepType_t)( inputAnswers[0].toInt() ), //stepType
+					inputAnswers[1].toDouble(), // BCL
+					inputAnswers[2].toDouble(), // DI
+					inputAnswers[3].toInt(), // numBeats
+					inputAnswers[4].toStdString(), // currentToScale
+					inputAnswers[5].toInt(), // scalingPercentage
+					inputAnswers[6].toInt(), // waitTime
+					(ProtocolStep::modelType_t)( inputAnswers[6].toInt() ) //model
+				) 
+			) 
+		);
 		return true;
 	}
 	else return false; // No step added
@@ -320,7 +363,9 @@ void Protocol::saveProtocol( QWidget *parent ) {
 
 	// Open file, return error if unable to do so
 	if( !file.open(QIODevice::WriteOnly) ) {
-		QMessageBox::warning(parent,"Error","Unable to save file: Please check folder permissions." );
+		QMessageBox::warning(
+			parent, "Error", 
+			"Unable to save file: Please check folder permissions.");
 		return ;
 	}
 
@@ -379,15 +424,16 @@ QString Protocol::loadProtocol( QWidget *parent ) {
 
 		// Add new step to protocol container
 		protocolContainer.push_back( 
-		ProtocolStepPtr( new ProtocolStep(
-			(ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
+			ProtocolStepPtr( new ProtocolStep(
+				(ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
 				stepElement.attribute( "BCL" ).toDouble(),
+				stepElement.attribute( "DI" ).toDouble(),
 				stepElement.attribute( "numBeats" ).toInt(),
 				stepElement.attribute( "currentToScale" ).toStdString(),
 				stepElement.attribute( "scalingPercentage" ).toInt(),
 				stepElement.attribute( "waitTime" ).toInt(),
 				(ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
-			) ) ); // Add step to segment container            
+		) ) ); // Add step to segment container            
 
 		stepNode = stepNode.nextSibling(); // Move to next step
 	} // End step iteration
@@ -443,14 +489,15 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
 
 		// Add new step to protocol container
 		protocolContainer.push_back( 
-		ProtocolStepPtr( new ProtocolStep(
-			(ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
-			stepElement.attribute( "BCL" ).toDouble(),
-			stepElement.attribute( "numBeats" ).toInt(),
-			stepElement.attribute( "currentToScale" ).toStdString(),
-			stepElement.attribute( "scalingPercentage" ).toInt(),
-			stepElement.attribute( "waitTime" ).toInt(),
-			(ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
+			ProtocolStepPtr( new ProtocolStep(
+				(ProtocolStep::stepType_t)stepElement.attribute("stepType").toInt(),
+				stepElement.attribute( "BCL" ).toDouble(),
+				stepElement.attribute( "DI" ).toDouble(),
+				stepElement.attribute( "numBeats" ).toInt(),
+				stepElement.attribute( "currentToScale" ).toStdString(),
+				stepElement.attribute( "scalingPercentage" ).toInt(),
+				stepElement.attribute( "waitTime" ).toInt(),
+				(ProtocolStep::modelType_t)stepElement.attribute("modelType").toInt()
 		) ) ); // Add step to segment container            
 
 		stepNode = stepNode.nextSibling(); // Move to next step
@@ -468,6 +515,7 @@ QDomElement Protocol::stepToNode( QDomDocument &doc, const ProtocolStepPtr stepP
 	// Set attributes of step to element
 	stepElement.setAttribute( "stepType", QString::number( stepPtr->stepType ) );
 	stepElement.setAttribute( "BCL", QString::number( stepPtr->BCL ) );
+	stepElement.setAttribute( "DI", QString::number( stepPtr->DI ) );
 	stepElement.setAttribute( "numBeats", QString::number( stepPtr->numBeats ) );
 	stepElement.setAttribute( "currentToScale", QString::fromStdString( stepPtr->currentToScale ) );
 	stepElement.setAttribute( "scalingPercentage", stepPtr->scalingPercentage );
@@ -495,11 +543,24 @@ QString Protocol::getStepDescription( int stepNumber ) {
 		              " beats - " + QString::number( step->BCL ) + "ms BCL";
 		break;
 
+	case ProtocolStep::DIPACE:
+		type = "DI Pace ";
+		description = type + ": " + QString::number( step->numBeats ) + 
+		              " beats - " + QString::number( step->DI ) + "ms DI";
+		break;
+
 	case ProtocolStep::SCALE:
 		type = "Scale " + QString::fromStdString(step->currentToScale) + "(" + 
 		       QString::number( step->scalingPercentage ) + "%)";
 		description = type + ": " + QString::number( step->numBeats ) + 
 		              " beats - " + QString::number( step->BCL ) + "ms BCL";
+		break;
+	
+	case ProtocolStep::DISCALE:
+		type = "DI Scale " + QString::fromStdString(step->currentToScale) + "(" + 
+		       QString::number( step->scalingPercentage ) + "%)";
+		description = type + ": " + QString::number( step->numBeats ) + 
+		              " beats - " + QString::number( step->DI ) + "ms DI";
 		break;
 
 	case ProtocolStep::WAIT:

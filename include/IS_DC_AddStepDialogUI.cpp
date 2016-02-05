@@ -41,11 +41,13 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 	stepComboBox->clear();
 	stepComboBox->insertItem( 0, tr( "Static Pacing" ) );
 	stepComboBox->insertItem( 1, tr( "Current Scaling" ) );
-	stepComboBox->insertItem( 2, tr( "Wait" ) );
-	stepComboBox->insertItem( 3, tr( "Model: Start" ) );
-	stepComboBox->insertItem( 4, tr( "Model: Stop" ) );
-	stepComboBox->insertItem( 5, tr( "Model: Reset" ) );
-	stepComboBox->insertItem( 6, tr( "Model: Change" ) );
+	stepComboBox->insertItem( 2, tr( "Diastolic Interval" ) );
+	stepComboBox->insertItem( 3, tr( "DI + Scaling" ) );
+	stepComboBox->insertItem( 4, tr( "Wait" ) );
+	stepComboBox->insertItem( 5, tr( "Model: Start" ) );
+	stepComboBox->insertItem( 6, tr( "Model: Stop" ) );
+	stepComboBox->insertItem( 7, tr( "Model: Reset" ) );
+	stepComboBox->insertItem( 8, tr( "Model: Change" ) );
 	AddStepDialogLayout->addWidget( stepComboBox, 0, 0, 1, 2 );
 
 	BCLLabel = new QLabel( "Basic Cycle Length (ms)", this );
@@ -59,34 +61,40 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 	numBeatsEdit = new QLineEdit( "", this );
 	numBeatsEdit->setValidator( new QIntValidator(0, 10000, numBeatsEdit) );
 	AddStepDialogLayout->addWidget( numBeatsEdit, 2, 1);
+	
+	DILabel = new QLabel( "Diastolic Interval (ms)", this );
+	AddStepDialogLayout->addWidget( DILabel, 3, 0);
+	DIEdit = new QLineEdit( "", this );
+	DIEdit->setValidator( new QDoubleValidator(0, 1000, 10, DIEdit) );
+	AddStepDialogLayout->addWidget( DIEdit, 3, 1);
 
 	currentToScaleLabel = new QLabel( "Current to Scale", this );
-	AddStepDialogLayout->addWidget( currentToScaleLabel, 3, 0);
+	AddStepDialogLayout->addWidget( currentToScaleLabel, 4, 0);
 	currentToScaleEdit = new QLineEdit( "", this );
 	QRegExp currentToScaleRegExp("(INa|IKr|ICaL|IK1|IKs|ICaT|INaK|INCX|IpCA)");
 	currentToScaleEdit->setValidator( new QRegExpValidator(currentToScaleRegExp, currentToScaleEdit) );
 	currentToScaleEdit->setToolTip( tr( "Choices: INa, IKr, IKs, ICaL, IK1, ICaT, INaK, or INCX" ) );
-	AddStepDialogLayout->addWidget( currentToScaleEdit, 3, 1);
+	AddStepDialogLayout->addWidget( currentToScaleEdit, 4, 1);
 
 	scalingPercentageLabel = new QLabel( "Scaling Percentage", this );
-	AddStepDialogLayout->addWidget( scalingPercentageLabel, 4, 0);
+	AddStepDialogLayout->addWidget( scalingPercentageLabel, 5, 0);
 	scalingPercentageEdit = new QLineEdit( "", this );
 	scalingPercentageEdit->setValidator( new QDoubleValidator(-1000, 1000, 2, scalingPercentageEdit) );
-	AddStepDialogLayout->addWidget( scalingPercentageEdit, 4, 1);
+	AddStepDialogLayout->addWidget( scalingPercentageEdit, 5, 1);
 
 	waitTimeLabel = new QLabel( "Wait Time (ms)", this );
-	AddStepDialogLayout->addWidget( waitTimeLabel, 5, 0);
+	AddStepDialogLayout->addWidget( waitTimeLabel, 6, 0);
 	waitTimeEdit = new QLineEdit( "", this );
 	waitTimeEdit->setValidator( new QDoubleValidator(0, 10000, 2, waitTimeEdit) );
-	AddStepDialogLayout->addWidget( waitTimeEdit, 5, 1);
+	AddStepDialogLayout->addWidget( waitTimeEdit, 6, 1);
 
 	modelLabel = new QLabel( "Model", this );
-	AddStepDialogLayout->addWidget( modelLabel, 6, 0);
+	AddStepDialogLayout->addWidget( modelLabel, 7, 0);
 	modelComboBox = new QComboBox( this );
 	modelComboBox->clear();
 	modelComboBox->insertItem( 0, tr( "Livzhitz Rudy 2009" ) );
 	modelComboBox->insertItem( 1, tr( "Faber Rudy 2000" ) );
-	AddStepDialogLayout->addWidget( modelComboBox, 6, 1);
+	AddStepDialogLayout->addWidget( modelComboBox, 7, 1);
 
 	buttonGroup = new QButtonGroup( this );
 	buttonGroupBox = new QGroupBox( this );
@@ -100,7 +108,7 @@ AddStepDialog::AddStepDialog( QWidget* parent /*, const char* name, bool modal, 
 	exitButton = new QPushButton( "Exit", buttonGroupBox );
 	buttonGroupBoxLayout->addWidget( exitButton );
 	buttonGroup->addButton(exitButton);
-	AddStepDialogLayout->addWidget( buttonGroupBox, 7, 0, 1, 2 );
+	AddStepDialogLayout->addWidget( buttonGroupBox, 8, 0, 1, 2 );
 }
 
 /*

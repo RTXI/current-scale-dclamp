@@ -38,6 +38,8 @@ class AddStepDialog : public QDialog {
 		QLineEdit* BCLEdit;
 		QLabel* numBeatsLabel;
 		QLineEdit* numBeatsEdit;
+		QLabel* DILabel;
+		QLineEdit* DIEdit;
 		QLabel* currentToScaleLabel;
 		QLineEdit* currentToScaleEdit;
 		QLabel* scalingPercentageLabel;

@@ -42,15 +42,18 @@ using namespace std;
 /* AddStepInputDialog Class */
 AddStepInputDialog::AddStepInputDialog(QWidget* parent ) : AddStepDialog( parent ) /*, 0, TRUE )*/ {
 	QValidator* validator = new QDoubleValidator(this);
-//	QValidator* validator = new QIntValidator(this);
 	BCLEdit->setValidator(validator);
 	numBeatsEdit->setValidator(validator);
 	scalingPercentageEdit->setValidator(validator);
 
 	QObject::connect( addStepButton,SIGNAL(clicked(void)),this,SLOT(addStepClicked(void)) );
 	QObject::connect( exitButton, SIGNAL(clicked(void)), this, SLOT( reject() ) );
-	QObject::connect( this, SIGNAL(checked(void)), this, SLOT(accept()) ); // Dialog returns Accept after inputs have been checked
-	QObject::connect( stepComboBox, SIGNAL(activated(int)), SLOT(stepComboBoxUpdate(int)) ); // Updates when combo box selection is changed
+	
+	// Dialog returns Accept after inputs have been checked
+	QObject::connect( this, SIGNAL(checked(void)), this, SLOT(accept()) ); 
+
+	// Updates when combo box selection is changed
+	QObject::connect( stepComboBox, SIGNAL(activated(int)), SLOT(stepComboBoxUpdate(int)) ); 
 
 	stepComboBoxUpdate(0);
 }
@@ -126,7 +129,8 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
 	}
 }
 
-void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and checks if they are valid entries
+// Initializes QStrings and checks if they are valid entries
+void AddStepInputDialog::addStepClicked( void ) { 
 	bool check = true;
 	BCL = BCLEdit->text();
 	stepType = QString::number( stepComboBox->currentIndex() );
@@ -167,9 +171,11 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 	std::vector<QString> inputAnswers;
 
 	if( exec() == QDialog::Rejected ) {
-		return inputAnswers; // Return an empty vector if step window is closed
+		// Return an empty vector if step window is closed
+		return inputAnswers; 
 	}
-	else { // QDialog is accepted when addStep button is pressed and inputs are considered valid
+	else { 
+		// QDialog is accepted when addStep button is pressed and inputs are considered valid
 		inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
 		//inputAnswers.push_back( stepType );
 		inputAnswers.push_back( BCL );
@@ -201,11 +207,14 @@ Protocol::Protocol( void ) { }
 
 Protocol::~Protocol( void ) { }
 
-// Opens input dialogs to gather step information, then adds to protocol container *at the end*
-// Returns true if a step was added
+// Opens input dialogs to gather step information, then adds to protocol 
+// container *at the end*. Returns true if a step was added
 bool Protocol::addStep( QWidget *parent ) {
-	AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
-	vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
+	// Special dialog box for step parameter input
+	AddStepInputDialog *dlg = new AddStepInputDialog(parent);
+	
+	// Opens dialog box for input
+	vector<QString> inputAnswers = dlg->gatherInput(); 
 	delete dlg;
 
 	if( inputAnswers.size() > 0 ) {
@@ -227,11 +236,14 @@ bool Protocol::addStep( QWidget *parent ) {
 	}
 }
 
-// Opens input dialogs to gather step information, then adds to protocol container at *a specific point*
-// Returns true if a step was added
+// Opens input dialogs to gather step information, then adds to protocol 
+// container at *a specific point*. Returns true if a step was added
 bool Protocol::addStep( QWidget *parent, int idx ) {
-	AddStepInputDialog *dlg = new AddStepInputDialog(parent); // Special dialog box for step parameter input
-	vector<QString> inputAnswers = dlg->gatherInput(); // Opens dialog box for input
+	// Special dialog box for step parameter input
+	AddStepInputDialog *dlg = new AddStepInputDialog(parent); 
+
+	// Opens dialog box for input
+	vector<QString> inputAnswers = dlg->gatherInput(); 
 	delete dlg;
 
 	vector<ProtocolStepPtr>::iterator it = protocolContainer.begin();
@@ -256,8 +268,11 @@ bool Protocol::addStep( QWidget *parent, int idx ) {
 // Deletes a step
 void Protocol::deleteStep( QWidget *parent, int stepNumber ) {
 	// Message box asking for confirmation whether step should be deleted
-	QString text = "Do you wish to delete step " + QString::number(stepNumber+1) + "?"; // Text pointing out specific step
-	if( QMessageBox::question(parent,"Delete Step Confirmation",text,"Yes","No") ) {
+	QString text = "Do you wish to delete step " + QString::number(stepNumber+1) + "?"; 
+	
+	// text pointing out specific step
+	if( QMessageBox::question(parent, "Delete Step Confirmation",
+	                                 text, "Yes", "No")) {
 		return ; // Answer is no
 	}
 
@@ -269,7 +284,8 @@ void Protocol::deleteStep( QWidget *parent, int stepNumber ) {
 void Protocol::saveProtocol( QWidget *parent ) {
 	// Make sure protocol has at least one segment with one step
 	if( protocolContainer.size() == 0 ) { 
-		QMessageBox::warning(parent,"Error","A protocol must contain at least one step" );
+		QMessageBox::warning(parent, "Error",
+		                     "A protocol must contain at least one step");
 		return;
 	}
 
@@ -279,17 +295,18 @@ void Protocol::saveProtocol( QWidget *parent ) {
 	protocolDoc.appendChild(root);   
 
 	// Save dialog to retrieve desired filename and location
-	QString fileName = QFileDialog::getSaveFileName(parent,"Save protocol","~/","XML Files (*.xml)" );
+	QString fileName = QFileDialog::getSaveFileName(parent, "Save protocol", 
+	                                                "~/", "XML Files (*.xml)");
 
 	// If filename does not include .xml extension, add extension
 	if( !(fileName.endsWith(".xml")) ) fileName.append(".xml");
 
 	// If filename exists, warn user
 	if ( QFileInfo(fileName).exists() &&
-		QMessageBox::warning( parent,
-			"File Exists", "Do you wish to overwrite " + fileName + "?",
-			QMessageBox::Yes | QMessageBox::Default, QMessageBox::No
-			| QMessageBox::Escape) != QMessageBox::Yes) {
+		QMessageBox::warning( 
+			parent, "File Exists", "Do you wish to overwrite " + fileName + "?",
+			QMessageBox::Yes | QMessageBox::Default, 
+			QMessageBox::No | QMessageBox::Escape) != QMessageBox::Yes) {
 		return ; // Return if answer is no
 	}
 
@@ -299,8 +316,10 @@ void Protocol::saveProtocol( QWidget *parent ) {
 	}
 
 	// Save protocol to file
-	QFile file(fileName); // Open file
-	if( !file.open(QIODevice::WriteOnly) ) { // Open file, return error if unable to do so
+	QFile file(fileName); 
+
+	// Open file, return error if unable to do so
+	if( !file.open(QIODevice::WriteOnly) ) {
 		QMessageBox::warning(parent,"Error","Unable to save file: Please check folder permissions." );
 		return ;
 	}
@@ -314,23 +333,29 @@ QString Protocol::loadProtocol( QWidget *parent ) {
 	// If protocol is present, warn user that protocol will be lost upon loading
 	if( protocolContainer.size() != 0 &&
 		QMessageBox::warning(parent,
-			"Load Protocol", "All unsaved changes to current protocol will be lost.\nDo you wish to continue?",
-			QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) != QMessageBox::Yes ) {
+			"Load Protocol", 
+			"All unsaved changes to current protocol will be lost.\nDo you wish to continue?",
+			QMessageBox::Yes | QMessageBox::Default, 
+			QMessageBox::No | QMessageBox::Escape) != QMessageBox::Yes ) {
 		return ""; // Return if answer is no
 	}
 
 	// Save dialog to retrieve desired filename and location
-	QString fileName = QFileDialog::getOpenFileName(parent,"Open a protocol","~/","XML Files (*.xml)");
+	QString fileName = QFileDialog::getOpenFileName(parent, "Open a protocol", 
+	                                                "~/","XML Files (*.xml)");
 	QDomDocument doc( "IS_DC_Protocol" );
 	QFile file( fileName );
 
-	if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
+	// Make sure file can be opened, if not, warn user
+	if( !file.open( QIODevice::ReadOnly ) ) { 
 		QMessageBox::warning(parent, "Error", "Unable to open protocol file" );
 		return "";
 	}   
 
-	if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
-		QMessageBox::warning(parent, "Error", "Unable to set file contents to document" );
+	// Make sure file contents are loaded into document
+	if( !doc.setContent( &file ) ) { 
+		QMessageBox::warning(parent, "Error", 
+		                     "Unable to set file contents to document");
 		file.close();
 		return "";
 	}
@@ -338,7 +363,9 @@ QString Protocol::loadProtocol( QWidget *parent ) {
 	file.close();
 
 	QDomElement root = doc.documentElement(); // Get root element from document
-	if( root.tagName() != "IS_DC_protocol-v1.0" ) { // Check if tagname is correct for this module version
+	
+	// Check if tagname is correct for this module version
+	if( root.tagName() != "IS_DC_protocol-v1.0" ) { 
 		QMessageBox::warning(parent, "Error", "Incompatible XML file" );
 		return "";
 	}
@@ -378,9 +405,10 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
 	// If protocol is present, warn user that protocol will be lost upon loading
 	if( protocolContainer.size() != 0 &&
 		QMessageBox::warning( parent,
-			"Load Protocol", "All unsaved changes to current protocol will be lost.\nDo you wish to continue?",
-			QMessageBox::Yes | QMessageBox::Default, QMessageBox::No
-			| QMessageBox::Escape) != QMessageBox::Yes )
+			"Load Protocol", 
+			"All unsaved changes to current protocol will be lost.\nDo you wish to continue?",
+			QMessageBox::Yes | QMessageBox::Default, 
+			QMessageBox::No | QMessageBox::Escape) != QMessageBox::Yes )
 		return ; // Return if answer is no
 
 	QDomDocument doc( "IS_DC_Protocol" );
@@ -389,7 +417,8 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
 	if( !file.open( QIODevice::ReadOnly ) ) { // Make sure file can be opened, if not, warn user
 		QMessageBox::warning(parent, "Error", "Unable to open protocol file" );
 		return ;
-	}   
+	}
+
 	if( !doc.setContent( &file ) ) { // Make sure file contents are loaded into document
 		QMessageBox::warning(parent, "Error", "Unable to set file contents to document" );
 		file.close();
@@ -397,9 +426,9 @@ void Protocol::loadProtocol( QWidget *parent, QString fileName ) {
 	}
 	file.close();
 
-	QDomElement root = doc.documentElement(); // Get root element from documen
+	QDomElement root = doc.documentElement(); // Get root element from document
 
-	// Check if tagname is correct for this module versiont
+	// Check if tagname is correct for this module version
 	if( root.tagName() != "IS_DC_protocol-v1.0" ) { 
 		QMessageBox::warning(parent, "Error", "Incompatible XML file" );
 		return;
@@ -462,12 +491,15 @@ QString Protocol::getStepDescription( int stepNumber ) {
 
 	case ProtocolStep::PACE:
 		type = "Pace ";
-		description = type + ": " + QString::number( step->numBeats ) + " beats - " + QString::number( step->BCL ) + "ms BCL";
+		description = type + ": " + QString::number( step->numBeats ) + 
+		              " beats - " + QString::number( step->BCL ) + "ms BCL";
 		break;
 
 	case ProtocolStep::SCALE:
-		type = "Scale " + QString::fromStdString(step->currentToScale) + "(" + QString::number( step->scalingPercentage ) + "%)";
-		description = type + ": " + QString::number( step->numBeats ) + " beats - " + QString::number( step->BCL ) + "ms BCL";
+		type = "Scale " + QString::fromStdString(step->currentToScale) + "(" + 
+		       QString::number( step->scalingPercentage ) + "%)";
+		description = type + ": " + QString::number( step->numBeats ) + 
+		              " beats - " + QString::number( step->BCL ) + "ms BCL";
 		break;
 
 	case ProtocolStep::WAIT:

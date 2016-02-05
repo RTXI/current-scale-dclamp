@@ -227,7 +227,8 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 			// Using a while loop makes sure if multiple model changes are called
 			// consecutively, they will all be called within one execute loop
 			while( modelInit ) {
-				if( currentStep >= protocolContainer->size() ) {// If end of protocol has been reached
+				// If end of protocol has been reached
+				if( currentStep >= protocolContainer->size() ) {
 					protocolMode = END;
 					modelInit = false;
 				}
@@ -258,13 +259,12 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						stepTime = 0;
 						cycleStartTime = 0;
 
-						if( stepType == ProtocolStep::PACE || 
-						    stepType == ProtocolStep::SCALE )
-
-							// -1 since time starts at 0, not 1
+						if( stepType == ProtocolStep::PACE || stepType == ProtocolStep::SCALE ) {
+							// set to -1 since time starts at 0, not 1
 							stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; 
+						}
 						else {
-							// -1 since time starts at 0, not 1
+							// set to -1 since time starts at 0, not 1
 							stepEndTime = ( stepPtr->waitTime / period ) - 1; 
 						}
 
@@ -337,7 +337,8 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 	} // end switch( executeMode )     
 } // end execute()
 
-void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, protocol, and model cell
+// Initialize all variables, protocol, and model cell
+void IScale_DynClamp::Module::initialize(void){ 
 	protocol = new Protocol();
 	livshitzRudy2009 = new ModelCell();
 	livshitzRudy2009->changeModel( ModelCell::LIVRUDY2009 );
@@ -475,7 +476,8 @@ void IScale_DynClamp::Module::toggleThreshold( void ) {
 		responseTime = 0;
 		setActive( true );
 	}
-	// Stop protocol, only called when pace button is unclicked in the middle of a run
+	// Stop protocol, only called when pace button is unclicked in the 
+	// middle of a run
 	else { 
 		executeMode = IDLE;
 		setActive( false );

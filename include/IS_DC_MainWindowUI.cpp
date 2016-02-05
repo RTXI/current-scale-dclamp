@@ -243,7 +243,4 @@ IScale_DynClampUI::IScale_DynClampUI( QWidget* parent ) : QWidget( parent ) {
 	IScale_DynClampUILayout->addWidget( protocolEditorListBox );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-IScale_DynClampUI::~IScale_DynClampUI() { } // no need to delete child widgets, Qt does it all for us
+IScale_DynClampUI::~IScale_DynClampUI() { } 

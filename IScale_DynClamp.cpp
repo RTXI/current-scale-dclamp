@@ -312,6 +312,10 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 				calculateAPD(2);
 
 			} // end if(PACE || SCALE)
+			
+			// Stimulate based on set diastolic intervals
+			if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
+			} // end if(DIPACE || DISCALE)
 
 			else { // If stepType = WAIT
 				output(0) = 0;

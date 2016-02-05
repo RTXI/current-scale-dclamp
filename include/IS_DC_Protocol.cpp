@@ -166,13 +166,13 @@ vector<QString> AddStepInputDialog::gatherInput( void ) {
 	}
 	else { // QDialog is accepted when addStep button is pressed and inputs are considered valid
 		inputAnswers.push_back( QString::number( stepComboBox->currentIndex() ) );
-		//        inputAnswers.push_back( stepType );
+		//inputAnswers.push_back( stepType );
 		inputAnswers.push_back( BCL );
 		inputAnswers.push_back( numBeats );
 		inputAnswers.push_back( currentToScale );
 		inputAnswers.push_back( scalingPercentage );
 		inputAnswers.push_back( waitTime );
-		//        inputAnswers.push_back( model );
+		//inputAnswers.push_back( model );
 		inputAnswers.push_back( QString::number( modelComboBox->currentIndex() ) );
 		return inputAnswers;
 	}

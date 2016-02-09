@@ -263,14 +263,23 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 							// set to -1 since time starts at 0, not 1
 							stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; 
 						}
+						else if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE ) {
+							stepEndBeat = beatNum + stepPtr->numBeats; 
+
+							// pad stepEndTime to hell to avoid setting off:
+							//    if( stepTime => stepEndTime ) {...}
+							stepEndTime = (( 100000 * stepPtr->numBeats ) / period ) - 1; 
+						}
 						else {
 							// set to -1 since time starts at 0, not 1
 							stepEndTime = ( stepPtr->waitTime / period ) - 1; 
 						}
 
 						pBCLInt = stepPtr->BCL / period; // BCL for protocol
+						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
+//						stepEndBeat = beatNum + stepPtr->numBeats; 
 						Vrest = voltage;
 						calculateAPD( 1 );
 						modelInit = false;
@@ -282,7 +291,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 		if( protocolMode == EXEC ) { // Execute protocol 
 			// Pace cell at BCL
 			if( stepType == ProtocolStep::PACE || stepType == ProtocolStep::SCALE) {
-				if (stepTime - cycleStartTime >= pBCLInt){
+				if ( stepTime - cycleStartTime >= pBCLInt ) {
 					beatNum++;
 					cycleStartTime = stepTime;
 					Vrest = voltage;
@@ -315,6 +324,44 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 			
 			// Stimulate based on set diastolic intervals
 			if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
+				
+				if ( APDMode == DONE ) {
+					if ( time - APEnd  >= (pDIInt * period) ) {
+						if ( beatNum < stepEndBeat ) {
+							cycleStartTime = stepTime;
+							beatNum++;
+							Vrest = voltage;
+							calculateAPD(1);
+						}
+						else {
+							currentStep++;
+							protocolMode = STEPINIT;
+						}
+					}
+				}
+				
+				// Stimulate cell for stimLength(ms)
+				if ( (stepTime - cycleStartTime) < stimLengthInt ) {
+					outputCurrent = stimMag * 1e-9;
+				}
+				else outputCurrent = 0;
+
+				if( voltageClamp || stepType == ProtocolStep::DISCALE ) {
+					totalModelCurrent = modelCell->voltageClamp(voltage);
+				}
+			  	
+				// If Scaling step, scale current
+				if( stepType == ProtocolStep::DISCALE) {
+					targetCurrent = modelCell->getParameter( stepPtr->currentToScale );
+					scaledCurrent = targetCurrent + 
+					                ( targetCurrent * ( stepPtr->scalingPercentage / 100.0 ) );
+					
+					// Scale current to cell size; Cm in pF, convert to F
+					outputCurrent += ( targetCurrent - scaledCurrent ) *  Cm * 1e-12; 
+				}
+
+				output(0) = outputCurrent;
+				calculateAPD(2);
 			} // end if(DIPACE || DISCALE)
 
 			else { // If stepType = WAIT
@@ -613,10 +660,10 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step) {
 			if( (time - APStart) > stimWindow ) { 
 				if( peakVoltage < voltage  ) { // Find peak voltage 
 					peakVoltage = voltage;
-					peakTime = time;
+					APPeak = time;
 				}
 				// Keep looking for the peak for 5ms to account for noise
-				else if ( (time - peakTime) > 5 ) { 
+				else if ( (time - APPeak) > 5 ) { 
 					double APAmp;
 
 					// Amplitude of action potential based on resting membrane 
@@ -634,6 +681,7 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step) {
 
 		case DOWN: // Find downstroke threshold and calculate APD
 			if( voltage <= downstrokeThreshold ) {
+				APEnd = time;
 				APD = time - APStart;
 				APDMode = DONE;
 			}

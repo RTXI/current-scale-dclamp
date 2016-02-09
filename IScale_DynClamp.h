@@ -97,7 +97,7 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		// States
 		double time; // Time (ms)
 		double voltage; // Membrane voltage
-		double beatNum; // Beat number
+		double beatNum; // Number of beats (cumulative)
 		double APD; // Action potential duration
 
 		// Parameters
@@ -121,6 +121,7 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		int currentStep; // Current step in protocol
 		int stepTime; // Time tracker for step
 		int stepEndTime; // Time end tracker for step
+		int stepEndBeat; // Best end tracker for step
 		int cycleStartTime; // Time tracker for BCL
 		double totalModelCurrent; // Total current in the model during voltage clamp
 		double targetCurrent; // Current that will be scaled
@@ -128,6 +129,7 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		double period; // Period based on RTXI thread rate
 		int BCLInt; // BCL / period (unitless)
 		int pBCLInt; // BCL for protocol
+		int pDIInt; // DI for protocol
 		int stimLengthInt; // stimLength / period (unitless)
 
 		// APD Calculation    
@@ -135,8 +137,9 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		double downstrokeThreshold; // Downstroke threshold for end of AP
 		enum APDMode_t { START, PEAK, DOWN, DONE } APDMode;
 		double APStart; // Time the action potential starts   
+		double APPeak; // Time of action potential peak
+		double APEnd; // Time of action potential end
 		double peakVoltage; // Peak of action potential
-		double peakTime; // Time of action potential peak
 		double Vrest;
 
 		// Threshold Variables

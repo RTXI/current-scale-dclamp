@@ -268,7 +268,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 
 							// pad stepEndTime to hell to avoid setting off:
 							//    if( stepTime => stepEndTime ) {...}
-							stepEndTime = (( 100000 * stepPtr->numBeats ) / period ) - 1; 
+							stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
 						}
 						else {
 							// set to -1 since time starts at 0, not 1
@@ -362,6 +362,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 
 				output(0) = outputCurrent;
 				calculateAPD(2);
+				stepEndTime++;
 			} // end if(DIPACE || DISCALE)
 
 			else { // If stepType = WAIT

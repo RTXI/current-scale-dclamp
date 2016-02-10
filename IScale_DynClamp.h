@@ -53,7 +53,6 @@ namespace IScale_DynClamp {
         Q_OBJECT // macro needed if slots are implemented
     
         public:
-    
         Module( void );
         ~Module(void);        
         void execute( void );
@@ -107,7 +106,7 @@ namespace IScale_DynClamp {
         int stimWindow; // Window of time after stimulus ignored by APD calculation
         int numTrials; // Number of trials to be run
         int intervalTime; // Time between trials
-        int BCL; // Basic cycle length
+        double BCL; // Basic cycle length
         double stimMag; // Stimulation magnitude (nA)
         double stimLength; // Stimulation length (ms)
         double Cm; // Membrane capacitance (pF)
@@ -122,6 +121,7 @@ namespace IScale_DynClamp {
         int currentStep; // Current step in protocol
         int stepTime; // Time tracker for step
         int stepEndTime; // Time end tracker for step
+        int stepEndBeat; // Best end tracker for step
         int cycleStartTime; // Time tracker for BCL
         double totalModelCurrent; // Total current in the model during voltage clamp
         double targetCurrent; // Current that will be scaled
@@ -129,6 +129,7 @@ namespace IScale_DynClamp {
         double period; // Period based on RTXI thread rate
         int BCLInt; // BCL / period (unitless)
         int pBCLInt; // BCL for protocol
+        int pDIInt; // DI for protocol
         int stimLengthInt; // stimLength / period (unitless)
 
         // APD Calculation    
@@ -136,8 +137,9 @@ namespace IScale_DynClamp {
         double downstrokeThreshold; // Downstroke threshold for end of AP
         enum APDMode_t { START, PEAK, DOWN, DONE } APDMode;
         double APStart; // Time the action potential starts   
+        double APPeak; // Time of action potential peak
+        double APEnd; // Time of action potential end
         double peakVoltage; // Peak of action potential
-        double peakTime; // Time of action potential peak
         double Vrest;
 
         // Threshold Variables
@@ -163,6 +165,7 @@ namespace IScale_DynClamp {
         friend class ToggleThresholdEvent;
     
         class ModifyEvent : public RT::Event {
+
         public:
             ModifyEvent( Module *, int, int, int, int, int, int,
                          double, double, double, double, bool );

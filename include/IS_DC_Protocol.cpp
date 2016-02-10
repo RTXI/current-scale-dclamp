@@ -41,10 +41,12 @@ using namespace std;
 /* AddStepInputDialog Class */
 AddStepInputDialog::AddStepInputDialog(QWidget* parent ) :
     AddStepDialog( parent, 0, TRUE ) {
-    QValidator* validator = new QIntValidator(this);
-    BCLEdit->setValidator(validator);
-    numBeatsEdit->setValidator(validator);
-    scalingPercentageEdit->setValidator(validator);
+    QValidator* int_validator = new QIntValidator(this);
+    QValidator* doub_validator = new QDoubleValidator(this);
+    BCLEdit->setValidator(doub_validator);
+    DIEdit->setValidator(doub_validator);
+    numBeatsEdit->setValidator(int_validator);
+    scalingPercentageEdit->setValidator(doub_validator);
     
     QObject::connect( addStepButton,SIGNAL(clicked(void)),this,SLOT(addStepClicked(void)) );
     QObject::connect( exitButton, SIGNAL(clicked(void)), this, SLOT( reject() ) );

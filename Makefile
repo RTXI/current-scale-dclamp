@@ -1,19 +1,23 @@
-
 PLUGIN_NAME = IScale_DynClamp
 
 HEADERS = IScale_DynClamp.h
 
 SOURCES = IScale_DynClamp.cpp moc_IScale_DynClamp.cpp \
-	include/IS_DC_MainWindowUI.cpp include/moc_IS_DC_MainWindowUI.cpp \
-	include/IS_DC_Protocol.cpp include/moc_IS_DC_Protocol.cpp \
-	include/IS_DC_AddStepDialogUI.cpp include/moc_IS_DC_AddStepDialogUI.cpp \
-	include/MCL/ModelCell.cpp include/MCL/models/include/default_model.cpp \
-	include/MCL/models/include/RealTimeMath.cpp include/MCL/models/include/PowFast.cpp \
-	include/MCL/models/LivRudy2009/LivRudy2009.cpp \
-	include/MCL/models/FaberRudy2000/FaberRudy2000.cpp \
-	include/MCL/models/Pandit/Pandit.cpp \
-	include/MCL/models/TenTusscher2006/TenTusscher2006.cpp \
-	include/MCL/models/WangSobie/WangSobie.cpp
+          include/IS_DC_MainWindowUI.cpp \
+          include/moc_IS_DC_MainWindowUI.cpp \
+          include/IS_DC_Protocol.cpp \
+          include/moc_IS_DC_Protocol.cpp \
+          include/IS_DC_AddStepDialogUI.cpp \
+          include/moc_IS_DC_AddStepDialogUI.cpp \
+          include/MCL/ModelCell.cpp \
+          include/MCL/models/include/default_model.cpp \
+          include/MCL/models/include/RealTimeMath.cpp \
+          include/MCL/models/include/PowFast.cpp \
+          include/MCL/models/LivRudy2009/LivRudy2009.cpp \
+          include/MCL/models/FaberRudy2000/FaberRudy2000.cpp \
+          include/MCL/models/Pandit/Pandit.cpp \
+          include/MCL/models/TenTusscher2006/TenTusscher2006.cpp \
+          include/MCL/models/WangSobie/WangSobie.cpp
 
 LIBS = -lgsl -lgslcblas
 

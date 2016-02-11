@@ -138,24 +138,6 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and checks if they are valid entries
     bool check = true;
     BCL = BCLEdit->text();

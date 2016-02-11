@@ -16,20 +16,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*** INTRO
- * Current Scaling Dynamic Clamp
- * 
- * IS_DC_Protocol.h
- * Contains classes for customizeable protocol
- *
- * Author: Francis A. Ortega (2011)
- *
- *** NOTES
- *
- * v1.0 - Initial Version
- *
- ***/
-
 #include <boost/shared_ptr.hpp>
 #include <vector>
 #include <string>

@@ -16,17 +16,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*** INTRO
- * Current Scaling Dynamic Clamp
- * 
- * IS_DC_Protocol.cpp, v1.0
- *
- * Author: Francis A. Ortega (2011)
- *
- * Notes in header
- *
-***/
-
 #include "IS_DC_Protocol.h"
 #include <iostream>
 

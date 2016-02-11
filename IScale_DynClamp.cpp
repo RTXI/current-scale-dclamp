@@ -279,7 +279,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
-//						stepEndBeat = beatNum + stepPtr->numBeats; 
 						Vrest = voltage;
 						calculateAPD( 1 );
 						modelInit = false;
@@ -323,7 +322,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 			} // end if(PACE || SCALE)
 			
 			// Stimulate based on set diastolic intervals
-			if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
+			else if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
 				
 				if ( APDMode == DONE ) {
 					if ( time - APEnd  >= (pDIInt * period) ) {
@@ -702,6 +701,10 @@ void IScale_DynClamp::Module::rebuildListBox( void ) {
 	for( int i = 0; i < protocolContainer->size(); i++ ) {
 		mainWindow->protocolEditorListBox->insertItem( i,  protocol->getStepDescription( i ) );
 	}
+}
+
+void IScale_DynClamp::Module::printProtocol(void) {
+
 }
 
 /* Build Module GUI */

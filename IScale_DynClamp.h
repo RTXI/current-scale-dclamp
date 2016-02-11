@@ -58,6 +58,7 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		void execute( void );
 		void receiveEvent( const ::Event::Object * );
 		void receiveEventRT( const ::Event::Object * );
+		void printProtocol( void );
 					 
 	public slots:
 		void modify( void ); // Updates parameters

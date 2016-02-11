@@ -167,16 +167,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
         time += period;
         break;
 
-
-
-
-
-
-
-
-
-
-
     case PACE:
         
         time += period;
@@ -274,14 +264,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             } // end while( modelInit )
         } // end STEPINIT
 
-
-
-
-
-
-
-
-
         if( protocolMode == EXEC ) { // Execute protocol
             if( stepType == ProtocolStep::PACE || stepType == ProtocolStep::SCALE) { // Pace cell at BCL
                 if (stepTime - cycleStartTime >= pBCLInt){
@@ -312,7 +294,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             } // end if(PACE || SCALE)
 			
             // Stimulate based on set diastolic intervals
-            if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
+            else if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
             
                if ( APDMode == DONE ) {
             		if ( time - APEnd  >= (pDIInt * period) ) {
@@ -713,7 +695,7 @@ void IScale_DynClamp::Module::modify(void) {
     int sw = mainWindow->stimWindowEdit->text().toInt();
     int nt = mainWindow->numTrialEdit->text().toInt();
     int it = mainWindow->intervalTimeEdit->text().toInt();
-    int b = mainWindow->BCLEdit->text().toDouble();
+    double b = mainWindow->BCLEdit->text().toDouble();
     double sm = mainWindow->stimMagEdit->text().toDouble();
     double sl = mainWindow->stimLengthEdit->text().toDouble();
     double c = mainWindow->CmEdit->text().toDouble();

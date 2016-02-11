@@ -16,19 +16,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*** INTRO
- * Current Scaling Dynamic Clamp
- * 
- * IScale_DynClamp.h, v1.0
- *
- * Author: Francis A. Ortega (2011)
- *
- *** NOTES
- *
- * v1.0 - Initial Version
- *
- ***/
-
 #ifndef ISCALE_DYNCLAMP_H
 #define ISCALE_DYNCLAMP_H
 

@@ -68,8 +68,8 @@ class ProtocolStep {
 public:
     enum stepType_t { PACE, SCALE, DIPACE, DISCALE, WAIT, STARTMODEL, 
                       STOPMODEL, RESETMODEL, CHANGEMODEL } stepType;    
-    int BCL; // ms
-    int DI; // ms
+    double BCL; // ms
+    double DI; // ms
     int numBeats;
     std::string currentToScale; // String name of current
     int scalingPercentage; // Whole number %

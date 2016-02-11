@@ -64,6 +64,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::PACE:
         BCLEdit->setEnabled(true);
         numBeatsEdit->setEnabled(true);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(false);
         scalingPercentageEdit->setEnabled(false);
         waitTimeEdit->setEnabled(false);
@@ -72,6 +73,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::SCALE:
         BCLEdit->setEnabled(true);
         numBeatsEdit->setEnabled(true);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(true);
         scalingPercentageEdit->setEnabled(true);
         waitTimeEdit->setEnabled(false);
@@ -80,6 +82,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::WAIT:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(false);
         scalingPercentageEdit->setEnabled(false);
         waitTimeEdit->setEnabled(true);
@@ -106,6 +109,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::STARTMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(false);
         scalingPercentageEdit->setEnabled(false);
         waitTimeEdit->setEnabled(false);
@@ -114,6 +118,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::STOPMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(false);
         scalingPercentageEdit->setEnabled(false);
         waitTimeEdit->setEnabled(false);
@@ -122,6 +127,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::RESETMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(false);
         scalingPercentageEdit->setEnabled(false);
         waitTimeEdit->setEnabled(false);
@@ -130,6 +136,7 @@ void AddStepInputDialog::stepComboBoxUpdate( int selection ) {
     case ProtocolStep::CHANGEMODEL:
         BCLEdit->setEnabled(false);
         numBeatsEdit->setEnabled(false);
+        DIEdit->setEnabled(false);
         currentToScaleEdit->setEnabled(false);
         scalingPercentageEdit->setEnabled(false);
         waitTimeEdit->setEnabled(false);
@@ -151,7 +158,7 @@ void AddStepInputDialog::addStepClicked( void ) { // Initializes QStrings and ch
     
     switch( stepComboBox->currentItem() ) {
     
-    case ProtocolStep::Pace: //0: // Pace
+    case ProtocolStep::PACE: //0: // Pace
         if(BCL == "" || numBeats == "") check = false;
         break;
         

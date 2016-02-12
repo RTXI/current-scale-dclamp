@@ -202,6 +202,297 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 		time += period;
 		stepTime += 1;
 
+		switch( protocolMode ) {
+		case STEPINIT:
+			// Record data if dataRecord is toggled
+			if( recordData && !recording && currentStep == 0 ) {
+				Event::Object event(Event::START_RECORDING_EVENT);
+				Event::Manager::getInstance()->postEventRT(&event);
+				recording = true;
+			}
+
+			modelInit = true;                                
+			// Model changes do not use up a thread loop by themselves
+			// Using a while loop makes sure if multiple model changes are called
+			// consecutively, they will all be called within one execute loop
+			while( modelInit ) {
+				// If end of protocol has been reached
+				if( currentStep >= protocolContainer->size() ) {
+					protocolMode = END;
+					modelInit = false;
+				}
+				else {
+					stepPtr = protocolContainer->at( currentStep );
+					stepType = stepPtr->stepType;
+
+					switch( stepType ) {
+					case ProtocolStep::CHANGEMODEL:
+						if( stepPtr->modelType == ProtocolStep::LIVRUDY2009 ) {
+							modelCell = livshitzRudy2009;
+						}
+						else modelCell = faberRudy2000;
+						currentStep++;
+						break;
+
+					case ProtocolStep::STARTMODEL:
+						voltageClamp = true;
+						currentStep++;
+						break;
+
+					case ProtocolStep::STOPMODEL:
+						voltageClamp = false;
+						currentStep++;
+						break;
+
+					case ProtocolStep::RESETMODEL:
+						modelCell->resetModel();
+						currentStep++;
+						break;
+
+					case ProtocolStep::PACE:
+						stepTime = 0;
+						cycleStartTime = 0;
+						// set to -1 since time starts at 0, not 1
+						stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; 
+
+						pBCLInt = stepPtr->BCL / period; // BCL for protocol
+//						pDIInt = stepPtr->DI / period; // DI for protocol
+						protocolMode = EXEC;
+						beatNum++;
+						Vrest = voltage;
+						calculateAPD( 1 );
+						modelInit = false;
+						break;
+
+					case ProtocolStep::SCALE:
+						stepTime = 0;
+						cycleStartTime = 0;
+						// set to -1 since time starts at 0, not 1
+						stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; 
+
+						pBCLInt = stepPtr->BCL / period; // BCL for protocol
+//						pDIInt = stepPtr->DI / period; // DI for protocol
+						protocolMode = EXEC;
+						beatNum++;
+						Vrest = voltage;
+						calculateAPD( 1 );
+						modelInit = false;
+						break;
+
+					case ProtocolStep::DIPACE:
+						stepTime = 0;
+						cycleStartTime = 0;
+						stepEndBeat = beatNum + stepPtr->numBeats; 
+
+						// pad stepEndTime to hell to avoid setting off:
+						//    if( stepTime => stepEndTime ) {...}
+						stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
+
+//						pBCLInt = stepPtr->BCL / period; // BCL for protocol
+						pDIInt = stepPtr->DI / period; // DI for protocol
+						protocolMode = EXEC;
+						beatNum++;
+						Vrest = voltage;
+						calculateAPD( 1 );
+						modelInit = false;
+						break;
+
+					case ProtocolStep::DISCALE:
+						stepTime = 0;
+						cycleStartTime = 0;
+						stepEndBeat = beatNum + stepPtr->numBeats; 
+
+						// pad stepEndTime to hell to avoid setting off:
+						//    if( stepTime => stepEndTime ) {...}
+						stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
+
+//						pBCLInt = stepPtr->BCL / period; // BCL for protocol
+						pDIInt = stepPtr->DI / period; // DI for protocol
+						protocolMode = EXEC;
+						beatNum++;
+						Vrest = voltage;
+						calculateAPD( 1 );
+						modelInit = false;
+						break;
+
+					case ProtocolStep::WAIT:
+						stepTime = 0;
+						cycleStartTime = 0;
+						stepEndTime = ( stepPtr->waitTime / period ) - 1; 
+
+//						pBCLInt = stepPtr->BCL / period; // BCL for protocol
+//						pDIInt = stepPtr->DI / period; // DI for protocol
+						protocolMode = EXEC;
+						beatNum++;
+						Vrest = voltage;
+//						calculateAPD( 1 );
+						modelInit = false;
+						break;
+
+					default:
+						break;
+
+					} // end switch( stepType )
+				} // end else
+			} // end while( modelInit )
+			break; // end STEPINIT
+
+		case EXEC: // execute protocol
+			// Pace cell at BCL
+			switch( stepType ) {
+			case ProtocolStep::PACE:
+				if ( stepTime - cycleStartTime >= pBCLInt ) {
+					beatNum++;
+					cycleStartTime = stepTime;
+					Vrest = voltage;
+					calculateAPD( 1 );
+				}
+				// Stimulate cell for stimLength(ms)
+				if ( (stepTime - cycleStartTime) < stimLengthInt ) {
+					outputCurrent = stimMag * 1e-9;
+				}
+				else outputCurrent = 0;
+
+				// voltage clamp the model; returns totalModelCurrent for 
+				// debugging purposes only
+				if( voltageClamp ) {
+					totalModelCurrent = modelCell->voltageClamp(voltage);
+				}
+
+				output(0) = outputCurrent;
+				calculateAPD(2);
+				break;
+
+			case ProtocolStep::SCALE:
+				if ( stepTime - cycleStartTime >= pBCLInt ) {
+					beatNum++;
+					cycleStartTime = stepTime;
+					Vrest = voltage;
+					calculateAPD( 1 );
+				}
+				// Stimulate cell for stimLength(ms)
+				if ( (stepTime - cycleStartTime) < stimLengthInt ) {
+					outputCurrent = stimMag * 1e-9;
+				}
+				else outputCurrent = 0;
+
+				// required for SCALE?
+				totalModelCurrent = modelCell->voltageClamp(voltage);
+
+				// If Scaling step, scale current
+				targetCurrent = modelCell->getParameter( stepPtr->currentToScale );
+				scaledCurrent = targetCurrent + ( targetCurrent * ( stepPtr->scalingPercentage / 100.0 ) );
+				
+				// Scale current to cell size; Cm in pF, convert to F
+				outputCurrent += ( targetCurrent - scaledCurrent ) *  Cm * 1e-12; 
+
+				output(0) = outputCurrent;
+				calculateAPD(2);
+				break;
+
+			case ProtocolStep::DIPACE:
+				if ( APDMode == DONE ) {
+					if ( time - APEnd  >= (pDIInt * period) ) {
+						if ( beatNum < stepEndBeat ) {
+							cycleStartTime = stepTime;
+							beatNum++;
+							Vrest = voltage;
+							calculateAPD(1);
+						}
+						else {
+							currentStep++;
+							protocolMode = STEPINIT;
+						}
+					}
+				}
+				
+				// Stimulate cell for stimLength(ms)
+				if ( (stepTime - cycleStartTime) < stimLengthInt ) {
+					outputCurrent = stimMag * 1e-9;
+				}
+				else outputCurrent = 0;
+
+				// voltage clamp the model; returns totalModelCurrent for 
+				// debugging purposes only
+				if( voltageClamp ) {
+					totalModelCurrent = modelCell->voltageClamp(voltage);
+				}
+				
+				output(0) = outputCurrent;
+				calculateAPD(2);
+				stepEndTime++;
+				break;
+
+			case ProtocolStep::DISCALE:
+				if ( APDMode == DONE ) {
+					if ( time - APEnd  >= (pDIInt * period) ) {
+						if ( beatNum < stepEndBeat ) {
+							cycleStartTime = stepTime;
+							beatNum++;
+							Vrest = voltage;
+							calculateAPD(1);
+						}
+						else {
+							currentStep++;
+							protocolMode = STEPINIT;
+						}
+					}
+				}
+				
+				// Stimulate cell for stimLength(ms)
+				if ( (stepTime - cycleStartTime) < stimLengthInt ) {
+					outputCurrent = stimMag * 1e-9;
+				}
+				else outputCurrent = 0;
+
+				// required for DISCALE?
+				totalModelCurrent = modelCell->voltageClamp(voltage);
+				
+				// If Scaling step, scale current
+				targetCurrent = modelCell->getParameter( stepPtr->currentToScale );
+				scaledCurrent = targetCurrent + ( targetCurrent * ( stepPtr->scalingPercentage / 100.0 ) );
+				
+				// Scale current to cell size; Cm in pF, convert to F
+				outputCurrent += ( targetCurrent - scaledCurrent ) *  Cm * 1e-12; 
+
+				output(0) = outputCurrent;
+				calculateAPD(2);
+				stepEndTime++;
+				break;
+
+			case ProtocolStep::WAIT:
+				output(0) = 0;
+				break;
+
+			default:
+				break;
+			} // end switch( stepType)
+
+			if( stepTime >= stepEndTime ) {
+				currentStep++;
+				protocolMode = STEPINIT;
+			}            
+			break; // end EXEC
+
+		case END:
+			// End of Protocol: Stop Data recorder and untoggle button
+			if(recording == true) {
+				Event::Object event(Event::STOP_RECORDING_EVENT);
+				Event::Manager::getInstance()->postEventRT(&event);
+				recording = false;
+			}
+			protocolOn = false;
+			executeMode = IDLE;
+			break;// end END
+
+		default:
+			break;
+
+		} // end switch( protocolMode )
+	} // end switch( executeMode )     
+} // end execute()
+
+/*
 		if( protocolMode == STEPINIT ) { 
 			// Record data if dataRecord is toggled
 			if( recordData && !recording && currentStep == 0 ) {
@@ -274,7 +565,9 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 				} // end else
 			} // end while( modelInit )
 		} // end STEPINIT
+*/
 
+/*
 		if( protocolMode == EXEC ) { // Execute protocol 
 			// Pace cell at BCL
 			if( stepType == ProtocolStep::PACE || stepType == ProtocolStep::SCALE) {
@@ -361,7 +654,9 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 				protocolMode = STEPINIT;
 			}            
 		} // end EXEC
+*/
 
+/*
 		// End of Protocol: Stop Data recorder and untoggle button
 		if( protocolMode == END ) { 
 			if(recording == true) {
@@ -372,9 +667,12 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 			protocolOn = false;
 			executeMode = IDLE;
 		} // end END
+*/
 
+/*
 	} // end switch( executeMode )     
 } // end execute()
+*/
 
 // Initialize all variables, protocol, and model cell
 void IScale_DynClamp::Module::initialize(void){ 

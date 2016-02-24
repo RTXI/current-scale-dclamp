@@ -392,7 +392,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 
 			case ProtocolStep::DIPACE:
 				if ( APDMode == DONE ) {
-					if ( time - APEnd  >= (pDIInt * period) ) {
+					if ( stepTime - APEndStepTime >= pDIInt ) {
 						if ( beatNum < stepEndBeat ) {
 							cycleStartTime = stepTime;
 							beatNum++;
@@ -968,6 +968,7 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step) {
 		case DOWN: // Find downstroke threshold and calculate APD
 			if( voltage <= downstrokeThreshold ) {
 				APEnd = time;
+				APEndStepTime = stepTime;
 				APD = time - APStart;
 				APDMode = DONE;
 			}

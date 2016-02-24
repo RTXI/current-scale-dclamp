@@ -131,6 +131,7 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		double APStart; // Time the action potential starts   
 		double APPeak; // Time of action potential peak
 		double APEnd; // Time of action potential end
+		int APEndStepTime; // Step of action potential end
 		double peakVoltage; // Peak of action potential
 		double Vrest;
 

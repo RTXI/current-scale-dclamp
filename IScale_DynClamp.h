@@ -126,6 +126,7 @@ namespace IScale_DynClamp {
         double APStart; // Time the action potential starts   
         double APPeak; // Time of action potential peak
         double APEnd; // Time of action potential end
+        int APEndStep; // Step of action potential end
         double peakVoltage; // Peak of action potential
         double Vrest;
 

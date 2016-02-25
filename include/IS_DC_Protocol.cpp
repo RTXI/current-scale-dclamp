@@ -43,8 +43,10 @@ AddStepInputDialog::AddStepInputDialog(QWidget* parent ) :
     AddStepDialog( parent, 0, TRUE ) {
     QValidator* int_validator = new QIntValidator(this);
     QValidator* doub_validator = new QDoubleValidator(this);
+    QValidator* di_validator = new QDoubleValidator(this);
+    di_validator->setRange(0.0001, 99999999, 4);
     BCLEdit->setValidator(doub_validator);
-    DIEdit->setValidator(doub_validator);
+    DIEdit->setValidator(di_validator);
     numBeatsEdit->setValidator(int_validator);
     scalingPercentageEdit->setValidator(doub_validator);
     

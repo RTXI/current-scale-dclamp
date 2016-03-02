@@ -104,11 +104,11 @@ IScale_DynClamp::Module::~Module(void) {
 	delete faberRudy2000;
 
 	/*
-	setActive(false);
-	IScale_DynClamp_SyncEvent event;
-	RT::System::getInstance()->postEvent(&event);
-	Plugin::Manager::getInstance()->unload(this);
-	mainWindow->close();
+		setActive(false);
+		IScale_DynClamp_SyncEvent event;
+		RT::System::getInstance()->postEvent(&event);
+		Plugin::Manager::getInstance()->unload(this);
+		mainWindow->close();
 	*/
 } // End destructor
 
@@ -194,7 +194,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 		// Inject Current
 		output( 0 ) = outputCurrent;
 
-		//Calulate APD
+		// Calulate APD
 		calculateAPD( 2 ); // Second step of APD calculation
 		break;
 
@@ -256,7 +256,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; 
 
 						pBCLInt = stepPtr->BCL / period; // BCL for protocol
-//						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
 						Vrest = voltage;
@@ -271,7 +270,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; 
 
 						pBCLInt = stepPtr->BCL / period; // BCL for protocol
-//						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
 						Vrest = voltage;
@@ -288,7 +286,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						//    if( stepTime => stepEndTime ) {...}
 						stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
 
-//						pBCLInt = stepPtr->BCL / period; // BCL for protocol
 						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
@@ -306,7 +303,6 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						//    if( stepTime => stepEndTime ) {...}
 						stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
 
-//						pBCLInt = stepPtr->BCL / period; // BCL for protocol
 						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
@@ -320,12 +316,9 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						cycleStartTime = 0;
 						stepEndTime = ( stepPtr->waitTime / period ) - 1; 
 
-//						pBCLInt = stepPtr->BCL / period; // BCL for protocol
-//						pDIInt = stepPtr->DI / period; // DI for protocol
 						protocolMode = EXEC;
 						beatNum++;
 						Vrest = voltage;
-//						calculateAPD( 1 );
 						modelInit = false;
 						break;
 
@@ -376,7 +369,8 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 				}
 				else outputCurrent = 0;
 
-				// required for SCALE?
+				// Calling voltageClamp() is required for SCALE, but 
+				// the totalModelCurrent return value may be discarded. 
 				totalModelCurrent = modelCell->voltageClamp(voltage);
 
 				// If Scaling step, scale current
@@ -445,7 +439,8 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 				}
 				else outputCurrent = 0;
 
-				// required for DISCALE?
+				// Calling voltageClamp() is required for DISCALE, but 
+				// the totalModelCurrent return value may be discarded. 
 				totalModelCurrent = modelCell->voltageClamp(voltage);
 				
 				// If Scaling step, scale current

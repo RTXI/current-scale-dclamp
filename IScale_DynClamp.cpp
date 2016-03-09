@@ -507,6 +507,10 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step){ // Two APDs are ca
                 peakVoltage = Vrest;
                 APDMode = PEAK;
             }
+            // Skip to next step if the stimulus fails to produce an action potential
+            else if ( (stepTime - cycleStartTime) > stimWindow/period ) {
+                APDMode = DONE;
+            }
             break;
             
         case PEAK: // Find peak of AP, points within "window" are ignored to eliminate effect of stimulus artifact

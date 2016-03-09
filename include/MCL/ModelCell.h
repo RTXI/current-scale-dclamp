@@ -67,17 +67,17 @@ class ModelCell {
 		void setModelRate(double modelRate, double RealTimePeriod);
 		void setModelRate(double modelRate);
 
-		double currentClamp(double current); // Current clamp model, returns voltage
-		double voltageClamp(double voltage); // Voltage clamp model, returns current
-		void resetModel(); // Reset model to initial conditions
-		int resetModel(double); // Reset model to a specific set of initial conditions, return value indicating which set was chosen
-		void resetModel(double*); // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
-		void changeModel(model_t); // Delete current model and switch to desired model
-		double getCurrent(int); // Returns a model current *** Obsolete due to parameter functions ***
-		double getConcentration(int); // Returns a model concentration *** Obsolete due to parameter functions ***
-		double getParameter(int); // Returns desired parameter
-		double getParameter(std::string); // Returns desired parameter, uses map for better code readability
-		void setParameter(int, double); // Sets a parameter to a value
+		double currentClamp(double current);  // Current clamp model, returns voltage
+		double voltageClamp(double voltage);  // Voltage clamp model, returns current
+		void resetModel();                    // Reset model to initial conditions
+		int resetModel(double);               // Reset model to a specific set of initial conditions, return value indicating which set was chosen
+		void resetModel(double*);             // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
+		void changeModel(model_t);            // Delete current model and switch to desired model
+		double getCurrent(int);               // Returns a model current *** Obsolete due to parameter functions ***
+		double getConcentration(int);         // Returns a model concentration *** Obsolete due to parameter functions ***
+		double getParameter(int);             // Returns desired parameter
+		double getParameter(std::string);     // Returns desired parameter, uses map for better code readability
+		void setParameter(int, double);       // Sets a parameter to a value
 		QStringList getParameterList( void ); // Returns a list of parameters available for retrieval
 
 	public:

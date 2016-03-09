@@ -57,14 +57,14 @@
 class FaberRudy2000 : public default_model { // Base class is default_model
 
 public:
-    FaberRudy2000(void); // Constructor
+    FaberRudy2000(void);          // Constructor
     virtual ~FaberRudy2000(void); // Destructor
 
     // Virtual functions for default_model base class
-    virtual double iClamp(double); // Current clamp
-    virtual double vClamp(double); // Voltage clamp
-    virtual double current(int); // Current return function
-    virtual double concentration(int); // Concentration return function
+    virtual double iClamp(double);         // Current clamp
+    virtual double vClamp(double);         // Voltage clamp
+    virtual double current(int);           // Current return function
+    virtual double concentration(int);     // Concentration return function
     virtual double param(std::string);
     virtual QStringList paramList( void ); // Returns a list of parameters available for retrieval
     virtual void reset();
@@ -108,18 +108,18 @@ private:
     
     //Cell Geometry
     double pi;						
-    double L; //Length 100um (cm)
-    double r; //Radius 11um (cm)
-    double R_cg; //Ratio of capacitive membrane area to gemometric membrane area
-    double V_cell; //Volume of cell 38E-6 uL
-    double A_geo; //Geometric membrane area; 0.767E-4 cm^2
-    double A_cap; //Capacitive membrane area
-    double V_myo; //Myoplasm volume set to 68% of volume of cell
-    double V_mito; //Mitochondria volume set to 26% of volume of cell
-    double V_sr; //Sarcoplasmic reticulum volume set to 6%
-    double V_nsr; //Network SR is 92% of SR
-    double V_jsr; //Junctional SR is 8% of SR
-    double V_cleft; //Cleft volume
+    double L;       // Length 100um (cm)
+    double r;       // Radius 11um (cm)
+    double R_cg;    // Ratio of capacitive membrane area to gemometric membrane area
+    double V_cell;  // Volume of cell 38E-6 uL
+    double A_geo;   // Geometric membrane area; 0.767E-4 cm^2
+    double A_cap;   // Capacitive membrane area
+    double V_myo;   // Myoplasm volume set to 68% of volume of cell
+    double V_mito;  // Mitochondria volume set to 26% of volume of cell
+    double V_sr;    // Sarcoplasmic reticulum volume set to 6%
+    double V_nsr;   // Network SR is 92% of SR
+    double V_jsr;   // Junctional SR is 8% of SR
+    double V_cleft; // Cleft volume
 
     //initial conditions taken from the LR code on the web
     double Na_out;
@@ -132,12 +132,12 @@ private:
     double dK_in;
     double I_Total;
    
-    double I_Na, E_Na, am, bm, ah, bh, aj, bj, mtau, htau, jtau, mss, hss, jss; //I_Na channel
-    double d_inf, f_inf, tau_d, tau_f, ad, bd, af, bf; //L-type Ca channel
-    double f_Ca, I_Ca_bar, I_Ca_L, I_Ca_K_bar, I_Ca_K, I_Ca_Na_bar, I_Ca_Na; //L-type Ca channel
-    double E_Ca_T, tau_b, tau_g, b_ss, g_ss, I_Ca_T; //T type Ca channel
-    double I_K1, K1_s, aK1, bK1, G_K1, E_K1; //I_K1 channel
-    double Kp, I_Kp, E_Kp; //I_Kp channel
+    double I_Na, E_Na, am, bm, ah, bh, aj, bj, mtau, htau, jtau, mss, hss, jss; // I_Na channel
+    double d_inf, f_inf, tau_d, tau_f, ad, bd, af, bf;                          // L-type Ca channel
+    double f_Ca, I_Ca_bar, I_Ca_L, I_Ca_K_bar, I_Ca_K, I_Ca_Na_bar, I_Ca_Na;    // L-type Ca channel
+    double E_Ca_T, tau_b, tau_g, b_ss, g_ss, I_Ca_T;                            // T type Ca channel
+    double I_K1, K1_s, aK1, bK1, G_K1, E_K1;                                    // I_K1 channel
+    double Kp, I_Kp, E_Kp;                                                      // I_Kp channel
     double I_Na_Ca; 
     double I_Na_K, f_Na_K, sigma;
     double I_p_Ca;
@@ -181,25 +181,25 @@ private:
     double G_Ca_T;
     double PR_NaK;
     double G_Kp;
-    double c1; // Scaling factor for inaca (uA/uF)
-    double c2; // Half-saturation concentration of NaCa exhanger (mM)
-    double gammas; // Position of energy barrier controlling voltage dependance of inaca
+    double c1;         // Scaling factor for inaca (uA/uF)
+    double c2;         // Half-saturation concentration of NaCa exhanger (mM)
+    double gammas;     // Position of energy barrier controlling voltage dependance of inaca
     double I_Na_K_bar;
     double Km_Na_i;
     double Km_Ko;
     double I_p_Ca_bar;
     double Km_p_Ca;
     double G_Ca_b_bar;
-    double G_Na_b_bar;//0.00141;
+    double G_Na_b_bar; //0.00141;
     double tau_tr;
     double I_up_bar ;
     double Ca_nsr_bar;
     double K_leak;
     double Km_up;
-    double G_rel_bar; // Max. rate constant of Ca release from JSR due to overload (ms^-1)
+    double G_rel_bar;  // Max. rate constant of Ca release from JSR due to overload (ms^-1)
     double G_rel_bar_OL;
-    double CSQN_bar; // Max. [Ca] buffered in CSQN (mM)
-    double Km_CSQN; // Equalibrium constant of buffering for CSQN (mM)
+    double CSQN_bar;   // Max. [Ca] buffered in CSQN (mM)
+    double Km_CSQN;    // Equalibrium constant of buffering for CSQN (mM)
     double TRPN_bar;						
     double CMDN_bar;						
     double Km_TRPN;
@@ -215,9 +215,9 @@ private:
     double m; 
     double hh; 
     double j; 
-    double Na_in;	//10;
-    double K_in;		//145;
-    double Ca_in, Ca_in_x;	//0.12E-3;
+    double Na_in;	          //10;
+    double K_in;            //145;
+    double Ca_in, Ca_in_x;	 //0.12E-3;
     double Ca_jsr;
     double Ca_nsr;
 

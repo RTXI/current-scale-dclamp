@@ -57,21 +57,21 @@ class default_model{
 		void setSteps(int);
 
 		// Virtual functions, every model must be derived from this class and contain these functions
-		virtual double vClamp(double); // Parameter: Voltage | Return: Current
-		virtual double iClamp(double); // Parameter: Current | Return: Voltage
-		virtual void reset(); // Reset to initial conditions
-		virtual int reset(double); // Reset to specific set of initial conditions, returns int describing which set was chosen
-		virtual void reset(double*); // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
-		virtual double current(int); // Get current function *** Obsolete due to param function ***
-		virtual double concentration(int); // Get concentration function *** Obsolete due to param function ***
-		virtual double param(int); // Get parameter function
-		virtual double param(std::string); // Get parameter function, uses map for better code readability
-		virtual void setParam(int, double); // Set parameter function
+		virtual double vClamp(double);         // Parameter: Voltage | Return: Current
+		virtual double iClamp(double);         // Parameter: Current | Return: Voltage
+		virtual void reset();                  // Reset to initial conditions
+		virtual int reset(double);             // Reset to specific set of initial conditions, returns int describing which set was chosen
+		virtual void reset(double*);           // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
+		virtual double current(int);           // Get current function *** Obsolete due to param function ***
+		virtual double concentration(int);     // Get concentration function *** Obsolete due to param function ***
+		virtual double param(int);             // Get parameter function
+		virtual double param(std::string);     // Get parameter function, uses map for better code readability
+		virtual void setParam(int, double);    // Set parameter function
 		virtual QStringList paramList( void ); // Returns a list of parameters available for retrieval
 
 	protected:
-		int i; // vClamp and iClamp loop counter
-		int steps; // Number of loops model must go through to match
+		int i;           // vClamp and iClamp loop counter
+		int steps;       // Number of loops model must go through to match
 
 		double DT;
 		double I_Inject; // Current injected during current clamp

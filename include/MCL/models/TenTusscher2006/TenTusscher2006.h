@@ -51,13 +51,13 @@
 class TenTusscher2006 : public default_model { // Base class is default_model
     
 public:
-	TenTusscher2006(void); // Constructor
+	TenTusscher2006(void);          // Constructor
 	virtual ~TenTusscher2006(void); // Destructor
 
     // Virtual functions for default_model base class
     virtual double iClamp(double); // Current clamp
     virtual double vClamp(double); // Voltage clamp
-	virtual void reset(); // Reset model to initial conditions
+    virtual void reset();          // Reset model to initial conditions
 
 private:
     void solve(); // Model current solver

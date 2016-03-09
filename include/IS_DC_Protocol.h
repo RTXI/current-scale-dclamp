@@ -61,12 +61,12 @@ class ProtocolStep {
 		// stepComboBox, defined in IS_DC_AddStepDialogUI.cpp
 		enum stepType_t { PACE, SCALE, DIPACE, DISCALE, WAIT, STARTMODEL,
 		                  STOPMODEL, RESETMODEL, CHANGEMODEL } stepType; 
-		double BCL; // ms
-		double DI; // ms
+		double BCL;                 // ms
+		double DI;                  // ms
 		int numBeats;
 		std::string currentToScale; // String name of current
-		int scalingPercentage; // Whole number %
-		int waitTime; // ms
+		int scalingPercentage;      // Whole number %
+		int waitTime;               // ms
 		enum modelType_t { LIVRUDY2009, FABERRUDY2000 } modelType;
 
 		ProtocolStep( stepType_t, double, double, int, std::string, int, int, 
@@ -76,17 +76,17 @@ class ProtocolStep {
 };
 
 typedef boost::shared_ptr<ProtocolStep> ProtocolStepPtr; // Step pointer
-typedef std::vector<ProtocolStepPtr> ProtocolContainer; // Protocol steps
+typedef std::vector<ProtocolStepPtr> ProtocolContainer;  // Protocol steps
 
 class Protocol {
 	public:
 		Protocol( void );
 		~Protocol( void );
-		bool addStep( QWidget * ); // Add a protocol step at the end
-		bool addStep( QWidget *, int ); // Add a protocol step at a specific point
+		bool addStep( QWidget * );         // Add a protocol step at the end
+		bool addStep( QWidget *, int );    // Add a protocol step at a specific point
 		void deleteStep( QWidget *, int ); // Delete a protocol step
-		void saveProtocol( QWidget * ); // Save protocol in xml format
-		void clearProtocol( void ); // Clears protocol 
+		void saveProtocol( QWidget * );    // Save protocol in xml format
+		void clearProtocol( void );        // Clears protocol 
 
 		// Build protocol container from xml file, file browser is opened.
 		QString loadProtocol( QWidget * );

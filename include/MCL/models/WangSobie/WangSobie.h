@@ -51,15 +51,15 @@
 class WangSobie : public default_model {
     
 public:
-    WangSobie(void); // Constructor
+    WangSobie(void);          // Constructor
     virtual ~WangSobie(void); // Destructor
 
     // Virtual functions for default_model base class
-    virtual double iClamp(double); // Current clamp
-    virtual double vClamp(double); // Voltage clamp
-    virtual double current(int); // Current return function
+    virtual double iClamp(double);     // Current clamp
+    virtual double vClamp(double);     // Voltage clamp
+    virtual double current(int);       // Current return function
     virtual double concentration(int); // Concentration return function
-    virtual void reset(); // Reset to initial conditions
+    virtual void reset();              // Reset to initial conditions
 
     //double DT; *Part of base class
     //int steps; *Part of base class

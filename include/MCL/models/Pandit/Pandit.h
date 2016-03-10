@@ -59,17 +59,17 @@
 class Pandit : public default_model {
     
 public:
-    Pandit(void); // Constructor
+    Pandit(void);          // Constructor
     virtual ~Pandit(void); // Destructor
 
     // Virtual functions for default_model base class
-    virtual double iClamp(double); // Current clamp
-    virtual double vClamp(double); // Voltage clamp
-    virtual double current(int); // Current return function
+    virtual double iClamp(double);     // Current clamp
+    virtual double vClamp(double);     // Voltage clamp
+    virtual double current(int);       // Current return function
     virtual double concentration(int); // Concentration return function
-    virtual void reset(); // Reset to initial conditions
-    virtual int reset(double); // Reset to specific set of initial conditions, returns int describing which parameter set is being used
-    virtual void reset(double*); // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
+    virtual void reset();              // Reset to initial conditions
+    virtual int reset(double);         // Reset to specific set of initial conditions, returns int describing which parameter set is being used
+    virtual void reset(double*);       // Using the array pointer, modify certain parameters of the model (Used with the genetic algorithm)
     
     //double DT; *Part of base class
     //int steps; *Part of base class
@@ -148,39 +148,39 @@ private:
     // Parameters for INaCa
     double kNaCa; // Scaling factor
     double dNaCa; // Denominator constant
-    double gam; // Position of energy barrier
+    double gam;   // Position of energy barrier
   
     // Parameters for SR function
-    double v1; // Max RyR channel Ca flux
-    double Kfb; // Forward half-sat constant for Ca/ATPase
-    double Krb;// Backward half-sat constant for Ca/ATPase
-    double Ksr; // Scaling factor for Ca/ATPase
-    double Nfb; // Forward cooperativity constant for Ca/ATPase
-    double Nrb; // Reverse cooperativity constant for Ca/ATPase
-    double vmaxf; // Ca/ATPase forward rate parameter
-    double vmaxr; // Ca/ATPase reverse rate parameter
-    double tau_tr; // Time constant for transfer for NSR to JSR
-    double tau_xfer; // Time constant for transfer from subspace to myoplasm
-    double Ka_pos; // RyR Pc1-Po1 rate constant
-    double Ka_neg; // RyR Po1-Pc1 rate constant
-    double Kb_pos; // RyR Po1-Po2 rate constant
-    double Kb_neg; // RyR Po2-Po1 rate constant
-    double Kc_pos; // RyR Po1-Pc2 rate constant
-    double Kc_neg; // RyR Pc2-Po1 rate constant
-    double n_ry; // RyR Ca cooperativity parameter Pc1-Po1
-    double m_ry; // RyR Ca cooperativity parameter Po1-Po2
-    double LTRPNtot; // Total troponin low-affinity site concentration
-    double HTRPNtot; // Total troponin high-affinity site concentration
+    double v1;         // Max RyR channel Ca flux
+    double Kfb;        // Forward half-sat constant for Ca/ATPase
+    double Krb;        // Backward half-sat constant for Ca/ATPase
+    double Ksr;        // Scaling factor for Ca/ATPase
+    double Nfb;        // Forward cooperativity constant for Ca/ATPase
+    double Nrb;        // Reverse cooperativity constant for Ca/ATPase
+    double vmaxf;      // Ca/ATPase forward rate parameter
+    double vmaxr;      // Ca/ATPase reverse rate parameter
+    double tau_tr;     // Time constant for transfer for NSR to JSR
+    double tau_xfer;   // Time constant for transfer from subspace to myoplasm
+    double Ka_pos;     // RyR Pc1-Po1 rate constant
+    double Ka_neg;     // RyR Po1-Pc1 rate constant
+    double Kb_pos;     // RyR Po1-Po2 rate constant
+    double Kb_neg;     // RyR Po2-Po1 rate constant
+    double Kc_pos;     // RyR Po1-Pc2 rate constant
+    double Kc_neg;     // RyR Pc2-Po1 rate constant
+    double n_ry;       // RyR Ca cooperativity parameter Pc1-Po1
+    double m_ry;       // RyR Ca cooperativity parameter Po1-Po2
+    double LTRPNtot;   // Total troponin low-affinity site concentration
+    double HTRPNtot;   // Total troponin high-affinity site concentration
     double Khtrpn_pos; // Ca on rate for troponin high-affinity sites
     double Khtrpn_neg; // Ca off rate for troponin high-affinity sites
     double Kltrpn_pos; // Ca on rate for troponin low-affinity sites
     double Kltrpn_neg; // Ca off rate for troponin low-affinity sites
-    double CMDN_tot; // Total myoplasm calmodulin concentration
-    double CSQN_tot; // Total myoplasm calsequestrin concentration
-    double EGTA_tot; // Total myoplasm EGTA concentration
-    double KmCMDN; // Ca half-saturation constant for calmodulin
-    double KmCSQN; // Ca half-saturation constant for calsequestrin
-    double KmEGTA; // Ca half-saturation constant for EGTA
+    double CMDN_tot;   // Total myoplasm calmodulin concentration
+    double CSQN_tot;   // Total myoplasm calsequestrin concentration
+    double EGTA_tot;   // Total myoplasm EGTA concentration
+    double KmCMDN;     // Ca half-saturation constant for calmodulin
+    double KmCSQN;     // Ca half-saturation constant for calsequestrin
+    double KmEGTA;     // Ca half-saturation constant for EGTA
   
     // Gating variables
     double m_bar, tau_m;
@@ -198,14 +198,14 @@ private:
     double y_inf, tau_y;
     double Ek, ENa, V, dV_dt, Itotal;
     double m, h_gate, j, d, f11, f12, Ca_inact, r, s, rkslow, skslow, rss, y; // Gating variables
-    double INa, ICaL, IfNa, IfK, It, Ikslow, Iss, INaK, ICaP, INaCa, Ik1; // Major currents
+    double INa, ICaL, IfNa, IfK, It, Ikslow, Iss, INaK, ICaP, INaCa, Ik1;     // Major currents
     double Ca_nsr, Ca_ss, Ca_jsr, Pc1, Po1, Po2, Pc2, ltrpn, htrpn;
     double Jtr, Jxfer, Jtrpn, Jup, Jrel;
     double fb, rb, Bi, Bss, Bjsr;
-    double IBNa, IBK, IBCa, IB; // Background currents
-    double Nai, Ki, Cai; // Intracellular ion concentrations
+    double IBNa, IBK, IBCa, IB;                                               // Background currents
+    double Nai, Ki, Cai;                                                      // Intracellular ion concentrations
     double RTONF;
-    double sigma; // For INaK calculation
+    double sigma;                                                             // For INaK calculation
     double ECal;
     double fna, fk;
 

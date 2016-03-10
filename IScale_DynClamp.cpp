@@ -16,17 +16,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*** INTRO
- * Current Scaling Dynamic Clamp
- * 
- * IScale_DynClamp.cpp, v1.0
- *
- * Author: Francis A. Ortega (2011)
- *
- * Notes in header
- *
- ***/
-
 /* Include */
 #include <IScale_DynClamp.h>
 #include <iostream>
@@ -44,7 +33,7 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 
-#include "/usr/local/rtxi/plugins/data_recorder/data_recorder.h"
+#include "/usr/local/lib/rtxi_includes/data_recorder.h"
 
 using namespace std;
 
@@ -191,6 +180,8 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
         calculateAPD( 2 ); // Second step of APD calculation
         break;
 
+
+
     case PROTOCOL:
 
         time += period;
@@ -240,21 +231,28 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 
                         if( stepType == ProtocolStep::PACE || stepType == ProtocolStep::SCALE)
                             stepEndTime = (( stepPtr->BCL * stepPtr->numBeats ) / period ) - 1; // -1 since time starts at 0, not 1
+						      else if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE ) {
+                            stepEndBeat = beatNum + stepPtr->numBeats; 
+
+                            // pad stepEndTime to hell to avoid setting off:
+                            //    if( stepTime => stepEndTime ) {...}
+                            stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
+                        }
                         else
                             stepEndTime = ( stepPtr->waitTime / period ) - 1; // -1 since time starts at 0, not 1
                         
                         pBCLInt = stepPtr->BCL / period; // BCL for protocol
+                        pDIInt = stepPtr->DI / period; // DI for protocol
                         protocolMode = EXEC;
                         beatNum++;
                         Vrest = voltage;
                         calculateAPD( 1 );
                         modelInit = false;
                     }
-                    
                 } // end else
             } // end while( modelInit )
         } // end STEPINIT
-        
+
         if( protocolMode == EXEC ) { // Execute protocol
             if( stepType == ProtocolStep::PACE || stepType == ProtocolStep::SCALE) { // Pace cell at BCL
                 if (stepTime - cycleStartTime >= pBCLInt){
@@ -283,6 +281,49 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 
                 
             } // end if(PACE || SCALE)
+			
+            // Stimulate based on set diastolic intervals
+            else if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
+            
+               if ( APDMode == DONE ) {
+            		if ( currentStep - APEndStep  >= pDIInt ) {
+            			if ( beatNum < stepEndBeat ) {
+            				cycleStartTime = stepTime;
+            				beatNum++;
+            				Vrest = voltage;
+            				calculateAPD(1);
+            			}
+            			else {
+            				currentStep++;
+            				protocolMode = STEPINIT;
+            			}
+                   }
+            	}
+            	
+            	// Stimulate cell for stimLength(ms)
+            	if ( (stepTime - cycleStartTime) < stimLengthInt ) {
+            		outputCurrent = stimMag * 1e-9;
+               }
+            	else outputCurrent = 0;
+            
+            	if( voltageClamp || stepType == ProtocolStep::DISCALE ) {
+            	    totalModelCurrent = modelCell->voltageClamp(voltage);
+               }
+              	
+            	// If Scaling step, scale current
+            	if( stepType == ProtocolStep::DISCALE) {
+            		targetCurrent = modelCell->getParameter( stepPtr->currentToScale );
+            		scaledCurrent = targetCurrent + 
+            		                ( targetCurrent * ( stepPtr->scalingPercentage / 100.0 ) );
+            		
+            		// Scale current to cell size; Cm in pF, convert to F
+            		outputCurrent += ( targetCurrent - scaledCurrent ) *  Cm * 1e-12; 
+            	}
+            
+            	output(0) = outputCurrent;
+            	calculateAPD(2);
+            	stepEndTime++;
+            } // end if(DIPACE || DISCALE)
         
             else { // If stepType = WAIT
                 output(0) = 0;
@@ -306,6 +347,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
     } // end switch( executeMode )     
 } // end execute()
 
+
 void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, protocol, and model cell
     protocol = new Protocol();
     livshitzRudy2009 = new ModelCell();
@@ -323,6 +365,7 @@ void IScale_DynClamp::Module::initialize(void){ // Initialize all variables, pro
     APD = 0;
     targetCurrent = 0;
     scaledCurrent = 0;
+    executeMode = IDLE;
 
     // Parameters
     APDRepol = 90;    
@@ -464,15 +507,19 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step){ // Two APDs are ca
                 peakVoltage = Vrest;
                 APDMode = PEAK;
             }
+            // Skip to next step if the stimulus fails to produce an action potential
+            else if ( (stepTime - cycleStartTime) > stimWindow/period ) {
+                APDMode = DONE;
+            }
             break;
             
         case PEAK: // Find peak of AP, points within "window" are ignored to eliminate effect of stimulus artifact
             if( (time - APStart) > stimWindow ) { // If we are outside the chosen time window after the AP
                 if( peakVoltage < voltage  ) { // Find peak voltage                    
                     peakVoltage = voltage;
-                    peakTime = time;
+                    APPeak = time;
                 }
-                else if ( (time - peakTime) > 5 ) { // Keep looking for the peak for 5ms to account for noise
+                else if ( (time - APPeak) > 5 ) { // Keep looking for the peak for 5ms to account for noise
                     double APAmp;                    
                     APAmp = peakVoltage - Vrest ; // Amplitude of action potential based on resting membrane and peak voltage
                     // Calculate downstroke threshold based on AP amplitude and desired AP repolarization %
@@ -484,6 +531,8 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step){ // Two APDs are ca
             
         case DOWN: // Find downstroke threshold and calculate APD
             if( voltage <= downstrokeThreshold ) {
+                APEnd = time;
+                APEndStep = currentStep;
                 APD = time - APStart;
                 APDMode = DONE;
             }
@@ -526,7 +575,7 @@ void IScale_DynClamp::Module::createGUI( void ) {
     mainWindow->stimWindowEdit->setValidator( new QIntValidator(mainWindow->stimWindowEdit) );
     mainWindow->numTrialEdit->setValidator( new QIntValidator(mainWindow->numTrialEdit) );
     mainWindow->intervalTimeEdit->setValidator( new QIntValidator(mainWindow->intervalTimeEdit) );
-    mainWindow->BCLEdit->setValidator( new QIntValidator(mainWindow->BCLEdit) );
+    mainWindow->BCLEdit->setValidator( new QDoubleValidator(mainWindow->BCLEdit) );
     mainWindow->stimMagEdit->setValidator( new QDoubleValidator(mainWindow->stimMagEdit) );
     mainWindow->stimLengthEdit->setValidator( new QDoubleValidator(mainWindow->stimLengthEdit) );
     mainWindow->CmEdit->setValidator( new QDoubleValidator(mainWindow->CmEdit) );
@@ -601,7 +650,7 @@ void IScale_DynClamp::Module::doLoad(const Settings::Object::State &s) {
     mainWindow->stimWindowEdit->setText( QString::number( s.loadInteger("Stim Window") ) );
     mainWindow->numTrialEdit->setText( QString::number( s.loadInteger("Num Trials") ) );
     mainWindow->intervalTimeEdit->setText( QString::number( s.loadInteger("Interval Time") ) );
-    mainWindow->BCLEdit->setText( QString::number( s.loadInteger("BCL") ) );
+    mainWindow->BCLEdit->setText( QString::number( s.loadDouble("BCL") ) );
     mainWindow->stimMagEdit->setText( QString::number( s.loadInteger("Stim Mag") ) );
     mainWindow->stimLengthEdit->setText( QString::number( s.loadInteger("Stim Length") ) );
     mainWindow->CmEdit->setText( QString::number( s.loadInteger("Cm") ) );
@@ -628,7 +677,7 @@ void IScale_DynClamp::Module::doSave(Settings::Object::State &s) const {
     s.saveInteger( "Stim Window", stimWindow );
     s.saveInteger( "Num Trials", numTrials);
     s.saveInteger( "Interval Time", intervalTime );
-    s.saveInteger( "BCL", BCL );
+    s.saveDouble( "BCL", BCL );
     s.saveDouble( "Stim Mag", stimMag );
     s.saveDouble( "Stim Length", stimLength );
     s.saveDouble( "Cm", Cm );
@@ -640,7 +689,7 @@ void IScale_DynClamp::Module::modify(void) {
     int sw = mainWindow->stimWindowEdit->text().toInt();
     int nt = mainWindow->numTrialEdit->text().toInt();
     int it = mainWindow->intervalTimeEdit->text().toInt();
-    int b = mainWindow->BCLEdit->text().toInt();
+    double b = mainWindow->BCLEdit->text().toDouble();
     double sm = mainWindow->stimMagEdit->text().toDouble();
     double sl = mainWindow->stimLengthEdit->text().toDouble();
     double c = mainWindow->CmEdit->text().toDouble();

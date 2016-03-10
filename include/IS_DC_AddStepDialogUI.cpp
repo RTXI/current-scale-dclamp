@@ -73,6 +73,23 @@ AddStepDialog::AddStepDialog( QWidget* parent, const char* name, bool modal, WFl
     layout2->addWidget( numBeatsEdit );
     AddStepDialogLayout->addLayout( layout2 );
 
+    dilayout = new QHBoxLayout( 0, 0, 6, "dilayout");
+
+    DILabel = new QLabel( this, "DILabel" );
+    DILabel->setMinimumSize( QSize( 175, 0 ) );
+    DILabel->setMaximumSize( QSize( 175, 32767 ) );
+    QFont DILabel_font(  DILabel->font() );
+    DILabel_font.setBold( TRUE );
+    DILabel->setFont( DILabel_font ); 
+    DILabel->setAlignment( int( QLabel::AlignCenter ) );
+    dilayout->addWidget( DILabel );
+
+    DIEdit = new QLineEdit( this, "DIEdit" );
+    DIEdit->setMinimumSize( QSize( 75, 0 ) );
+    DIEdit->setMaximumSize( QSize( 75, 32767 ) );
+    dilayout->addWidget( DIEdit );
+    AddStepDialogLayout->addLayout( dilayout );
+    
     layout3 = new QHBoxLayout( 0, 0, 6, "layout3"); 
 
     currentToScaleLabel = new QLabel( this, "currentToScaleLabel" );
@@ -184,12 +201,15 @@ void AddStepDialog::languageChange()
     stepComboBox->clear();
     stepComboBox->insertItem( tr( "Static Pacing" ) );
     stepComboBox->insertItem( tr( "Current Scaling" ) );
+    stepComboBox->insertItem( tr( "Diastolic Interval" ) );
+    stepComboBox->insertItem( tr( "DI + Scaling" ) );
     stepComboBox->insertItem( tr( "Wait" ) );
     stepComboBox->insertItem( tr( "Model: Start" ) );
     stepComboBox->insertItem( tr( "Model: Stop" ) );
     stepComboBox->insertItem( tr( "Model: Reset" ) );
     stepComboBox->insertItem( tr( "Model: Change" ) );
     BCLLabel->setText( tr( "Basic Cycle Length (ms)" ) );
+    DILabel->setText( tr( "Diastolic Interval (ms)" ) );
     numBeatsLabel->setText( tr( "Number of Beats" ) );
     currentToScaleLabel->setText( tr( "Current to Scale" ) );
     QToolTip::add( currentToScaleEdit, tr( "INa IKr IKs ICaL IK1 ICaT INaK INCX" ) );

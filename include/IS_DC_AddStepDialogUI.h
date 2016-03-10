@@ -35,6 +35,8 @@ public:
     QLineEdit* BCLEdit;
     QLabel* numBeatsLabel;
     QLineEdit* numBeatsEdit;
+    QLabel* DILabel;
+    QLineEdit* DIEdit;
     QLabel* currentToScaleLabel;
     QLineEdit* currentToScaleEdit;
     QLabel* scalingPercentageLabel;
@@ -55,6 +57,7 @@ protected:
     QHBoxLayout* layout4;
     QHBoxLayout* layout5;
     QHBoxLayout* layout6;
+    QHBoxLayout* dilayout;
     QHBoxLayout* buttonGroupLayout;
 
 protected slots:

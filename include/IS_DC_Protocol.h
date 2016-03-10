@@ -44,6 +44,7 @@ class AddStepInputDialog: public AddStepDialog {
     private:
     QString stepType;
     QString BCL;
+    QString DI;
     QString numBeats;
     QString currentToScale;
     QString scalingPercentage;
@@ -65,34 +66,36 @@ class AddStepInputDialog: public AddStepDialog {
 
 class ProtocolStep {
 public:
-    enum stepType_t { PACE, SCALE, WAIT, STARTMODEL, STOPMODEL, RESETMODEL, CHANGEMODEL } stepType;    
-    int BCL; // ms
+    enum stepType_t { PACE, SCALE, DIPACE, DISCALE, WAIT, STARTMODEL, 
+                      STOPMODEL, RESETMODEL, CHANGEMODEL } stepType;    
+    double BCL;                 // ms
+    double DI;                  // ms
     int numBeats;
     std::string currentToScale; // String name of current
-    int scalingPercentage; // Whole number %
-    int waitTime; // ms
+    int scalingPercentage;      // Whole number %
+    int waitTime;               // ms
     enum modelType_t { LIVRUDY2009, FABERRUDY2000 } modelType;
     
-    ProtocolStep( stepType_t, int, int, std::string, int, int, modelType_t );
+    ProtocolStep( stepType_t, double, double, int, std::string, int, int, modelType_t );
     ~ProtocolStep( void );
     int stepLength ( double );
 };
 
 typedef boost::shared_ptr<ProtocolStep> ProtocolStepPtr; // Step pointer
-typedef std::vector<ProtocolStepPtr> ProtocolContainer; // Vector of steps: protocol
+typedef std::vector<ProtocolStepPtr> ProtocolContainer;  // Vector of steps: protocol
 
 class Protocol {
 public:
     Protocol( void );
     ~Protocol( void );
-    bool addStep( QWidget * ); // Add a protocol step at the end
-    bool addStep( QWidget *, int ); // Add a protocol step at a specific point
-    void deleteStep( QWidget *, int ); // Delete a protocol step
-    void saveProtocol( QWidget * ); // Save protocol in xml format
-    void clearProtocol( void ); // Clears protocol
-    QString loadProtocol( QWidget * ); // Build protocol container from xml file, file browser is opened
+    bool addStep( QWidget * );               // Add a protocol step at the end
+    bool addStep( QWidget *, int );          // Add a protocol step at a specific point
+    void deleteStep( QWidget *, int );       // Delete a protocol step
+    void saveProtocol( QWidget * );          // Save protocol in xml format
+    void clearProtocol( void );              // Clears protocol
+    QString loadProtocol( QWidget * );       // Build protocol container from xml file, file browser is opened
     void loadProtocol( QWidget *, QString ); // Build protocol container from xml file, file name is parameter
-    QString getStepDescription( int ); // Retrieve a string description of step
+    QString getStepDescription( int );       // Retrieve a string description of step
     QDomElement stepToNode( QDomDocument &, const ProtocolStepPtr, int );
 
     ProtocolContainer protocolContainer;

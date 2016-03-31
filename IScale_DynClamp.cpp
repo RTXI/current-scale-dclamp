@@ -33,7 +33,7 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 
-#include "/usr/local/lib/rtxi_includes/data_recorder.h"
+#include "/usr/local/src/rtxi/plugins/data_recorder/data_recorder.h"
 
 using namespace std;
 
@@ -286,7 +286,7 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
             else if( stepType == ProtocolStep::DIPACE || stepType == ProtocolStep::DISCALE) {
             
                if ( APDMode == DONE ) {
-            		if ( currentStep - APEndStep  >= pDIInt ) {
+            		if ( stepTime - APEndStep  >= pDIInt ) {
             			if ( beatNum < stepEndBeat ) {
             				cycleStartTime = stepTime;
             				beatNum++;
@@ -508,8 +508,11 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step){ // Two APDs are ca
                 APDMode = PEAK;
             }
             // Skip to next step if the stimulus fails to produce an action potential
-            else if ( (stepTime - cycleStartTime) > stimWindow/period ) {
+            else if ( (stepTime - cycleStartTime) > 2*stimWindow/period ) {
                 APDMode = DONE;
+                APEnd = time;
+                APEndStep = stepTime;
+std::cout<<"No AP found. Skipping to DONE."<<std::endl;
             }
             break;
             
@@ -532,7 +535,7 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step){ // Two APDs are ca
         case DOWN: // Find downstroke threshold and calculate APD
             if( voltage <= downstrokeThreshold ) {
                 APEnd = time;
-                APEndStep = currentStep;
+                APEndStep = stepTime;
                 APD = time - APStart;
                 APDMode = DONE;
             }

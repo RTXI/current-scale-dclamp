@@ -753,6 +753,8 @@ void IScale_DynClamp::Module::Module::calculateAPD(int step) {
 			// Skip to next step if the stimulus fails to produce an action potential
 			else if ( (stepTime - cycleStartTime) > stimWindow/period ) {
 				APDMode = DONE;
+				APEndStepTime = stepTime;
+std::cout<<"No APD found, switching to DONE"<<std::endl;
 			}
 			break;
 

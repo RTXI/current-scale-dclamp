@@ -26,7 +26,9 @@ LIBS = -lgsl -lgslcblas
 
 include $(shell rtxi_plugin_config --pkgdata-dir)/Makefile.plugin_compile
 
-clean:
+clean: extraclean
+
+extraclean:
 	rm -f $(OBJECTS)
 	rm -f moc_*
 	rm -f *.o

@@ -28,13 +28,7 @@ include $(shell rtxi_plugin_config --pkgdata-dir)/Makefile.plugin_compile
 
 clean: extraclean
 
-extraclean:
-	rm -f $(OBJECTS)
-	rm -f moc_*
-	rm -f *.o
-	rm -f $(PLUGIN_NAME).la
-	rm -f $(PLUGIN_NAME).o
-	rm -rf .libs
+extraclean: 
 	rm -rf include/.libs
 	rm -rf include/*/.libs
 	rm -rf include/*/*/.libs

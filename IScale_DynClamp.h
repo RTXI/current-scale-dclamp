@@ -124,6 +124,8 @@ class Module: public QWidget, public RT::Thread, public Plugin::Object,
 		int pBCLInt;                       // BCL for protocol
 		int pDIInt;                        // DI for protocol
 		int stimLengthInt;                 // stimLength / period (unitless)
+		double startDIVoltage; 
+		bool isDINext;
 
 		// APD Calculation    
 		double upstrokeThreshold;   // Upstroke threshold for start of AP

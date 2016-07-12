@@ -257,6 +257,13 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 							// pad stepEndTime to hell to avoid setting off:
 							//    if( stepTime => stepEndTime ) {...}
 							stepEndTime = (( 1 * stepPtr->numBeats ) / period ) - 1; 
+
+							ProtocolStep::stepType_t nextStepType = (protocolContainer->at(currentStep+1))->stepType;
+							if( nextStepType == ProtocolStep::DIPACE || 
+							    nextStepType == ProtocolStep::DISCALE ) {
+								isDINext = true;
+								startDIVoltage = voltage;
+							}
 						}
 						else {
 							// set to -1 since time starts at 0, not 1
@@ -317,7 +324,11 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 						if ( beatNum < stepEndBeat ) {
 							cycleStartTime = stepTime;
 							beatNum++;
-							Vrest = voltage;
+							if (isDINext) {
+								Vrest = startDIVoltage; 
+							} else {
+								Vrest = voltage;
+							}
 							calculateAPD(1);
 						}
 						else {
@@ -788,6 +799,7 @@ void IScale_DynClamp::Module::initialize(void){
 	stimLength = 1;
 	Cm = 100;
 	LJP = 0;
+	startDIVoltage = 0;
 
 	mainWindow->APDRepolEdit->setText( QString::number(APDRepol) );
 	mainWindow->minAPDEdit->setText( QString::number(minAPD) );
@@ -807,6 +819,7 @@ void IScale_DynClamp::Module::initialize(void){
 	modelInit = true;
 	loadedFile = "";
 	protocolOn = false;
+	isDINext = false;
 
 	// APD parameters
 	upstrokeThreshold = -40;

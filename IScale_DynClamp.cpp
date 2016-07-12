@@ -263,6 +263,8 @@ void IScale_DynClamp::Module::execute(void) { // Real-Time Execution
 							    nextStepType == ProtocolStep::DISCALE ) {
 								isDINext = true;
 								startDIVoltage = voltage;
+							} else {
+								isDINext = false;
 							}
 						}
 						else {

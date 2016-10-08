@@ -49,5 +49,5 @@ extraclean:
 	rm -rf include/*/*/*/.libs
 	rm -f include/*.o
 	rm -f include/moc_*
-	rm include/*/*.o
-	rm include/*/*/*/*.o
+	rm -f include/*/*.o
+	rm -f include/*/*/*/*.o

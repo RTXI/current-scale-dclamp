@@ -17,6 +17,7 @@
  */
 
 #include "IScale_DynClamp.h"
+#include <iostream>
 #include <math.h>
 #include <main_window.h>
 #include <data_recorder.h>
